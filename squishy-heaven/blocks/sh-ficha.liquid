@@ -1,0 +1,109 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Orden fijo de ficha definido por el design system:
+  nombre → subtítulo → 3 beneficios → medidas y variantes →
+  material y cuidados → seguridad y edad → envío y garantía.
+
+  Este bloque cubre los últimos cuatro. Cada acordeón prefiere el metafield
+  del producto y cae al texto por defecto del bloque si no existe.
+{%- endcomment -%}
+
+{%- liquid
+  assign p = closest.product | default: product
+  assign m = p.metafields.squishy
+
+  assign medidas   = m.medidas.value   | default: block.settings.medidas
+  assign material  = m.material.value  | default: block.settings.material
+  assign seguridad = m.seguridad.value | default: block.settings.seguridad
+  assign envio     = m.envio.value     | default: block.settings.envio
+-%}
+
+<div class="sh sh--flush sh-pficha" {{ block.shopify_attributes }}>
+  <div class="sh-faq">
+    {%- if medidas != blank -%}
+      <details class="sh-faq__item">
+        <summary class="sh-faq__q">
+          <span class="sh-pficha__q">{% render 'sh-icon', name: 'ruler', size: 18 %}Medidas y variantes</span>
+          {% render 'sh-icon', name: 'chevron-down', size: 20 %}
+        </summary>
+        <div class="sh-faq__a">{{ medidas }}</div>
+      </details>
+    {%- endif -%}
+
+    {%- if material != blank -%}
+      <details class="sh-faq__item">
+        <summary class="sh-faq__q">
+          <span class="sh-pficha__q">{% render 'sh-icon', name: 'hand-heart', size: 18 %}Material y cuidados</span>
+          {% render 'sh-icon', name: 'chevron-down', size: 20 %}
+        </summary>
+        <div class="sh-faq__a">{{ material }}</div>
+      </details>
+    {%- endif -%}
+
+    {%- if seguridad != blank -%}
+      <details class="sh-faq__item">
+        <summary class="sh-faq__q">
+          <span class="sh-pficha__q">{% render 'sh-icon', name: 'baby', size: 18 %}Seguridad y edad</span>
+          {% render 'sh-icon', name: 'chevron-down', size: 20 %}
+        </summary>
+        <div class="sh-faq__a">{{ seguridad }}</div>
+      </details>
+    {%- endif -%}
+
+    {%- if envio != blank -%}
+      <details class="sh-faq__item">
+        <summary class="sh-faq__q">
+          <span class="sh-pficha__q">{% render 'sh-icon', name: 'truck', size: 18 %}Envío y garantía</span>
+          {% render 'sh-icon', name: 'chevron-down', size: 20 %}
+        </summary>
+        <div class="sh-faq__a">{{ envio }}</div>
+      </details>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .sh-pficha { padding: 0; background: none; }
+  .sh-pficha .sh-faq__q { padding: var(--space-4) var(--space-5); font-size: var(--text-sm); }
+  .sh-pficha .sh-faq__a { padding: 0 var(--space-5) var(--space-4); }
+  .sh-pficha__q { display: inline-flex; align-items: center; gap: 10px; }
+  .sh-pficha__q svg { color: var(--mint-700); flex: none; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Ficha de producto",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Sustituye el bloque de descripción importada del proveedor. Cada acordeón lee su metafield (`squishy.medidas`, `squishy.material`, `squishy.seguridad`, `squishy.envio`) y usa el texto de abajo cuando el producto no lo tiene. Si dejas un campo vacío y el producto tampoco tiene metafield, el acordeón no se muestra."
+    },
+    {
+      "type": "richtext",
+      "id": "medidas",
+      "label": "Medidas y variantes",
+      "default": "<p>Consulta la medida exacta en las fotos de la galería. Las imágenes con cotas están al final, nunca como foto principal.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "material",
+      "label": "Material y cuidados",
+      "default": "<p>Espuma PU suave con acabado mate. Límpialo con un paño húmedo y guárdalo lejos del sol directo.</p><p>Manos limpias y secas para que la textura dure más.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "seguridad",
+      "label": "Seguridad y edad",
+      "default": "<p>Recomendado desde 3 años y siempre con supervisión de un adulto.</p><p>No es comestible ni es un juguete de baño. Si el material se rompe, deja de usarlo.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "envio",
+      "label": "Envío y garantía",
+      "default": "<p>Preparamos tu pedido en 1 a 2 días hábiles y llega entre 5 y 12 días hábiles con número de seguimiento.</p><p>Si llega dañado, escríbenos con una foto en los primeros 7 días y te ayudamos.</p>"
+    }
+  ],
+  "presets": [{ "name": "SH · Ficha de producto" }]
+}
+{% endschema %}

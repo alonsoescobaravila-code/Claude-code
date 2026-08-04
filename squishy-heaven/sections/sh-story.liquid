@@ -1,0 +1,134 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+<section class="sh" data-tone="{{ section.settings.tone }}">
+  <div class="sh__wrap">
+    <div class="sh-story" data-media="{{ section.settings.media_position }}">
+      <div class="sh-story__media">
+        <div class="sh-photo" data-tone="{{ section.settings.photo_tone }}" style="aspect-ratio:4/3">
+          {%- if section.settings.image -%}
+            {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450,700,900', sizes: '(max-width: 989px) 92vw, 520px', alt: section.settings.image.alt | default: section.settings.heading | escape }}
+          {%- else -%}
+            <div class="sh-photo__note"><span>{{ section.settings.photo_brief }}</span></div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="sh-story__text">
+        {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h2 class="sh__title">{{ section.settings.heading }}</h2>
+        {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
+
+        {%- if section.blocks.size > 0 -%}
+          <ul class="sh-checks sh-story__checks">
+            {%- for block in section.blocks -%}
+              <li {{ block.shopify_attributes }}>{% render 'sh-icon', name: 'check', size: 18 %}{{ block.settings.text }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if section.settings.cta_label != blank -%}
+          <div class="sh-story__cta">
+            <a href="{{ section.settings.cta_link | default: '#' }}" class="sh-btn sh-btn--grape">{{ section.settings.cta_label }}</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sh-story { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12); align-items: center; }
+  .sh-story[data-media="right"] .sh-story__media { order: 2; }
+  .sh-story__checks { margin-top: var(--space-6); }
+  .sh-story__cta { margin-top: var(--space-8); }
+  @media (max-width: 989px) {
+    .sh-story { grid-template-columns: 1fr; gap: var(--space-8); }
+    .sh-story[data-media="right"] .sh-story__media { order: 0; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Historia",
+  "tag": "section",
+  "class": "sh-section",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Bloque de credibilidad. Di lo que sí puedes probar: cómo eliges producto, cómo envías, qué pasa si algo sale mal. Evita «certificado», «no tóxico» o «100% garantizado» si no tienes documento que lo respalde."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Kicker", "default": "Hechos con cariño" },
+    { "type": "text", "id": "heading", "label": "Titular", "default": "Elegimos por textura, no por catálogo" },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto",
+      "default": "Probamos cada squishy antes de sumarlo a la tienda: cómo se siente al apretarlo, cuánto tarda en volver a su forma y si el color se ve igual que en la foto."
+    },
+    { "type": "text", "id": "cta_label", "label": "Botón", "default": "Ver toda la tienda" },
+    { "type": "url", "id": "cta_link", "label": "Enlace del botón" },
+    { "type": "header", "content": "Imagen" },
+    { "type": "image_picker", "id": "image", "label": "Imagen" },
+    {
+      "type": "textarea",
+      "id": "photo_brief",
+      "label": "Brief de foto",
+      "default": "Foto: colección ordenada por color sobre fondo pastel plano."
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Posición de la imagen",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "photo_tone",
+      "label": "Color del pozo",
+      "options": [
+        { "value": "0", "label": "Rosa" },
+        { "value": "1", "label": "Uva" },
+        { "value": "2", "label": "Menta" },
+        { "value": "3", "label": "Cielo" },
+        { "value": "4", "label": "Durazno" },
+        { "value": "5", "label": "Amarillo" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        { "value": "cream", "label": "Crema" },
+        { "value": "white", "label": "Blanco" },
+        { "value": "pink", "label": "Rosa 50" },
+        { "value": "grape", "label": "Uva 50" }
+      ],
+      "default": "cream"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "check",
+      "name": "Punto de confianza",
+      "settings": [{ "type": "text", "id": "text", "label": "Texto", "default": "Fotos reales del producto que recibes" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Historia",
+      "blocks": [
+        { "type": "check", "settings": { "text": "Fotos reales del producto que recibes" } },
+        { "type": "check", "settings": { "text": "Envío con número de seguimiento" } },
+        { "type": "check", "settings": { "text": "Si llega dañado, te ayudamos" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

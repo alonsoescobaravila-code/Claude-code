@@ -1,0 +1,92 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign col = section.settings.collection
+  assign limit = section.settings.limit
+  assign tones = '0,2,5,4,3,1,3,1' | split: ','
+-%}
+
+<section class="sh" data-tone="{{ section.settings.tone }}">
+  <div class="sh__wrap">
+    <div class="sh__head sh-featured__head">
+      {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="sh__title">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
+    </div>
+
+    {%- if col.products.size > 0 -%}
+      <div class="sh-grid sh-featured__grid">
+        {%- for product in col.products limit: limit -%}
+          {% render 'sh-product-card', product: product, tone: tones[forloop.index0] %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="sh-grid sh-featured__grid">
+        {%- for i in (1..4) -%}
+          <div class="sh-card sh-pcard">
+            <div class="sh-pcard__media">
+              <div class="sh-photo" data-tone="{{ tones[forloop.index0] }}" style="aspect-ratio:1/1">
+                <div class="sh-photo__note"><span>Elige una colección en el editor de temas</span></div>
+              </div>
+            </div>
+            <div class="sh-pcard__body">
+              <h3 class="sh-pcard__name">Squishy de ejemplo</h3>
+              <p class="sh-pcard__sub">Suave al tacto, fácil de amar</p>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="sh-featured__cta">
+        <a href="{{ section.settings.cta_link | default: col.url | default: '#' }}" class="sh-btn sh-btn--grape">{{ section.settings.cta_label }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .sh-featured__head { margin-bottom: var(--space-10); }
+  .sh-featured__cta { display: flex; justify-content: center; margin-top: var(--space-10); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Productos",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Las tarjetas leen los metafields `squishy.nombre` y `squishy.subtitulo` para mostrar el nombre corto sin tocar el título real del producto. Si el metafield está vacío, recorta el título a 5 palabras."
+    },
+    { "type": "collection", "id": "collection", "label": "Colección" },
+    { "type": "range", "id": "limit", "label": "Productos a mostrar", "min": 2, "max": 12, "step": 1, "default": 4 },
+    { "type": "text", "id": "eyebrow", "label": "Kicker", "default": "Los más queridos" },
+    { "type": "text", "id": "heading", "label": "Titular", "default": "Favoritos de la comunidad" },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto",
+      "default": "Texturas que la gente vuelve a comprar para regalar y coleccionar."
+    },
+    { "type": "text", "id": "cta_label", "label": "Botón inferior", "default": "Ver toda la tienda" },
+    { "type": "url", "id": "cta_link", "label": "Enlace del botón" },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        { "value": "cream", "label": "Crema" },
+        { "value": "white", "label": "Blanco" },
+        { "value": "pink", "label": "Rosa 50" },
+        { "value": "grape", "label": "Uva 50" },
+        { "value": "mint", "label": "Menta 50" }
+      ],
+      "default": "white"
+    }
+  ],
+  "presets": [{ "name": "SH · Productos" }]
+}
+{% endschema %}

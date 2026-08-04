@@ -1,0 +1,140 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+<section class="sh sh--tight" data-tone="{{ section.settings.tone }}">
+  <div class="sh__wrap">
+    {%- if section.settings.heading != blank -%}
+      <div class="sh__head sh-tiles__head">
+        {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h2 class="sh__title">{{ section.settings.heading }}</h2>
+        {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="sh-tiles">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign col = block.settings.collection
+          assign title = block.settings.title | default: col.title
+          assign url = col.url | default: '#'
+          assign count = block.settings.count
+          if count == blank and col != blank
+            assign count = col.products_count | append: ' squishies'
+          endif
+        -%}
+        <a href="{{ url }}" class="sh-card sh-tile" data-tint="{{ block.settings.tint }}" {{ block.shopify_attributes }}>
+          <span class="sh-tile__icon">{% render 'sh-icon', name: block.settings.icon, size: 24 %}</span>
+          <span class="sh-tile__title">{{ title }}</span>
+          {%- if count != blank -%}<span class="sh-tile__count">{{ count }}</span>{%- endif -%}
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sh-tiles__head { margin-bottom: var(--space-10); }
+  .sh-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
+  .sh-tile {
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+    padding: var(--space-8) var(--space-5); text-align: center; text-decoration: none;
+    border: 0;
+  }
+  .sh-tile[data-tint="pink"]   { background: var(--pink-100); }
+  .sh-tile[data-tint="grape"]  { background: var(--grape-100); }
+  .sh-tile[data-tint="mint"]   { background: var(--mint-100); }
+  .sh-tile[data-tint="sky"]    { background: var(--sky-100); }
+  .sh-tile[data-tint="peach"]  { background: var(--peach-100); }
+  .sh-tile[data-tint="yellow"] { background: var(--yellow-100); }
+  .sh-tile__icon {
+    width: 52px; height: 52px; border-radius: var(--radius-pill); background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--grape-600); margin-bottom: var(--space-2);
+    transition: transform var(--duration-squish) var(--ease-squish);
+  }
+  .sh-tile:hover .sh-tile__icon { transform: scale(1.08); }
+  .sh-tile__title {
+    font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg);
+    color: var(--text-heading);
+  }
+  .sh-tile__count {
+    font-family: var(--font-body); font-weight: 600; font-size: var(--text-2xs);
+    color: var(--text-muted);
+  }
+  @media (max-width: 749px) { .sh-tiles { grid-template-columns: repeat(2, 1fr); gap: var(--space-4); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Categorías",
+  "tag": "section",
+  "class": "sh-section",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Kicker" },
+    { "type": "text", "id": "heading", "label": "Titular", "default": "Explora por categoría" },
+    { "type": "textarea", "id": "body", "label": "Texto" },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        { "value": "cream", "label": "Crema" },
+        { "value": "white", "label": "Blanco" },
+        { "value": "pink", "label": "Rosa 50" },
+        { "value": "grape", "label": "Uva 50" }
+      ],
+      "default": "cream"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Categoría",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Colección" },
+        { "type": "text", "id": "title", "label": "Título (si lo dejas vacío usa el de la colección)" },
+        { "type": "text", "id": "count", "label": "Contador (si lo dejas vacío se calcula solo)" },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icono",
+          "options": [
+            { "value": "cherry", "label": "Frutales" },
+            { "value": "rabbit", "label": "Animalitos" },
+            { "value": "package", "label": "Mini y Jumbo" },
+            { "value": "gift", "label": "Packs regalo" },
+            { "value": "sparkles", "label": "Novedades" },
+            { "value": "hand-heart", "label": "Anti-estrés" }
+          ],
+          "default": "cherry"
+        },
+        {
+          "type": "select",
+          "id": "tint",
+          "label": "Color",
+          "options": [
+            { "value": "pink", "label": "Rosa" },
+            { "value": "grape", "label": "Uva" },
+            { "value": "mint", "label": "Menta" },
+            { "value": "sky", "label": "Cielo" },
+            { "value": "peach", "label": "Durazno" },
+            { "value": "yellow", "label": "Amarillo" }
+          ],
+          "default": "pink"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Categorías",
+      "blocks": [
+        { "type": "tile", "settings": { "title": "Frutales", "icon": "cherry", "tint": "pink" } },
+        { "type": "tile", "settings": { "title": "Animalitos", "icon": "rabbit", "tint": "sky" } },
+        { "type": "tile", "settings": { "title": "Mini y Jumbo", "icon": "package", "tint": "mint" } },
+        { "type": "tile", "settings": { "title": "Packs regalo", "icon": "gift", "tint": "yellow" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

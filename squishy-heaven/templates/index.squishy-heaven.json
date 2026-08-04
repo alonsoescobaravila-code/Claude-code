@@ -1,0 +1,136 @@
+{
+  "sections": {
+    "hero": {
+      "type": "sh-hero",
+      "settings": {
+        "eyebrow": "Squishy Heaven",
+        "heading": "Aprieta, respira, sonríe.",
+        "body": "Squishies suaves, pastel y coleccionables. Un pequeño descanso para tus manos, en tu escritorio, tu mochila o tu regalo favorito.",
+        "cta_label": "Elegir mi squishy",
+        "cta_link": "shopify://collections/all",
+        "cta2_label": "Ver toda la tienda",
+        "cta2_link": "shopify://collections/all",
+        "show_trust": true,
+        "trust_labels": "Envío con seguimiento | Pago seguro | Si llega dañado, te ayudamos | Fotos reales del producto",
+        "show_rating": false,
+        "photo_brief": "Foto hero: manos apretando un squishy de fresa sobre fondo pastel plano, luz de día suave.",
+        "photo_ratio": "4/3",
+        "photo_tone": "3",
+        "tone": "cream"
+      }
+    },
+    "categorias": {
+      "type": "sh-collection-tiles",
+      "blocks": {
+        "b1": { "type": "tile", "settings": { "title": "Frutales", "icon": "cherry", "tint": "pink" } },
+        "b2": { "type": "tile", "settings": { "title": "Animalitos", "icon": "rabbit", "tint": "sky" } },
+        "b3": { "type": "tile", "settings": { "title": "Mini y Jumbo", "icon": "package", "tint": "mint" } },
+        "b4": { "type": "tile", "settings": { "title": "Packs regalo", "icon": "gift", "tint": "yellow" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4"],
+      "settings": { "heading": "Explora por categoría", "tone": "cream" }
+    },
+    "favoritos": {
+      "type": "sh-featured-products",
+      "settings": {
+        "limit": 4,
+        "eyebrow": "Los más queridos",
+        "heading": "Favoritos de la comunidad",
+        "body": "Texturas que la gente vuelve a comprar para regalar y coleccionar.",
+        "cta_label": "Ver toda la tienda",
+        "cta_link": "shopify://collections/all",
+        "tone": "white"
+      }
+    },
+    "textura": {
+      "type": "sh-textura",
+      "blocks": {
+        "c1": { "type": "chip", "settings": { "label": "Suave", "swatch": "pink", "active": true } },
+        "c2": { "type": "chip", "settings": { "label": "Mochi", "swatch": "grape" } },
+        "c3": { "type": "chip", "settings": { "label": "Slow rising", "swatch": "mint" } },
+        "c4": { "type": "chip", "settings": { "label": "Firme", "swatch": "sky" } },
+        "c5": { "type": "chip", "settings": { "label": "Jumbo", "swatch": "yellow" } },
+        "s1": { "type": "shot", "settings": { "tone": "0", "brief": "Close-up de manos apretando el squishy para mostrar textura.", "caption": "Textura en la mano" } },
+        "s2": { "type": "shot", "settings": { "tone": "3", "brief": "Escritorio pastel con mini squishies junto al teclado.", "caption": "Compañero de escritorio" } },
+        "s3": { "type": "shot", "settings": { "tone": "2", "brief": "Unboxing sencillo con tarjeta de agradecimiento.", "caption": "Llega listo para regalar" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5", "s1", "s2", "s3"],
+      "settings": {
+        "eyebrow": "Elige por textura",
+        "heading": "Suave, mochi o slow rising",
+        "body": "Cada textura se siente distinta en la mano. Elige la que mejor acompañe tu día.",
+        "tone": "grape"
+      }
+    },
+    "historia": {
+      "type": "sh-story",
+      "blocks": {
+        "k1": { "type": "check", "settings": { "text": "Fotos reales del producto que recibes" } },
+        "k2": { "type": "check", "settings": { "text": "Envío con número de seguimiento" } },
+        "k3": { "type": "check", "settings": { "text": "Si llega dañado, te ayudamos" } }
+      },
+      "block_order": ["k1", "k2", "k3"],
+      "settings": {
+        "eyebrow": "Hechos con cariño",
+        "heading": "Elegimos por textura, no por catálogo",
+        "body": "Probamos cada squishy antes de sumarlo a la tienda: cómo se siente al apretarlo, cuánto tarda en volver a su forma y si el color se ve igual que en la foto.",
+        "cta_label": "Ver toda la tienda",
+        "cta_link": "shopify://collections/all",
+        "photo_brief": "Foto: colección ordenada por color sobre fondo pastel plano.",
+        "media_position": "left",
+        "photo_tone": "1",
+        "tone": "cream"
+      }
+    },
+    "confianza": {
+      "type": "sh-trust-row",
+      "blocks": {
+        "t1": { "type": "trust", "settings": { "icon": "truck", "label": "Envío con seguimiento", "detail": "5 a 12 días hábiles según tu región." } },
+        "t2": { "type": "trust", "settings": { "icon": "shield-check", "label": "Pago seguro", "detail": "Procesado por Shopify Payments." } },
+        "t3": { "type": "trust", "settings": { "icon": "life-buoy", "label": "Si llega dañado, te ayudamos", "detail": "Escríbenos con una foto en los primeros 7 días." } },
+        "t4": { "type": "trust", "settings": { "icon": "camera", "label": "Fotos reales del producto", "detail": "Lo que ves en la ficha es lo que llega a tu casa." } }
+      },
+      "block_order": ["t1", "t2", "t3", "t4"],
+      "settings": { "heading": "Compra tranquila", "tone": "white" }
+    },
+    "faq": {
+      "type": "sh-faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": { "question": "¿Cuánto tarda el envío?", "answer": "<p>Entre 5 y 12 días hábiles según tu región. Te enviamos el número de seguimiento apenas sale el pedido.</p>", "open": true } },
+        "f2": { "type": "faq", "settings": { "question": "¿Qué pasa si llega dañado?", "answer": "<p>Escríbenos con una foto dentro de los primeros 7 días y te ayudamos con reposición o reembolso.</p>" } },
+        "f3": { "type": "faq", "settings": { "question": "¿Cómo cuido mi squishy?", "answer": "<p>Manos limpias y secas, lejos del sol directo. Si se ensucia, límpialo con un paño húmedo y déjalo secar al aire.</p>" } },
+        "f4": { "type": "faq", "settings": { "question": "¿Es seguro para niños?", "answer": "<p>Recomendado desde 3 años y siempre con supervisión. No es comestible ni es un juguete de baño.</p>" } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": {
+        "eyebrow": "Preguntas frecuentes",
+        "heading": "Todo claro antes de comprar",
+        "help_text": "¿Te queda una duda?",
+        "help_link_label": "Escríbenos",
+        "tone": "pink"
+      }
+    },
+    "newsletter": {
+      "type": "sh-newsletter",
+      "settings": {
+        "eyebrow": "Comunidad squishy",
+        "heading": "Un pequeño momento suave para tu día",
+        "body": "Te avisamos cuando llegan texturas nuevas, packs de regalo y colecciones por color. Sin spam.",
+        "placeholder": "Tu correo",
+        "cta_label": "Quiero enterarme",
+        "note": "Puedes darte de baja cuando quieras.",
+        "tone": "cream"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "categorias",
+    "favoritos",
+    "textura",
+    "historia",
+    "confianza",
+    "faq",
+    "newsletter"
+  ]
+}
