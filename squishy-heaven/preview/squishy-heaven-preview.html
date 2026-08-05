@@ -196,8 +196,8 @@ body.show-fixes .fix { display:block; }
   display:flex; align-items:center; justify-content:center; }
 
 /* secciones */
-.sh { padding-block:var(--space-20); background:var(--cream); position:relative; }
-.sh--tight { padding-block:var(--space-12); }
+.sh { padding-block:var(--sh-pt,var(--space-20)) var(--sh-pb,var(--space-20));
+  background:var(--cream); position:relative; }
 .sh[data-tone="white"] { background:var(--white); }
 .sh[data-tone="pink"] { background:var(--pink-50); }
 .sh[data-tone="grape"] { background:var(--grape-50); }
@@ -213,15 +213,18 @@ body.show-fixes .fix { display:block; }
 .sh__title--display { font-size:clamp(var(--text-3xl),5.6cqw,var(--text-5xl)); }
 .sh__sub { font-size:var(--text-base); line-height:var(--leading-relaxed); color:var(--text-muted);
   margin:var(--space-4) 0 0; max-width:56ch; }
-.sh__head { text-align:center; margin-bottom:var(--space-10); }
-.sh__head .sh__sub { margin-inline:auto; }
+.sh__head { margin-bottom:var(--space-10); }
+.sh__head[data-align="center"] { text-align:center; }
+.sh__head[data-align="center"] .sh__sub { margin-inline:auto; }
+.sh__head[data-align="left"] { text-align:left; }
+.sh__head[data-align="left"] .sh__sub { margin-inline:0; }
 
 /* botones */
 .sh-btn { display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2);
   font-family:var(--font-display); font-weight:600; font-size:var(--text-sm);
   padding:12px 24px; border-radius:var(--radius-pill); border:2px solid transparent;
   text-decoration:none; cursor:pointer; white-space:nowrap; box-shadow:var(--shadow-sm);
-  transition:all var(--duration-base) var(--ease-squish); }
+  transition:all var(--duration-base) var(--ease-squish); min-height:44px; }
 .sh-btn--lg { font-size:var(--text-base); padding:16px 34px; }
 .sh-btn--sm { font-size:var(--text-xs); padding:8px 16px; }
 .sh-btn--block { display:flex; width:100%; }
@@ -240,6 +243,7 @@ body.show-fixes .fix { display:block; }
 .sh-badge--mint { background:var(--mint-100); }
 .sh-badge--peach { background:var(--peach-100); }
 .sh-badge--yellow { background:var(--yellow-100); }
+.sh-pcard__badge, .sh-pdp__badges .sh-badge { box-shadow:0 0 0 2px rgba(255,255,255,.9); }
 
 .sh-chip { display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:var(--text-xs);
   padding:9px 18px; border-radius:var(--radius-pill); background:#fff; color:var(--ink-700);
@@ -278,7 +282,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 .sh-photo__note span { max-width:24ch; }
 
 /* confianza */
-.sh-trust { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--space-4); }
+.sh-trust { display:grid; grid-template-columns:repeat(var(--sh-trust-cols,4),minmax(0,1fr)); gap:var(--space-4); }
 .sh-trust__item { display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--space-3); }
 .sh-trust__icon { width:52px; height:52px; border-radius:50%; background:#fff; box-shadow:var(--shadow-sm);
   display:flex; align-items:center; justify-content:center; color:var(--mint-700); flex:none; }
@@ -294,8 +298,8 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   color:var(--text-body); line-height:var(--leading-normal); }
 .sh-checks svg { color:var(--mint-700); flex:none; margin-top:2px; }
 
-.sh-grid { display:grid; gap:var(--space-6); grid-template-columns:repeat(4,1fr); }
-.sh-grid--3 { grid-template-columns:repeat(3,1fr); }
+.sh-grid { display:grid; gap:var(--space-6);
+  grid-template-columns:repeat(var(--sh-cols,4),minmax(0,1fr)); }
 
 .sh-pcard { position:relative; display:flex; flex-direction:column; overflow:hidden; }
 .sh-pcard__media { position:relative; padding:var(--space-3); }
@@ -326,7 +330,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 .sh-faq__a p { margin:0 0 var(--space-3); }
 .sh-faq__a p:last-child { margin-bottom:0; }
 
-.sh-input { flex:1 1 200px; min-width:0; font-family:inherit; font-weight:600; font-size:var(--text-sm);
+.sh-input { flex:1 1 200px; min-width:0; font-family:inherit; font-weight:600; font-size:var(--text-base);
   padding:14px 22px; border-radius:var(--radius-pill); border:1px solid var(--border-strong);
   background:#fff; color:var(--ink-700); }
 .sh-input::placeholder { color:var(--text-faint); font-weight:500; }
@@ -347,7 +351,6 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 .sh-hero__pile span:nth-child(3) { inset:4% 16% 48% 40%; background:var(--sky-500); }
 
 /* categorías */
-.sh-tiles { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--space-5); }
 .sh-tile { display:flex; flex-direction:column; align-items:center; gap:var(--space-2);
   padding:var(--space-8) var(--space-5); text-align:center; text-decoration:none; border:0; }
 .sh-tile[data-tint="pink"] { background:var(--pink-100); }
@@ -388,7 +391,6 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 .sh-news .sh-note { max-width:46ch; margin-inline:auto; }
 
 /* políticas */
-.sh-pol { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--space-6); }
 .sh-pol__card { padding:var(--space-8); display:flex; flex-direction:column; align-items:flex-start; }
 .sh-pol__icon { width:52px; height:52px; border-radius:50%; display:flex; align-items:center;
   justify-content:center; margin-bottom:var(--space-5); }
@@ -464,13 +466,23 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   .sh-pdp { grid-template-columns:1fr; gap:var(--space-8); }
   .st-foot__in { grid-template-columns:1fr 1fr; }
 }
+@container (max-width: 1024px) {
+  .sh-grid { grid-template-columns:repeat(var(--sh-cols-t,3),minmax(0,1fr)); }
+}
 @container (max-width: 749px) {
-  .sh { padding-block:var(--space-12); }
+  .sh { padding-block:var(--sh-pt-m,var(--space-12)) var(--sh-pb-m,var(--space-12)); }
   .sh__wrap { padding-inline:var(--space-5); }
-  .sh-grid, .sh-grid--3 { grid-template-columns:repeat(2,1fr); gap:var(--space-4); }
-  .sh-tiles { grid-template-columns:repeat(2,1fr); gap:var(--space-4); }
-  .sh-trust { grid-template-columns:repeat(2,1fr); gap:var(--space-5); }
-  .sh-pol { grid-template-columns:1fr; }
+  .sh__head { margin-bottom:var(--space-8); }
+  .sh-grid { grid-template-columns:repeat(var(--sh-cols-m,2),minmax(0,1fr)); gap:var(--space-4); }
+  .sh-trust { grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--space-5); }
+  [data-mobile="scroll"] .sh-grid {
+    display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+    scroll-padding-inline:var(--space-5);
+    margin-inline:calc(var(--space-5) * -1); padding-inline:var(--space-5);
+    padding-bottom:var(--space-2); scrollbar-width:none;
+  }
+  [data-mobile="scroll"] .sh-grid::-webkit-scrollbar { display:none; }
+  [data-mobile="scroll"] .sh-grid > * { flex:0 0 72%; scroll-snap-align:start; }
   .sh-menu, .st-menu { display:none; }
   .st-head__in { gap:var(--space-4); justify-content:space-between; }
   .sh-btn--lg { width:100%; }
@@ -482,7 +494,21 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   .sh-pdp__buy { flex-wrap:wrap; }
   .sh-pdp__buy .sh-btn { width:100%; }
   .st-foot__in { grid-template-columns:1fr; }
-  .sh-textura__shots { grid-template-columns:1fr; }
+}
+@container (max-width: 419px) {
+  .sh { --gutter:16px; }
+  .sh__wrap { padding-inline:var(--space-4); }
+  .sh-grid { gap:var(--space-3); }
+  .sh-pcard__media { padding:var(--space-2); }
+  .sh-pcard__body { padding:0 var(--space-3) var(--space-4); }
+  .sh-pcard__name { font-size:var(--text-base); }
+  .sh-price { font-size:var(--text-base); }
+  .sh-badge { font-size:10px; padding:4px 9px; }
+  .sh-pcard__badge { top:var(--space-4); left:var(--space-4); }
+  [data-mobile="scroll"] .sh-grid > * { flex:0 0 82%; }
+  .sh-faq__q { padding:var(--space-4) var(--space-5); font-size:var(--text-sm); }
+  .sh-faq__a { padding:0 var(--space-5) var(--space-4); }
+  .sh-pdp__thumbs { gap:var(--space-2); }
 }
 </style>
 
@@ -570,7 +596,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 <!-- ============================ HOME ============================ -->
 <div data-pane="home">
 
-  <section class="sh sh--tight">
+  <section class="sh" style="--sh-pt:48px;--sh-pb:48px;--sh-pt-m:32px;--sh-pb-m:32px">
     <div class="fix"><b>Prioridad 3 · Voz</b>El titular deja de ser un título SEO. «Aprieta, respira, sonríe.» es la frase espina de la marca. La calificación 4.9 se apagó hasta que haya reseñas reales conectadas, y el menú pasó de Home/Catalog/Contact a español.</div>
     <div class="sh__wrap">
       <div class="sh-hero">
@@ -599,10 +625,10 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
     </div>
   </section>
 
-  <section class="sh sh--tight">
+  <section class="sh" style="--sh-pt:48px;--sh-pb:48px;--sh-pt-m:32px;--sh-pb-m:32px">
     <div class="sh__wrap">
-      <div class="sh__head"><h2 class="sh__title">Explora por categoría</h2></div>
-      <div class="sh-tiles">
+      <div class="sh__head" data-align="center"><h2 class="sh__title">Explora por categoría</h2></div>
+      <div class="sh-grid sh-tiles" style="--sh-cols:4;--sh-cols-t:3;--sh-cols-m:2">
         <a href="#" class="sh-card sh-tile" data-tint="pink"><span class="sh-tile__icon"><svg width="24" height="24"><use href="#i-cherry"/></svg></span><span class="sh-tile__title">Frutales</span><span class="sh-tile__count">12 squishies</span></a>
         <a href="#" class="sh-card sh-tile" data-tint="sky"><span class="sh-tile__icon"><svg width="24" height="24"><use href="#i-rabbit"/></svg></span><span class="sh-tile__title">Animalitos</span><span class="sh-tile__count">8 squishies</span></a>
         <a href="#" class="sh-card sh-tile" data-tint="mint"><span class="sh-tile__icon"><svg width="24" height="24"><use href="#i-package"/></svg></span><span class="sh-tile__title">Mini y Jumbo</span><span class="sh-tile__count">15 squishies</span></a>
@@ -614,12 +640,12 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   <section class="sh" data-tone="white">
     <div class="fix fix--inline"><b>Prioridad 2 · Producto</b>Cada tarjeta muestra el nombre corto del metafield <code>squishy.nombre</code> en vez del título de proveedor. El título largo sigue existiendo para Google: solo deja de verse.</div>
     <div class="sh__wrap">
-      <div class="sh__head">
+      <div class="sh__head" data-align="center">
         <p class="sh__eyebrow">Los más queridos</p>
         <h2 class="sh__title">Favoritos de la comunidad</h2>
         <p class="sh__sub">Texturas que la gente vuelve a comprar para regalar y coleccionar.</p>
       </div>
-      <div class="sh-grid">
+      <div class="sh-grid" style="--sh-cols:4;--sh-cols-t:3;--sh-cols-m:2">
 
         <article class="sh-card sh-pcard sh-card--link">
           <div class="sh-pcard__media">
@@ -690,7 +716,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   <section class="sh" data-tone="grape">
     <div class="fix"><b>Prioridad 6 · Conversión</b>Sección nueva. Entrada al catálogo por sensación en la mano, no por categoría heredada del proveedor. El chip seleccionado invierte a tinta sólida: el rosa se queda con los botones de compra.</div>
     <div class="sh__wrap">
-      <div class="sh__head">
+      <div class="sh__head" data-align="center">
         <p class="sh__eyebrow">Elige por textura</p>
         <h2 class="sh__title">Suave, mochi o slow rising</h2>
         <p class="sh__sub">Cada textura se siente distinta en la mano. Elige la que mejor acompañe tu día.</p>
@@ -702,7 +728,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
         <a href="#" class="sh-chip"><span class="sh-chip__dot" style="background:var(--sky-500)"></span>Firme</a>
         <a href="#" class="sh-chip"><span class="sh-chip__dot" style="background:var(--yellow-500)"></span>Jumbo</a>
       </div>
-      <div class="sh-grid sh-grid--3 sh-textura__shots">
+      <div class="sh-grid sh-textura__shots" style="--sh-cols:3;--sh-cols-t:3;--sh-cols-m:1">
         <figure class="sh-textura__shot">
           <div class="sh-photo" data-tone="0"><div class="sh-photo__note"><span>Close-up de manos apretando el squishy para mostrar textura</span></div></div>
           <figcaption class="sh-textura__caption">Textura en la mano</figcaption>
@@ -740,11 +766,11 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
     </div>
   </section>
 
-  <section class="sh sh--tight" data-tone="white">
+  <section class="sh" data-tone="white">
     <div class="fix"><b>Prioridad 1 · Confianza</b>Reemplaza la marquesina de ocho beneficios en bucle de la home actual. Las cuatro señales se dicen una vez, con jerarquía y con el detalle concreto debajo.</div>
     <div class="sh__wrap">
-      <div class="sh__head"><h2 class="sh__title">Compra tranquila</h2></div>
-      <div class="sh-trust">
+      <div class="sh__head" data-align="center"><h2 class="sh__title">Compra tranquila</h2></div>
+      <div class="sh-trust" style="--sh-trust-cols:4">
         <div class="sh-trust__item"><span class="sh-trust__icon"><svg width="24" height="24"><use href="#i-truck"/></svg></span><span class="sh-trust__label">Envío con seguimiento</span><span class="sh-trust__detail">5 a 12 días hábiles según tu región.</span></div>
         <div class="sh-trust__item"><span class="sh-trust__icon"><svg width="24" height="24"><use href="#i-shield"/></svg></span><span class="sh-trust__label">Pago seguro</span><span class="sh-trust__detail">Procesado por Shopify Payments.</span></div>
         <div class="sh-trust__item"><span class="sh-trust__icon"><svg width="24" height="24"><use href="#i-buoy"/></svg></span><span class="sh-trust__label">Si llega dañado, te ayudamos</span><span class="sh-trust__detail">Escríbenos con una foto en los primeros 7 días.</span></div>
@@ -755,7 +781,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 
   <section class="sh" data-tone="pink">
     <div class="sh__wrap">
-      <div class="sh__head">
+      <div class="sh__head" data-align="center">
         <p class="sh__eyebrow">Preguntas frecuentes</p>
         <h2 class="sh__title">Todo claro antes de comprar</h2>
       </div>
@@ -780,7 +806,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
     </div>
   </section>
 
-  <section class="sh sh--tight">
+  <section class="sh" style="--sh-pt:48px;--sh-pb:48px;--sh-pt-m:32px;--sh-pb-m:32px">
     <div class="fix"><b>Prioridad 3 · Voz</b>El deseo va antes que el descuento. Nada de «¡Solo hoy!» ni contador regresivo: la razón para dejar el correo es enterarse de texturas nuevas.</div>
     <div class="sh__wrap">
       <div class="sh-news">
@@ -888,7 +914,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 
   <section class="sh-pdp__related">
     <h2>Combinan bien con este</h2>
-    <div class="sh-grid">
+    <div class="sh-grid" style="--sh-cols:4;--sh-cols-t:3;--sh-cols-m:2" data-mobile="scroll">
       <article class="sh-card sh-pcard sh-card--link">
         <div class="sh-pcard__media"><div class="sh-photo" data-tone="2"><div class="sh-blob" data-fill="mint"></div></div></div>
         <div class="sh-pcard__body"><h3 class="sh-pcard__name">Mini Sandía Satisfying</h3><p class="sh-pcard__sub">Cabe en tu bolsillo</p><div class="sh-pcard__foot"><span class="sh-price">$9.99</span><a href="#" class="sh-btn sh-btn--primary sh-btn--sm sh-btn--block">Agregar</a></div></div>
@@ -916,13 +942,13 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   <section class="sh">
     <div class="fix"><b>Prioridad 1 · Confianza</b>Esta página no existía completa en las rutas públicas que revisó el audit. Sin ella, cada duda de envío o devolución se convierte en un carrito abandonado. Los plazos del preset hay que reemplazarlos por los reales de la operación.</div>
     <div class="sh__wrap">
-      <div class="sh__head">
+      <div class="sh__head" data-align="center">
         <p class="sh__eyebrow">Compra tranquila</p>
         <h1 class="sh__title">Envíos, cambios y ayuda</h1>
         <p class="sh__sub">Todo lo que necesitas saber antes y después de tu pedido, sin letra chica.</p>
       </div>
 
-      <div class="sh-pol">
+      <div class="sh-grid sh-pol" style="--sh-cols:2;--sh-cols-t:2;--sh-cols-m:1">
         <article class="sh-card sh-pol__card">
           <span class="sh-pol__icon" data-tint="mint"><svg width="24" height="24"><use href="#i-truck"/></svg></span>
           <h3 class="sh-pol__title">Envío con seguimiento</h3>

@@ -25,6 +25,7 @@ Las capturas de la tienda real fijaron el punto de partida.
 assets/sh-squishy.css              tokens + componentes (un solo archivo, cacheado)
 snippets/sh-icon.liquid            iconos Lucide inline, sin JS externo
 snippets/sh-product-card.liquid    tarjeta de producto con nombre corto
+snippets/sh-section-attrs.liquid   traduce los ajustes de diseño a variables CSS
 sections/sh-hero.liquid            hero pastel con confianza
 sections/sh-collection-tiles.liquid categorías
 sections/sh-featured-products.liquid grilla de productos
@@ -62,6 +63,47 @@ preview/squishy-heaven-preview.html previsualización visual
 6. **Páginas de política:** crea una página y asígnale una plantilla con la
    sección `SH · Envíos y cambios`. Reemplaza cada plazo del preset por el
    real de tu operación.
+
+## Controles del editor
+
+Todas las secciones traen el mismo grupo **Diseño** al final de sus ajustes, así
+que armar una página es elegir contenido y mover barras — sin tocar código.
+
+| Control | Dónde | Qué hace |
+| --- | --- | --- |
+| Espacio arriba / abajo (escritorio) | todas | 0 a 128 px |
+| Espacio arriba / abajo (móvil) | todas | 0 a 96 px, independiente del escritorio |
+| Alineación del encabezado | secciones con titular | centrada o izquierda |
+| Columnas en escritorio | productos, categorías, texturas, envíos | 2 a 5 |
+| En móvil | las mismas | 1 columna, 2 columnas o carrusel deslizable |
+| Fondo de la sección | todas | los tintes pastel del design system |
+
+El carrusel deslizable usa `scroll-snap` nativo: se desliza con el dedo, sin
+JavaScript ni librerías.
+
+Las columnas de tablet se calculan solas — nunca más de 3, y nunca más de las
+que elegiste para escritorio, así una cuadrícula de 2 no se estira a 3 al pasar
+por el ancho intermedio.
+
+En teléfonos angostos se respeta tu elección de columnas: a 414 px, el ancho más
+común, dos tarjetas entran bien. Lo que se aprieta es el interior de la tarjeta
+—padding, tamaño del nombre, badge— no la cuadrícula.
+
+### Dónde va cada texto e imagen
+
+Todo el contenido es un ajuste del editor; el código no trae texto quemado.
+
+| Sección | Imágenes | Texto |
+| --- | --- | --- |
+| Hero | 1 foto (con brief mientras no exista) | kicker, titular, párrafo, 2 botones, 4 etiquetas de confianza |
+| Categorías | 1 foto por categoría, o icono | título y contador por categoría |
+| Productos | vienen del producto y sus metafields | kicker, titular, párrafo, botón |
+| Texturas | 1 foto por bloque | kicker, titular, párrafo, chips, pies de foto |
+| Historia | 1 foto | kicker, titular, párrafo, lista de puntos, botón |
+| Confianza | iconos del set | etiqueta y detalle por señal |
+| FAQ | — | pregunta y respuesta por bloque |
+| Newsletter | — | kicker, titular, párrafo, placeholder, botón, nota legal |
+| Envíos | iconos del set | título y texto por política |
 
 ### Detalle de rendimiento (opcional)
 

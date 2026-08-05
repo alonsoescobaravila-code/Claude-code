@@ -1,0 +1,40 @@
+{%- comment -%}
+  sh-section-attrs — escribe el atributo style de una sección con las
+  variables de layout que el merchant controla desde el editor de temas.
+
+  Se llama desde dentro de la etiqueta <section>, así:
+    <section class="sh" data-tone="..." {% render 'sh-section-attrs', s: section.settings, cols: 4 %}>
+
+  Parámetros:
+    s     ajustes de la sección (obligatorio)
+    cols  columnas en escritorio; si se omite no escribe variables de grilla
+
+  Las columnas de tablet se derivan: nunca más de 3, y nunca más de las
+  de escritorio, para que una grilla de 2 no se estire a 3 en tablet.
+{%- endcomment -%}
+
+{%- liquid
+  assign pt   = s.pad_top    | default: 80
+  assign pb   = s.pad_bottom | default: 80
+  assign pt_m = s.pad_top_mobile    | default: 48
+  assign pb_m = s.pad_bottom_mobile | default: 48
+
+  assign css = '--sh-pt:' | append: pt | append: 'px;--sh-pb:' | append: pb | append: 'px;'
+  assign css = css | append: '--sh-pt-m:' | append: pt_m | append: 'px;--sh-pb-m:' | append: pb_m | append: 'px;'
+
+  if cols
+    assign cols_t = cols | at_most: 3
+    assign cols_m = s.columns_mobile | default: '2'
+    if cols_m == 'scroll'
+      assign cols_m_value = 1
+    else
+      assign cols_m_value = cols_m
+    endif
+    assign css = css | append: '--sh-cols:' | append: cols | append: ';'
+    assign css = css | append: '--sh-cols-t:' | append: cols_t | append: ';'
+    assign css = css | append: '--sh-cols-m:' | append: cols_m_value | append: ';'
+  endif
+-%}
+
+style="{{ css }}"
+{%- if s.columns_mobile == 'scroll' %} data-mobile="scroll"{% endif -%}
