@@ -24,21 +24,40 @@
   assign sh_badge = m.badge.value
   assign sh_badge_tone = m.badge_tono.value | default: 'pink'
 
-  if product.compare_at_price > product.price and sh_badge == blank
+  comment
+    compare_at_price_max, no compare_at_price: el segundo solo mira la
+    primera variante, así que un producto con varias en oferta no la marca.
+  endcomment
+  if product.compare_at_price_max > product.price and sh_badge == blank
     assign sh_badge = 'Oferta suave'
     assign sh_badge_tone = 'peach'
   endif
 
+  unless product.available
+    assign sh_badge = 'Agotado'
+    assign sh_badge_tone = 'grape'
+  endunless
+
   assign sh_img = m.foto_card.value | default: product.featured_image
   assign sh_tone = tone | default: 0
   assign sh_cta = cta | default: 'Agregar'
+
+  comment
+    Solo se agrega directo cuando hay una sola variante. Con opciones de
+    color o tamaño, agregar la primera le mete al cliente algo que no eligió.
+  endcomment
+  assign sh_quick_add = false
+  if product.available and product.has_only_default_variant
+    assign sh_quick_add = true
+  endif
 -%}
 
 <div class="sh-card sh-pcard sh-card--link">
   <div class="sh-pcard__media">
     <div class="sh-photo" data-tone="{{ sh_tone }}" style="aspect-ratio:1/1">
       {%- if sh_img -%}
-        {{ sh_img | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320,480,640', sizes: '(max-width: 749px) 45vw, 280px', alt: sh_name | escape }}
+        {%- assign sh_alt = sh_img.alt | default: sh_name -%}
+        {{ sh_img | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320,480,640', sizes: '(max-width: 749px) 45vw, 280px', alt: sh_alt }}
       {%- else -%}
         <div class="sh-photo__note"><span>Foto pendiente: producto sobre fondo pastel plano</span></div>
       {%- endif -%}
@@ -56,19 +75,25 @@
 
     <div class="sh-pcard__foot">
       <span class="sh-price">
-        {{ product.price | money }}
-        {%- if product.compare_at_price > product.price -%}
-          <span class="sh-price__was">{{ product.compare_at_price | money }}</span>
+        {%- if product.price_varies -%}<span class="sh-price__from">Desde</span> {% endif -%}
+        {{- product.price | money -}}
+        {%- if product.compare_at_price_max > product.price -%}
+          <span class="sh-price__was">{{ product.compare_at_price_max | money }}</span>
         {%- endif -%}
       </span>
 
-      {%- if product.available -%}
+      {%- if sh_quick_add -%}
         {%- form 'product', product, class: 'sh-pcard__form' -%}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-          <button type="submit" class="sh-btn sh-btn--primary sh-btn--sm sh-btn--block">{{ sh_cta }}</button>
+          <button type="submit" class="sh-btn sh-btn--primary sh-btn--sm sh-btn--block"
+                  aria-label="Agregar {{ sh_name | escape }} al carrito">{{ sh_cta }}</button>
         {%- endform -%}
+      {%- elsif product.available -%}
+        <a href="{{ product.url }}" class="sh-btn sh-btn--primary sh-btn--sm sh-btn--block"
+           aria-label="Elegir opciones de {{ sh_name | escape }}">Elegir opciones</a>
       {%- else -%}
-        <a href="{{ product.url }}" class="sh-btn sh-btn--outline sh-btn--sm sh-btn--block">Ver detalles</a>
+        <a href="{{ product.url }}" class="sh-btn sh-btn--outline sh-btn--sm sh-btn--block"
+           aria-label="Ver {{ sh_name | escape }}">Ver detalles</a>
       {%- endif -%}
     </div>
   </div>

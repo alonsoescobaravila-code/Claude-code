@@ -27,7 +27,8 @@
           <figure class="sh-textura__shot" {{ block.shopify_attributes }}>
             <div class="sh-photo" data-tone="{{ block.settings.tone }}" style="aspect-ratio:4/3">
               {%- if block.settings.image -%}
-                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', sizes: '(max-width: 749px) 92vw, 360px', alt: block.settings.caption | escape }}
+                {%- assign sh_alt = block.settings.image.alt | default: block.settings.caption -%}
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', sizes: '(max-width: 749px) 92vw, 360px', alt: sh_alt }}
               {%- else -%}
                 <div class="sh-photo__note"><span>{{ block.settings.brief }}</span></div>
               {%- endif -%}
@@ -61,7 +62,7 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Kicker",
+      "label": "Antetítulo",
       "default": "Elige por textura"
     },
     {
@@ -263,8 +264,8 @@
         {
           "type": "textarea",
           "id": "brief",
-          "label": "Brief de foto (se muestra mientras no haya imagen)",
-          "default": "Close-up de manos apretando el squishy para mostrar textura."
+          "label": "Foto pendiente: qué hay que fotografiar",
+          "default": "Primer plano de manos apretando el squishy para mostrar textura."
         },
         {
           "type": "text",
@@ -350,7 +351,7 @@
           "type": "shot",
           "settings": {
             "tone": "0",
-            "brief": "Close-up de manos apretando el squishy para mostrar textura.",
+            "brief": "Primer plano de manos apretando el squishy para mostrar textura.",
             "caption": "Textura en la mano"
           }
         },

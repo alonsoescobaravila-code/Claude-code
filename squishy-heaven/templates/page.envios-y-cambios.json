@@ -1,0 +1,103 @@
+{
+  "sections": {
+    "politicas": {
+      "type": "sh-policies",
+      "blocks": {
+        "p1": {
+          "type": "policy",
+          "settings": {
+            "icon": "truck",
+            "tint": "mint",
+            "title": "Envío con seguimiento",
+            "body": "<p>Preparamos tu pedido en 1 o 2 días hábiles. La entrega tarda entre 5 y 12 días hábiles según tu región.</p><p>Apenas sale de nuestro almacén te mandamos el número de seguimiento por correo.</p>"
+          }
+        },
+        "p2": {
+          "type": "policy",
+          "settings": {
+            "icon": "package",
+            "tint": "sky",
+            "title": "Cambios y devoluciones",
+            "body": "<p>Tienes 30 días desde que recibes el pedido para pedir un cambio o una devolución.</p><p>El squishy debe estar sin usar y en su empaque. Escríbenos y te damos los pasos.</p>"
+          }
+        },
+        "p3": {
+          "type": "policy",
+          "settings": {
+            "icon": "life-buoy",
+            "tint": "grape",
+            "title": "Si llega dañado, te ayudamos",
+            "body": "<p>Escríbenos con una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso.</p><p>No necesitas devolver un producto dañado.</p>"
+          }
+        },
+        "p4": {
+          "type": "policy",
+          "settings": {
+            "icon": "baby",
+            "tint": "pink",
+            "title": "Seguridad y edad",
+            "body": "<p>Recomendado a partir de los 3 años y siempre con supervisión de un adulto.</p><p>No es comestible ni es un juguete de baño. Si el material se rompe, deja de usarlo.</p>"
+          }
+        }
+      },
+      "block_order": ["p1", "p2", "p3", "p4"],
+      "settings": {
+        "eyebrow": "Compra tranquila",
+        "heading": "Envíos, cambios y ayuda",
+        "heading_tag": "h1",
+        "body": "Todo lo que necesitas saber antes y después de tu pedido, sin letra chica.",
+        "footnote": "Los plazos son estimados y pueden variar en temporada alta. Te avisamos por correo si algo cambia.",
+        "tone": "cream",
+        "align": "center",
+        "columns": 2,
+        "columns_mobile": "1",
+        "pad_top": 64,
+        "pad_bottom": 80,
+        "pad_top_mobile": 40,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "faq": {
+      "type": "sh-faq",
+      "blocks": {
+        "f1": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cuánto tarda el envío?",
+            "answer": "<p>Entre 5 y 12 días hábiles según tu región. Te enviamos el número de seguimiento apenas sale el pedido.</p>",
+            "open": true
+          }
+        },
+        "f2": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Puedo cambiar mi pedido después de comprarlo?",
+            "answer": "<p>Si todavía no salió del almacén, sí. Escríbenos lo antes posible y lo ajustamos.</p>"
+          }
+        },
+        "f3": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cómo cuido mi squishy?",
+            "answer": "<p>Manos limpias y secas, lejos del sol directo. Si se ensucia, límpialo con un paño húmedo y déjalo secar al aire.</p>"
+          }
+        }
+      },
+      "block_order": ["f1", "f2", "f3"],
+      "settings": {
+        "eyebrow": "Preguntas frecuentes",
+        "heading": "Dudas que llegan seguido",
+        "heading_tag": "h2",
+        "help_text": "¿Te queda una duda?",
+        "help_link_label": "Escríbenos",
+        "tone": "pink",
+        "align": "center",
+        "pad_top": 64,
+        "pad_bottom": 80,
+        "pad_top_mobile": 40,
+        "pad_bottom_mobile": 48
+      }
+    }
+  },
+  "order": ["politicas", "faq"]
+}

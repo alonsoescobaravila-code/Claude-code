@@ -4,7 +4,8 @@
   <div class="sh__wrap">
     <div class="sh__head" data-align="{{ section.settings.align }}">
       {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
-      <h2 class="sh__title">{{ section.settings.heading }}</h2>
+      {%- assign sh_tag = section.settings.heading_tag | default: 'h2' -%}
+        <{{ sh_tag }} class="sh__title">{{ section.settings.heading }}</{{ sh_tag }}>
       {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
     </div>
 
@@ -75,7 +76,7 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Kicker",
+      "label": "Antetítulo",
       "default": "Compra tranquila"
     },
     {
@@ -123,6 +124,27 @@
     {
       "type": "header",
       "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta del titular",
+      "info": "Usa H1 solo cuando esta sección es el encabezado principal de la página. Dos H1 en la misma página confunden a Google y a los lectores de pantalla.",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        }
+      ],
+      "default": "h2"
     },
     {
       "type": "select",
@@ -310,7 +332,7 @@
             "icon": "truck",
             "tint": "mint",
             "title": "Envío con seguimiento",
-            "body": "<p>Preparamos tu pedido en 1 a 2 días hábiles. La entrega tarda entre 5 y 12 días hábiles según tu región.</p><p>Apenas sale de nuestro almacén te mandamos el número de seguimiento por correo.</p>"
+            "body": "<p>Preparamos tu pedido en 1 o 2 días hábiles. La entrega tarda entre 5 y 12 días hábiles según tu región.</p><p>Apenas sale de nuestro almacén te mandamos el número de seguimiento por correo.</p>"
           }
         },
         {
@@ -319,7 +341,7 @@
             "icon": "package",
             "tint": "sky",
             "title": "Cambios y devoluciones",
-            "body": "<p>Tienes 30 días desde que recibes el pedido para pedir un cambio o devolución.</p><p>El squishy debe estar sin usar y en su empaque. Escríbenos y te damos los pasos.</p>"
+            "body": "<p>Tienes 30 días desde que recibes el pedido para pedir un cambio o una devolución.</p><p>El squishy debe estar sin usar y en su empaque. Escríbenos y te damos los pasos.</p>"
           }
         },
         {
@@ -328,7 +350,7 @@
             "icon": "life-buoy",
             "tint": "grape",
             "title": "Si llega dañado, te ayudamos",
-            "body": "<p>Mándanos una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso.</p><p>No necesitas devolver un producto dañado.</p>"
+            "body": "<p>Escríbenos con una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso.</p><p>No necesitas devolver un producto dañado.</p>"
           }
         },
         {
@@ -337,7 +359,7 @@
             "icon": "baby",
             "tint": "pink",
             "title": "Seguridad y edad",
-            "body": "<p>Recomendado desde 3 años y siempre con supervisión de un adulto.</p><p>No es comestible ni es un juguete de baño. Si el material se rompe, deja de usarlo.</p>"
+            "body": "<p>Recomendado a partir de los 3 años y siempre con supervisión de un adulto.</p><p>No es comestible ni es un juguete de baño. Si el material se rompe, deja de usarlo.</p>"
           }
         }
       ]

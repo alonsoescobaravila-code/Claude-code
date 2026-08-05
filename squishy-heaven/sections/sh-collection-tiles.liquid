@@ -25,7 +25,8 @@
         <a href="{{ url }}" class="sh-card sh-tile" data-media="{{ block.settings.media }}" data-tint="{{ block.settings.tint }}" {{ block.shopify_attributes }}>
           {%- if block.settings.media == 'image' and img -%}
             <span class="sh-tile__photo">
-              {{ img | image_url: width: 480 | image_tag: loading: 'lazy', widths: '240,360,480', sizes: '(max-width: 749px) 45vw, 260px', alt: title | escape }}
+              {%- assign sh_alt = img.alt | default: title -%}
+              {{ img | image_url: width: 480 | image_tag: loading: 'lazy', widths: '240,360,480', sizes: '(max-width: 749px) 45vw, 260px', alt: sh_alt }}
             </span>
           {%- else -%}
             <span class="sh-tile__icon">{% render 'sh-icon', name: block.settings.icon, size: 24 %}</span>
@@ -89,7 +90,7 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Kicker"
+      "label": "Antetítulo"
     },
     {
       "type": "text",

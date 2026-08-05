@@ -13,7 +13,7 @@
         "show_trust": true,
         "trust_labels": "Envío con seguimiento | Pago seguro | Si llega dañado, te ayudamos | Fotos reales del producto",
         "show_rating": false,
-        "photo_brief": "Foto hero: manos apretando un squishy de fresa sobre fondo pastel plano, luz de día suave.",
+        "photo_brief": "Foto principal: manos apretando un squishy de fresa sobre fondo pastel plano, luz de día suave.",
         "photo_ratio": "4/3",
         "photo_tone": "3",
         "tone": "cream",
@@ -139,7 +139,7 @@
           "type": "shot",
           "settings": {
             "tone": "0",
-            "brief": "Close-up de manos apretando el squishy para mostrar textura.",
+            "brief": "Primer plano de manos apretando el squishy para mostrar textura.",
             "caption": "Textura en la mano"
           }
         },
@@ -235,7 +235,7 @@
           "settings": {
             "icon": "truck",
             "label": "Envío con seguimiento",
-            "detail": "5 a 12 días hábiles según tu región."
+            "detail": "Entre 5 y 12 días hábiles según tu región."
           }
         },
         "t2": {
@@ -243,7 +243,7 @@
           "settings": {
             "icon": "shield-check",
             "label": "Pago seguro",
-            "detail": "Procesado por Shopify Payments."
+            "detail": "El pago se procesa en la pasarela segura de Shopify."
           }
         },
         "t3": {
@@ -251,7 +251,7 @@
           "settings": {
             "icon": "life-buoy",
             "label": "Si llega dañado, te ayudamos",
-            "detail": "Escríbenos con una foto en los primeros 7 días."
+            "detail": "Escríbenos con una foto dentro de los primeros 7 días."
           }
         },
         "t4": {
@@ -294,7 +294,7 @@
           "type": "faq",
           "settings": {
             "question": "¿Qué pasa si llega dañado?",
-            "answer": "<p>Escríbenos con una foto dentro de los primeros 7 días y te ayudamos con reposición o reembolso.</p>"
+            "answer": "<p>Escríbenos con una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso.</p>"
           }
         },
         "f3": {
@@ -308,7 +308,7 @@
           "type": "faq",
           "settings": {
             "question": "¿Es seguro para niños?",
-            "answer": "<p>Recomendado desde 3 años y siempre con supervisión. No es comestible ni es un juguete de baño.</p>"
+            "answer": "<p>Recomendado a partir de los 3 años y siempre con supervisión. No es comestible ni es un juguete de baño.</p>"
           }
         }
       },
@@ -335,7 +335,7 @@
       "type": "sh-newsletter",
       "settings": {
         "eyebrow": "Comunidad squishy",
-        "heading": "Un pequeño momento suave para tu día",
+        "heading": "Un pequeño momento suave para tu día.",
         "body": "Te avisamos cuando llegan texturas nuevas, packs de regalo y colecciones por color. Sin spam.",
         "placeholder": "Tu correo",
         "cta_label": "Quiero enterarme",

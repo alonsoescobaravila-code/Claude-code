@@ -16,7 +16,7 @@ Las capturas de la tienda real fijaron el punto de partida.
 | P2 · Producto y fichas | Nombre corto por metafield sin tocar el SEO, subtítulo sensorial, 3 beneficios, acordeones de medidas/material/seguridad/envío, foto de tarjeta separada de las fotos de cotas |
 | P3 · Voz y copy | Todos los textos por defecto en español, frases aprobadas del design system, cero claims sin respaldo |
 | P4 · Dirección visual | Un solo CSS con los tokens del design system: botones pill, cards de 24px, badges, chips, FAQ, newsletter |
-| P5 · Fotografía | Cada hueco de imagen muestra el brief de la foto a producir mientras no exista |
+| P5 · Fotografía | Cada hueco de imagen dice qué foto hay que producir mientras no exista |
 | P6 · Conversión | CTA consistente «Elegir mi squishy», badges junto al botón, categorías y packs de regalo |
 
 ## Archivos
@@ -26,6 +26,8 @@ assets/sh-squishy.css              tokens + componentes (un solo archivo, cachea
 snippets/sh-icon.liquid            iconos Lucide inline, sin JS externo
 snippets/sh-product-card.liquid    tarjeta de producto con nombre corto
 snippets/sh-section-attrs.liquid   traduce los ajustes de diseño a variables CSS
+assets/sh-fredoka.woff2            fuente de titulares, alojada en el tema
+assets/sh-quicksand.woff2          fuente de texto, alojada en el tema
 sections/sh-hero.liquid            hero pastel con confianza
 sections/sh-collection-tiles.liquid categorías
 sections/sh-featured-products.liquid grilla de productos
@@ -40,6 +42,7 @@ blocks/sh-beneficios.liquid        producto · 3 beneficios
 blocks/sh-confianza.liquid         producto · confianza bajo el botón
 blocks/sh-ficha.liquid             producto · medidas, cuidados, seguridad, envío
 templates/index.squishy-heaven.json home ya armada
+templates/page.envios-y-cambios.json página de envíos ya armada
 docs/metafields-y-contenido.md     metafields y reescritura de productos
 preview/squishy-heaven-preview.html previsualización visual
 ```
@@ -56,13 +59,15 @@ preview/squishy-heaven-preview.html previsualización visual
    largo recortado en vez del nombre corto.
 4. **Home:** en el editor de temas elige la plantilla `squishy-heaven`, o arma
    la página a mano — las secciones aparecen como `SH · …` en el selector.
-5. **Ficha de producto:** en la columna de información agrega los bloques
+5. **Ficha de producto:** en la sección `product-information` de Horizon, dentro
+   de la columna de información, agrega los bloques
    `SH · Nombre y subtítulo`, `SH · Beneficios`, `SH · Confianza (producto)` y
    `SH · Ficha de producto`, en ese orden. Si activas «Mostrar nombre corto como título»,
    oculta el título nativo del tema para no repetirlo.
-6. **Páginas de política:** crea una página y asígnale una plantilla con la
-   sección `SH · Envíos y cambios`. Reemplaza cada plazo del preset por el
-   real de tu operación.
+6. **Página de envíos:** crea la página en Admin → Contenido → Páginas y, en
+   «Plantilla de tema», elige `page.envios-y-cambios`. Viene armada con las
+   cuatro políticas y tres preguntas frecuentes. **Reemplaza cada plazo por el
+   real de tu operación** antes de publicarla.
 
 ## Controles del editor
 
@@ -74,6 +79,7 @@ que armar una página es elegir contenido y mover barras — sin tocar código.
 | Espacio arriba / abajo (escritorio) | todas | 0 a 128 px |
 | Espacio arriba / abajo (móvil) | todas | 0 a 96 px, independiente del escritorio |
 | Alineación del encabezado | secciones con titular | centrada o izquierda |
+| Etiqueta del titular | hero, envíos, FAQ | H1, H2 o H3, para no repetir H1 en una página |
 | Columnas en escritorio | productos, categorías, texturas, envíos | 2 a 5 |
 | En móvil | las mismas | 1 columna, 2 columnas o carrusel deslizable |
 | Fondo de la sección | todas | los tintes pastel del design system |
@@ -95,14 +101,14 @@ Todo el contenido es un ajuste del editor; el código no trae texto quemado.
 
 | Sección | Imágenes | Texto |
 | --- | --- | --- |
-| Hero | 1 foto (con brief mientras no exista) | kicker, titular, párrafo, 2 botones, 4 etiquetas de confianza |
+| Hero | 1 foto (con nota de la toma mientras no exista) | antetítulo, titular, párrafo, 2 botones, 4 etiquetas de confianza |
 | Categorías | 1 foto por categoría, o icono | título y contador por categoría |
-| Productos | vienen del producto y sus metafields | kicker, titular, párrafo, botón |
-| Texturas | 1 foto por bloque | kicker, titular, párrafo, chips, pies de foto |
-| Historia | 1 foto | kicker, titular, párrafo, lista de puntos, botón |
+| Productos | vienen del producto y sus metafields | antetítulo, titular, párrafo, botón |
+| Texturas | 1 foto por bloque | antetítulo, titular, párrafo, chips, pies de foto |
+| Historia | 1 foto | antetítulo, titular, párrafo, lista de puntos, botón |
 | Confianza | iconos del set | etiqueta y detalle por señal |
 | FAQ | — | pregunta y respuesta por bloque |
-| Newsletter | — | kicker, titular, párrafo, placeholder, botón, nota legal |
+| Newsletter | — | antetítulo, titular, párrafo, texto de ejemplo, botón, nota legal |
 | Envíos | iconos del set | título y texto por política |
 
 ### Detalle de rendimiento (opcional)
@@ -141,14 +147,16 @@ Del `readme.md` del design system, las diez que no se rompen:
 - **Iconos.** El design system carga Lucide por CDN JS. Aquí van inlineados como
   SVG (`snippets/sh-icon.liquid`) con la geometría exacta de Lucide 0.446.0, para
   no sumar ~100 KB de JavaScript ni depender de un CDN externo en el storefront.
-- **Fuentes.** Fredoka y Quicksand se cargan desde Google Fonts, igual que en
-  `tokens/fonts.css`. Si licencias los archivos, cámbialo por `@font-face` con
-  `asset_url` en `assets/sh-squishy.css`.
+- **Fuentes.** El design system las carga desde Google Fonts. Aquí van alojadas
+  en el propio tema (`assets/sh-fredoka.woff2`, `assets/sh-quicksand.woff2`):
+  quita un tercero del storefront y evita la petición encadenada que provoca un
+  `@import`. Las dos son SIL Open Font License 1.1, así que alojarlas está
+  permitido, y las dos son variables — un archivo cubre todos los pesos.
 
 ## Lo que este paquete no incluye
 
 - **Fotografía.** La marca no tiene fotos propias todavía. Cada hueco de imagen
-  muestra el brief de lo que hay que producir; súbelas cuando existan.
+  dice qué hay que fotografiar; súbelas cuando existan.
 - **Logo.** No hay archivo de logo. El nombre va como tipografía.
 - **Emails.** El design system trae `ui_kits/email/` con welcome, carrito
   abandonado y post-compra. Faltan browse abandonment, reseñas/UGC y winback.

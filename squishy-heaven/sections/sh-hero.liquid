@@ -8,7 +8,8 @@
           <p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>
         {%- endif -%}
 
-        <h1 class="sh__title sh__title--display">{{ section.settings.heading }}</h1>
+        {%- assign sh_tag = section.settings.heading_tag | default: 'h1' -%}
+        <{{ sh_tag }} class="sh__title sh__title--display">{{ section.settings.heading }}</{{ sh_tag }}>
 
         {%- if section.settings.body != blank -%}
           <p class="sh__sub">{{ section.settings.body }}</p>
@@ -49,7 +50,8 @@
       <div class="sh-hero__media">
         <div class="sh-photo" data-tone="{{ section.settings.photo_tone }}" style="aspect-ratio:{{ section.settings.photo_ratio }}">
           {%- if section.settings.image -%}
-            {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '480,760,1000,1200', sizes: '(max-width: 989px) 92vw, 520px', alt: section.settings.image.alt | default: section.settings.heading | escape }}
+            {%- assign sh_alt = section.settings.image.alt | default: section.settings.heading -%}
+            {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '480,760,1000,1200', sizes: '(max-width: 989px) 92vw, 520px', alt: sh_alt }}
           {%- else -%}
             <div class="sh-photo__note"><span>{{ section.settings.photo_brief }}</span></div>
           {%- endif -%}
@@ -93,7 +95,7 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Kicker (máx. 3 palabras, va en mayúsculas)",
+      "label": "Antetítulo (máx. 3 palabras, se muestra en mayúsculas)",
       "default": "Squishy Heaven"
     },
     {
@@ -186,8 +188,8 @@
     {
       "type": "textarea",
       "id": "photo_brief",
-      "label": "Brief de foto (se muestra mientras no haya imagen)",
-      "default": "Foto hero: manos apretando un squishy de fresa sobre fondo pastel plano, luz de día suave."
+      "label": "Foto pendiente: qué hay que fotografiar",
+      "default": "Foto principal: manos apretando un squishy de fresa sobre fondo pastel plano, luz de día suave."
     },
     {
       "type": "select",
@@ -284,6 +286,27 @@
     {
       "type": "header",
       "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta del titular",
+      "info": "Usa H1 solo cuando esta sección es el encabezado principal de la página. Dos H1 en la misma página confunden a Google y a los lectores de pantalla.",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        }
+      ],
+      "default": "h1"
     },
     {
       "type": "range",

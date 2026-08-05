@@ -4,7 +4,8 @@
   <div class="sh__wrap">
     <div class="sh__head" data-align="{{ section.settings.align }}">
       {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
-      <h2 class="sh__title">{{ section.settings.heading }}</h2>
+      {%- assign sh_tag = section.settings.heading_tag | default: 'h2' -%}
+        <{{ sh_tag }} class="sh__title">{{ section.settings.heading }}</{{ sh_tag }}>
       {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
     </div>
 
@@ -54,7 +55,7 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Kicker",
+      "label": "Antetítulo",
       "default": "Preguntas frecuentes"
     },
     {
@@ -112,6 +113,27 @@
     {
       "type": "header",
       "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta del titular",
+      "info": "Usa H1 solo cuando esta sección es el encabezado principal de la página. Dos H1 en la misma página confunden a Google y a los lectores de pantalla.",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        }
+      ],
+      "default": "h2"
     },
     {
       "type": "select",
@@ -211,7 +233,7 @@
           "type": "faq",
           "settings": {
             "question": "¿Qué pasa si llega dañado?",
-            "answer": "<p>Escríbenos con una foto dentro de los primeros 7 días y te ayudamos con reposición o reembolso.</p>"
+            "answer": "<p>Escríbenos con una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso.</p>"
           }
         },
         {
@@ -225,7 +247,7 @@
           "type": "faq",
           "settings": {
             "question": "¿Es seguro para niños?",
-            "answer": "<p>Recomendado desde 3 años y siempre con supervisión. No es comestible ni es un juguete de baño.</p>"
+            "answer": "<p>Recomendado a partir de los 3 años y siempre con supervisión. No es comestible ni es un juguete de baño.</p>"
           }
         }
       ]

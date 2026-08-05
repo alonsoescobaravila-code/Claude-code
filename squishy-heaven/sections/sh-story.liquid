@@ -6,7 +6,8 @@
       <div class="sh-story__media">
         <div class="sh-photo" data-tone="{{ section.settings.photo_tone }}" style="aspect-ratio:4/3">
           {%- if section.settings.image -%}
-            {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450,700,900', sizes: '(max-width: 989px) 92vw, 520px', alt: section.settings.image.alt | default: section.settings.heading | escape }}
+            {%- assign sh_alt = section.settings.image.alt | default: section.settings.heading -%}
+            {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450,700,900', sizes: '(max-width: 989px) 92vw, 520px', alt: sh_alt }}
           {%- else -%}
             <div class="sh-photo__note"><span>{{ section.settings.photo_brief }}</span></div>
           {%- endif -%}
@@ -61,7 +62,7 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Kicker",
+      "label": "Antetítulo",
       "default": "Hechos con cariño"
     },
     {
@@ -99,7 +100,7 @@
     {
       "type": "textarea",
       "id": "photo_brief",
-      "label": "Brief de foto",
+      "label": "Foto pendiente: qué hay que fotografiar",
       "default": "Foto: colección ordenada por color sobre fondo pastel plano."
     },
     {

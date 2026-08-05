@@ -68,7 +68,7 @@ sobre las descripciones actuales:
 ## 4. Bloques de la ficha de producto
 
 Orden fijo que define el design system, de arriba hacia abajo en la columna de
-información:
+información de la sección `product-information` de Horizon:
 
 1. Nombre cute → bloque **SH · Nombre y subtítulo**
 2. Subtítulo sensorial → mismo bloque
