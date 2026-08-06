@@ -8,6 +8,13 @@ audit, plan de mejoras, tokens) y el sistema de marca de Claude Design
 (`Squishy_Heaven_Design_System.zip` — tokens CSS, 21 componentes, reglas de voz).
 Las capturas de la tienda real fijaron el punto de partida.
 
+> **Para instalar, ve a [`INSTALAR.md`](INSTALAR.md)** — dónde va cada archivo,
+> paso a paso.
+> **Si algo no funciona, ve a [`docs/si-algo-falla.md`](docs/si-algo-falla.md)** —
+> ordenado por lo que ves en pantalla.
+>
+> Este archivo es el porqué: qué resuelve cada pieza y cómo está construida.
+
 ## Qué arregla
 
 | Prioridad del audit | Qué entrega este paquete |
@@ -17,8 +24,7 @@ Las capturas de la tienda real fijaron el punto de partida.
 | P3 · Voz y copy | Todos los textos por defecto en español, frases aprobadas del design system, cero claims sin respaldo |
 | P4 · Dirección visual | Un solo CSS con los tokens del design system: botones pill, cards de 24px, badges, chips, FAQ, newsletter |
 | P5 · Fotografía | Cada hueco de imagen dice qué foto hay que producir mientras no exista |
-| P6 · Conversión | CTA consistente «Elegir mi squishy», badges junto al botón, categorías y packs de regalo |
-| P6 · Conversión | `sh-squish-toy`: se aprieta de verdad antes de comprar. `sh-tamano`: contesta «¿qué tan grande es?» antes de que sea una devolución |
+| P6 · Conversión | CTA consistente «Elegir mi squishy», badges junto al botón, categorías y packs de regalo. `sh-squish-toy` lo deja apretar antes de comprar, y `sh-tamano` contesta «¿qué tan grande es?» antes de que sea una devolución |
 
 ## Archivos
 
@@ -48,55 +54,29 @@ blocks/sh-confianza.liquid         producto · confianza bajo el botón
 blocks/sh-ficha.liquid             producto · medidas, cuidados, seguridad, envío
 templates/index.squishy-heaven.json home ya armada
 templates/page.envios-y-cambios.json página de envíos ya armada
+INSTALAR.md                        dónde va cada archivo, paso a paso
 docs/metafields-y-contenido.md     metafields y reescritura de productos
+docs/si-algo-falla.md              qué puede salir mal y cómo se arregla
 preview/squishy-heaven-preview.html previsualización visual
 ```
 
+Las cinco primeras carpetas van al tema. `INSTALAR.md`, `README.md`, `docs/` y
+`preview/` son para ti — no se suben a Shopify.
+
 ### Sobre la etiqueta `{% schema %}`
 
-Las **13 secciones y bloques** llevan su `{% schema %}` con `presets`, verificado
+Las **12 secciones y los 4 bloques** llevan su `{% schema %}` con `presets`, verificado
 con `@shopify/theme-check-node`: 0 avisos.
 
 Los **3 snippets no la llevan, y no deben llevarla**: Shopify solo acepta
 `{% schema %}` en `sections/` y `blocks/`. Un snippet con schema es un error de
-tema. Lo que sí llevan ahora es `{% doc %}`, que es su equivalente: declara los
+tema. Lo que sí llevan es `{% doc %}`, que es su equivalente: declara los
 parámetros que reciben, y el editor de código de Shopify los muestra al
 escribir `{% render %}`.
 
-Si el editor de Shopify te marca «falta la etiqueta schema» en alguno de estos
-archivos, casi siempre es una de dos cosas:
-
-- El archivo se subió a la carpeta equivocada. Un snippet en `sections/` da ese
-  error exacto. Cada archivo va en la carpeta que dice su ruta aquí arriba.
-- El pegado se cortó. La `{% schema %}` es lo último de cada archivo de sección;
-  si copias y pegas a mano y se pierde el final, el archivo queda sin ella.
-  Sube los archivos completos o usa `shopify theme push`.
-
-## Instalación
-
-1. **Duplica el tema Horizon** antes de tocar nada. Admin → Tienda online →
-   Temas → ⋯ → Duplicar. Trabaja sobre la copia.
-2. Abre **Editar código** en la copia y sube los archivos respetando las
-   carpetas: `assets/`, `snippets/`, `sections/`, `blocks/`, `templates/`.
-   Con Shopify CLI: `shopify theme push --only assets,snippets,sections,blocks,templates`.
-3. Crea las definiciones de metafield de `docs/metafields-y-contenido.md`.
-   Sin esto todo funciona igual, pero las tarjetas siguen mostrando el título
-   largo recortado en vez del nombre corto.
-4. **Home:** en el editor de temas elige la plantilla `squishy-heaven`, o arma
-   la página a mano — las secciones aparecen como `SH · …` en el selector.
-5. **Ficha de producto:** en la sección `product-information` de Horizon, dentro
-   de la columna de información, agrega los bloques
-   `SH · Nombre y subtítulo`, `SH · Beneficios`, `SH · Confianza (producto)` y
-   `SH · Ficha de producto`, en ese orden. Si activas «Mostrar nombre corto como título»,
-   oculta el título nativo del tema para no repetirlo.
-6. **Página de envíos:** crea la página en Admin → Contenido → Páginas y, en
-   «Plantilla de tema», elige `page.envios-y-cambios`. Viene armada con las
-   cuatro políticas y tres preguntas frecuentes. **Reemplaza cada plazo por el
-   real de tu operación** antes de publicarla.
-7. **Brillos en toda la tienda:** la sección `SH · Brillos al clic` no dibuja
-   nada, solo enciende el efecto en la página donde esté. Agrégala **una sola
-   vez al grupo del pie de página** para que funcione en toda la tienda. Si la
-   dejas solo en la home, solo brilla la home.
+Si el editor te marca «falta la etiqueta schema»,
+[`docs/si-algo-falla.md`](docs/si-algo-falla.md) tiene las dos causas y cómo
+distinguirlas.
 
 ## Orden de la home
 
