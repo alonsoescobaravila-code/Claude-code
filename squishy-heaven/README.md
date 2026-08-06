@@ -58,11 +58,12 @@ templates/page.envios-y-cambios.json página de envíos ya armada
 INSTALAR.md                        dónde va cada archivo, paso a paso
 docs/metafields-y-contenido.md     metafields y reescritura de productos
 docs/si-algo-falla.md              qué puede salir mal y cómo se arregla
+verificar/                         las cinco pasadas que este paquete pasa
 preview/squishy-heaven-preview.html previsualización visual
 ```
 
-Las cinco primeras carpetas van al tema. `INSTALAR.md`, `README.md`, `docs/` y
-`preview/` son para ti — no se suben a Shopify.
+Las cinco primeras carpetas van al tema. `INSTALAR.md`, `README.md`, `docs/`,
+`verificar/` y `preview/` son para ti — no se suben a Shopify.
 
 ### Sobre la etiqueta `{% schema %}`
 

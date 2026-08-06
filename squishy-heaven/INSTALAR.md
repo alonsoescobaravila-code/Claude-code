@@ -97,6 +97,7 @@ nada, pero ensucian el tema:
 README.md                 explicación general del paquete
 INSTALAR.md               este archivo
 docs/                     metafields, contenido y solución de problemas
+verificar/                los scripts que comprueban el paquete
 preview/                  la previsualización visual, se abre con doble clic
 ```
 
@@ -106,8 +107,8 @@ preview/                  la previsualización visual, se abre con doble clic
 shopify theme push --only assets,snippets,sections,blocks,templates
 ```
 
-Sube exactamente las cinco carpetas correctas y se salta `docs/` y `preview/`
-por sí solo.
+Sube exactamente las cinco carpetas correctas y se salta `docs/`, `verificar/`
+y `preview/` por sí solo.
 
 ---
 

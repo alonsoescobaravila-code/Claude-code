@@ -195,7 +195,7 @@
   min-height: 44px; /* objetivo táctil */
 }
 .sh-btn--lg { font-size: var(--text-base); padding: 16px 34px; }
-.sh-btn--sm { font-size: var(--text-xs); padding: 8px 16px; min-height: 40px; }
+.sh-btn--sm { font-size: var(--text-xs); padding: 8px 16px; min-height: 44px; }
 .sh-btn--block { display: flex; width: 100%; }
 /* rosa = solo CTA */
 .sh-btn--primary { background: var(--accent-primary); color: var(--white); }
@@ -238,7 +238,8 @@
   background: var(--white); color: var(--ink-700);
   border: 1px solid var(--border-soft); text-decoration: none;
   transition: all var(--duration-base) var(--ease-squish);
-  min-height: 40px;
+  min-height: 44px; /* mismo objetivo táctil que los botones: el chip de
+                       textura es navegación principal en el teléfono */
 }
 .sh-chip:hover { transform: translateY(-3px); box-shadow: var(--shadow-sm); }
 /* seleccionado invierte a tinta sólida — el rosa se queda con los CTA */
@@ -407,10 +408,14 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active {
   /* destello de cuatro puntas, el clásico «sparkle» */
   clip-path: polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 50%, 42% 42%);
 }
+/* Los valores de respaldo no son decorativos: si una custom property de la
+   animación faltara, la regla entera sería inválida, la partícula no animaría
+   y nunca llegaría el animationend que la borra. Con respaldo siempre anima y
+   siempre se limpia. */
 @keyframes sh-fx-pop {
-  0%   { transform: translate(var(--x), var(--y)) scale(.2) rotate(0deg); opacity: 0; }
+  0%   { transform: translate(var(--x, 0px), var(--y, 0px)) scale(.2) rotate(0deg); opacity: 0; }
   22%  { opacity: 1; }
-  100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) + var(--dy))) scale(.35) rotate(var(--r)); opacity: 0; }
+  100% { transform: translate(calc(var(--x, 0px) + var(--dx, 0px)), calc(var(--y, 0px) + var(--dy, 0px))) scale(.35) rotate(var(--r, 0deg)); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .sh-fx { display: none; } }
 
@@ -543,7 +548,7 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active {
 }
 .sh-squish__mute {
   display: inline-flex; align-items: center; gap: 8px;
-  margin-top: var(--space-5); padding: 8px 16px; min-height: 40px;
+  margin-top: var(--space-5); padding: 8px 16px; min-height: 44px;
   appearance: none; cursor: pointer;
   background: var(--white); color: var(--text-muted);
   border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
