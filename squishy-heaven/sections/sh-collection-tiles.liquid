@@ -26,7 +26,7 @@
           {%- if block.settings.media == 'image' and img -%}
             <span class="sh-tile__photo">
               {%- assign sh_alt = img.alt | default: title -%}
-              {{ img | image_url: width: 480 | image_tag: loading: 'lazy', widths: '240,360,480', sizes: '(max-width: 749px) 45vw, 260px', alt: sh_alt }}
+              {{ img | image_url: width: 480 | image_tag: loading: 'lazy', decoding: 'async', widths: '240,360,480', sizes: '(max-width: 749px) 45vw, 260px', alt: sh_alt }}
             </span>
           {%- else -%}
             <span class="sh-tile__icon">{% render 'sh-icon', name: block.settings.icon, size: 24 %}</span>

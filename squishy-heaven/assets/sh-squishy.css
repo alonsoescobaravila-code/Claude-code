@@ -121,6 +121,34 @@
 .sh--flush { padding-block: 0; }
 .sh__wrap { max-width: var(--container-max); margin-inline: auto; padding-inline: var(--gutter); }
 
+/* El navegador se salta el pintado de las secciones que todavía no se ven.
+   `auto` en contain-intrinsic-size hace que recuerde el alto real después
+   del primer pintado, así la barra de scroll no salta. Esto es lo que quita
+   el tirón al entrar en una home larga.
+   Los bloques de la ficha de producto quedan fuera: van dentro de la
+   columna de información de Horizon y son pequeños. */
+.sh:not(.sh--flush) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
+}
+
+/* Entrada suave al hacer scroll, sin JavaScript ni observadores.
+   Donde el navegador no soporta animation-timeline no pasa nada: el
+   contenido simplemente ya está visible. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sh__head, .sh-grid > *, .sh-trust__item, .sh-faq__item {
+      animation: sh-aparecer linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 42%;
+    }
+  }
+}
+@keyframes sh-aparecer {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
 /* tonos de fondo — campos pastel planos, nunca gradientes */
 .sh[data-tone="cream"] { background: var(--cream); }
 .sh[data-tone="white"] { background: var(--white); }
@@ -172,13 +200,15 @@
 /* rosa = solo CTA */
 .sh-btn--primary { background: var(--accent-primary); color: var(--white); }
 .sh-btn--primary:hover { background: var(--accent-primary-hover); box-shadow: var(--shadow-pink); transform: translateY(-3px); }
-.sh-btn--primary:active { background: var(--accent-primary-active); transform: scale(.96); box-shadow: none; }
+.sh-btn--primary:active { background: var(--accent-primary-active); box-shadow: none; }
 .sh-btn--grape { background: var(--accent-secondary); color: var(--white); }
 .sh-btn--grape:hover { background: var(--accent-secondary-hover); box-shadow: var(--shadow-grape); transform: translateY(-3px); }
-.sh-btn--grape:active { transform: scale(.96); box-shadow: none; }
+.sh-btn--grape:active { box-shadow: none; }
 .sh-btn--outline { background: transparent; color: var(--ink-700); border-color: var(--border-strong); box-shadow: none; }
 .sh-btn--outline:hover { background: var(--pink-50); transform: translateY(-3px); }
-.sh-btn--outline:active { transform: scale(.96); }
+/* Al presionar, el botón se aplasta a lo ancho en vez de encogerse parejo:
+   es la misma física del producto, aplicada a la interfaz. */
+.sh-btn:active { transform: scale(1.05, .9); transition-duration: var(--duration-fast); }
 .sh-btn:focus-visible { outline: none; border-color: var(--grape-500); box-shadow: 0 0 0 4px var(--focus-ring); }
 /* en pantallas táctiles el hover se queda pegado tras el tap */
 @media (hover: none) {
@@ -224,6 +254,11 @@
 }
 a.sh-card:hover, .sh-card--link:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 a.sh-card:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring); }
+/* La tarjeta cede al tocarla, como cede el producto. */
+a.sh-card:active, .sh-card--link:active, .sh-pcard:active {
+  transform: scale(1.02, .97);
+  transition-duration: var(--duration-fast);
+}
 
 /* ---------- pozo de foto (PhotoFrame) ---------- */
 .sh-photo {
@@ -349,6 +384,197 @@ a.sh-card:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring)
 }
 
 /* ============================================================
+   Brillos al hacer clic
+   Una sola capa fija para toda la página. `contain` la aísla: nada de
+   lo que pase dentro obliga al navegador a recalcular el resto del
+   documento. Las partículas solo animan transform y opacity.
+   ============================================================ */
+.sh-fx {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999;
+  contain: layout style paint;
+}
+.sh-fx__p {
+  position: absolute; top: 0; left: 0;
+  width: var(--sz, 10px); height: var(--sz, 10px);
+  margin: calc(var(--sz, 10px) / -2) 0 0 calc(var(--sz, 10px) / -2);
+  will-change: transform, opacity;
+  animation: sh-fx-pop var(--d, 520ms) cubic-bezier(.22,.68,.32,1) forwards;
+  /* estrella de cinco puntas */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.sh-fx__p--destello {
+  /* destello de cuatro puntas, el clásico «sparkle» */
+  clip-path: polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 50%, 42% 42%);
+}
+@keyframes sh-fx-pop {
+  0%   { transform: translate(var(--x), var(--y)) scale(.2) rotate(0deg); opacity: 0; }
+  22%  { opacity: 1; }
+  100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) + var(--dy))) scale(.35) rotate(var(--r)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .sh-fx { display: none; } }
+
+/* ============================================================
+   El squishy que se aprieta
+   ============================================================ */
+.sh-squish { display: grid; grid-template-columns: 1.05fr .95fr; gap: var(--space-12); align-items: center; }
+.sh-squish__panel {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--yellow-100); border-radius: var(--radius-2xl);
+  padding: var(--space-12) var(--space-8) var(--space-8);
+  overflow: clip; /* red de seguridad si alguien sube una imagen enorme */
+}
+
+/* El botón envuelve al juguete: por eso funciona con dedo, ratón y teclado
+   sin ningún atajo extra. */
+.sh-squish__boton {
+  appearance: none; border: 0; background: none; padding: 0;
+  /* Al apretarlo se ensancha hasta 1.23×, más un empujón y un giro pequeños.
+     El ancho deja ese margen a propósito: si ocupara el 100%, el juguete se
+     saldría del panel justo en el momento en que lo estás apretando. */
+  display: block; width: 78%; max-width: 320px; cursor: pointer;
+  touch-action: manipulation; /* nada de zoom por doble toque encima */
+  -webkit-tap-highlight-color: transparent;
+  border-radius: var(--radius-2xl);
+}
+.sh-squish__boton:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring); }
+
+.sh-squish__stage { position: relative; display: block; }
+/* Respira despacio para invitar al toque. Se pausa en vez de quitarse: si se
+   quitara, la escala saltaría de golpe al valor 1 en mitad del ciclo. */
+@media (prefers-reduced-motion: no-preference) {
+  .sh-squish__stage { animation: sh-respirar 3.8s ease-in-out infinite; }
+  .sh-squish:not([data-sh-estado="libre"]) .sh-squish__stage { animation-play-state: paused; }
+}
+@keyframes sh-respirar {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.016, .984); }
+}
+
+.sh-squish__toy {
+  position: relative; display: block;
+  transform: translate(var(--gx, 0), var(--gy, 0)) scale(var(--sx, 1), var(--sy, 1)) rotate(var(--giro, 0deg));
+  transform-origin: 50% 62%;
+  transition: transform var(--duration-squish) var(--ease-squish);
+  will-change: transform;
+}
+.sh-squish[data-sh-estado="apretado"] .sh-squish__toy { transition-duration: 90ms; transition-timing-function: var(--ease-soft); }
+/* «Slow rising»: vuelve despacio, como el material real. */
+.sh-squish[data-sh-estado="subiendo"] .sh-squish__toy { transition: transform 900ms cubic-bezier(.16,.84,.3,1); }
+
+/* La sombra se ensancha cuando el juguete se aplasta. */
+.sh-squish__sombra {
+  position: absolute; left: 50%; bottom: -18px;
+  width: 62%; height: 16px; border-radius: 50%;
+  background: rgba(91,75,99,.16);
+  transform: translateX(-50%) scaleX(1);
+  transition: transform var(--duration-squish) var(--ease-squish), opacity var(--duration-squish) var(--ease-squish);
+}
+.sh-squish[data-sh-estado="apretado"] .sh-squish__sombra { transform: translateX(-50%) scaleX(1.22); opacity: .75; }
+
+/* Marca del dedo: un círculo suave donde estás presionando. */
+.sh-squish__dedo {
+  position: absolute; top: var(--py, 50%); left: var(--px, 50%);
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(255,255,255,.5);
+  box-shadow: 0 0 22px 14px rgba(255,255,255,.34);
+  transform: translate(-50%, -50%) scale(.5);
+  opacity: 0; pointer-events: none;
+  transition: opacity 120ms linear, transform 120ms var(--ease-soft);
+}
+.sh-squish[data-sh-estado="apretado"] .sh-squish__dedo { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+/* ---------- la mantequilla, dibujada en CSS ---------- */
+/* display: block es obligatorio, no cosmético: son <span> dentro de un
+   <button>, y en un elemento en línea ni width ni aspect-ratio aplican.
+   Sin esto el botón mide cero de alto y no se puede apretar con el dedo. */
+.sh-butter {
+  display: block;
+  position: relative; width: 100%; aspect-ratio: 5 / 3.4;
+  background: var(--yellow-500); border-radius: 38px;
+  box-shadow: inset 0 -14px 0 rgba(245,201,92,.55), var(--shadow-md);
+  overflow: hidden;
+}
+.sh-butter__top {
+  position: absolute; inset: 0 0 auto 0; height: 30%;
+  background: var(--yellow-200); border-radius: 38px 38px 22px 22px;
+}
+.sh-butter__band {
+  position: absolute; left: -3%; right: -3%; bottom: 13%;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 21%; padding: 4px 0;
+  background: var(--white); color: var(--ink-500);
+  font-family: var(--font-body); font-weight: 700;
+  font-size: var(--text-3xs); letter-spacing: var(--tracking-caps); text-transform: uppercase;
+  box-shadow: 0 2px 0 rgba(91,75,99,.06);
+}
+.sh-butter__face {
+  position: absolute; left: 0; right: 0; top: 34%;
+  display: flex; align-items: center; justify-content: center; gap: 26px;
+}
+.sh-butter__eye {
+  display: block;
+  width: 13px; height: 15px; border-radius: 50%;
+  background: var(--ink-700);
+  transition: transform var(--duration-base) var(--ease-squish);
+}
+.sh-butter__mouth {
+  position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+  width: 20px; height: 10px;
+  border: 2.5px solid var(--ink-700); border-top: 0;
+  border-radius: 0 0 20px 20px;
+  transition: width var(--duration-base) var(--ease-squish), height var(--duration-base) var(--ease-squish);
+}
+/* Al apretarlo entrecierra los ojos y abre la boca. Es el detalle que
+   convierte «una animación» en «me está respondiendo». */
+.sh-squish[data-sh-estado="apretado"] .sh-butter__eye { transform: scaleY(.16); }
+.sh-squish[data-sh-estado="apretado"] .sh-butter__mouth { width: 26px; height: 14px; }
+
+/* ---------- textos y controles alrededor del juguete ---------- */
+.sh-squish__pista {
+  margin: var(--space-6) 0 0;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+.sh-squish__cuenta {
+  margin: var(--space-6) 0 0; min-height: 1.4em;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);
+  color: var(--grape-700);
+}
+.sh-squish__mute {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: var(--space-5); padding: 8px 16px; min-height: 40px;
+  appearance: none; cursor: pointer;
+  background: var(--white); color: var(--text-muted);
+  border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-family: var(--font-body); font-weight: 600; font-size: var(--text-2xs);
+  transition: all var(--duration-base) var(--ease-squish);
+}
+.sh-squish__mute:hover { color: var(--ink-700); border-color: var(--border-strong); }
+.sh-squish__mute:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring); }
+.sh-squish__mute .sh-squish__mute-off { display: none; }
+.sh-squish__mute[data-off="1"] .sh-squish__mute-on { display: none; }
+.sh-squish__mute[data-off="1"] .sh-squish__mute-off { display: inline; }
+.sh-squish__texto .sh-checks { margin-top: var(--space-6); }
+.sh-squish__acciones { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-8); }
+
+/* ============================================================
+   Tamaño real — la duda que más devuelve un squishy
+   ============================================================ */
+.sh-size__item { display: flex; flex-direction: column; gap: var(--space-3); text-align: center; }
+.sh-size__medida {
+  align-self: center;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xl);
+  color: var(--text-heading); line-height: 1;
+}
+.sh-size__label { margin: 0; font-family: var(--font-body); font-size: var(--text-xs); color: var(--text-muted); }
+.sh-size__ref {
+  display: inline-flex; align-items: center; gap: 6px; align-self: center;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--text-3xs);
+  text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--text-faint);
+}
+
+/* ============================================================
    Responsive
    ============================================================ */
 @media (max-width: 1024px) {
@@ -374,6 +600,12 @@ a.sh-card:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring)
   }
   [data-mobile="scroll"] .sh-grid::-webkit-scrollbar { display: none; }
   [data-mobile="scroll"] .sh-grid > * { flex: 0 0 72%; scroll-snap-align: start; }
+
+  /* En el teléfono el juguete va primero: es el gancho, no el adorno. */
+  .sh-squish { grid-template-columns: 1fr; gap: var(--space-8); }
+  .sh-squish__panel { order: -1; padding: var(--space-8) var(--space-5) var(--space-6); }
+  .sh-squish__boton { width: 72%; }
+  .sh-squish__acciones .sh-btn { width: 100%; }
 }
 
 /* Teléfonos angostos. Se respeta la elección de columnas del editor: a 414px
@@ -392,4 +624,8 @@ a.sh-card:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring)
   [data-mobile="scroll"] .sh-grid > * { flex: 0 0 82%; }
   .sh-faq__q { padding: var(--space-4) var(--space-5); font-size: var(--text-sm); }
   .sh-faq__a { padding: 0 var(--space-5) var(--space-4); }
+  .sh-butter { border-radius: 30px; }
+  .sh-butter__top { border-radius: 30px 30px 20px 20px; }
+  .sh-butter__face { gap: 20px; }
+  .sh-size__medida { font-size: var(--text-xl); }
 }

@@ -1,3 +1,14 @@
+{% doc %}
+  Traduce los ajustes de diseño del editor a las variables CSS que la
+  sección escribe en su propio atributo style.
+
+  @param {object} s - `section.settings` de quien la llama.
+  @param {number} [cols] - Columnas en escritorio. Si se omite, no escribe variables de grilla.
+
+  @example
+  <section class="sh" {% render 'sh-section-attrs', s: section.settings, cols: 4 %}>
+{% enddoc %}
+
 {%- comment -%}
   sh-section-attrs — escribe el atributo style de una sección con las
   variables de layout que el merchant controla desde el editor de temas.

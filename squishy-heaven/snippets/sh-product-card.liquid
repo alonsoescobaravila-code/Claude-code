@@ -1,3 +1,15 @@
+{% doc %}
+  Tarjeta de producto con la voz de marca: nombre corto, subtítulo sensorial
+  y precio, sin tocar el título que indexa Google.
+
+  @param {product} product - Producto a mostrar.
+  @param {string} [tone] - Índice del color del pozo de foto, de "0" a "5".
+  @param {string} [cta] - Texto del botón cuando el producto se puede agregar directo. Por defecto "Agregar".
+
+  @example
+  {% render 'sh-product-card', product: product, tone: 0, cta: 'Agregar' %}
+{% enddoc %}
+
 {%- comment -%}
   sh-product-card — ficha corta de producto con voz de marca.
 
@@ -57,7 +69,7 @@
     <div class="sh-photo" data-tone="{{ sh_tone }}" style="aspect-ratio:1/1">
       {%- if sh_img -%}
         {%- assign sh_alt = sh_img.alt | default: sh_name -%}
-        {{ sh_img | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320,480,640', sizes: '(max-width: 749px) 45vw, 280px', alt: sh_alt }}
+        {{ sh_img | image_url: width: 640 | image_tag: loading: 'lazy', decoding: 'async', widths: '320,480,640', sizes: '(max-width: 749px) 45vw, 280px', alt: sh_alt }}
       {%- else -%}
         <div class="sh-photo__note"><span>Foto pendiente: producto sobre fondo pastel plano</span></div>
       {%- endif -%}

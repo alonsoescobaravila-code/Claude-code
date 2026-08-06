@@ -18,25 +18,30 @@ Las capturas de la tienda real fijaron el punto de partida.
 | P4 · Dirección visual | Un solo CSS con los tokens del design system: botones pill, cards de 24px, badges, chips, FAQ, newsletter |
 | P5 · Fotografía | Cada hueco de imagen dice qué foto hay que producir mientras no exista |
 | P6 · Conversión | CTA consistente «Elegir mi squishy», badges junto al botón, categorías y packs de regalo |
+| P6 · Conversión | `sh-squish-toy`: se aprieta de verdad antes de comprar. `sh-tamano`: contesta «¿qué tan grande es?» antes de que sea una devolución |
 
 ## Archivos
 
 ```
 assets/sh-squishy.css              tokens + componentes (un solo archivo, cacheado)
+assets/sh-interactivo.js           el squishy que se aprieta + los brillos al clic
+assets/sh-fredoka.woff2            fuente de titulares, alojada en el tema
+assets/sh-quicksand.woff2          fuente de texto, alojada en el tema
 snippets/sh-icon.liquid            iconos Lucide inline, sin JS externo
 snippets/sh-product-card.liquid    tarjeta de producto con nombre corto
 snippets/sh-section-attrs.liquid   traduce los ajustes de diseño a variables CSS
-assets/sh-fredoka.woff2            fuente de titulares, alojada en el tema
-assets/sh-quicksand.woff2          fuente de texto, alojada en el tema
 sections/sh-hero.liquid            hero pastel con confianza
 sections/sh-collection-tiles.liquid categorías
 sections/sh-featured-products.liquid grilla de productos
+sections/sh-squish-toy.liquid      el squishy de mantequilla interactivo
+sections/sh-tamano.liquid          tamaño real, con la medida al lado
 sections/sh-textura.liquid         elige por textura + fotos
 sections/sh-story.liquid           historia y credibilidad
 sections/sh-trust-row.liquid       fila de confianza
 sections/sh-faq.liquid             preguntas frecuentes
 sections/sh-newsletter.liquid      newsletter
 sections/sh-policies.liquid        envíos, cambios, ayuda y seguridad
+sections/sh-brillos.liquid         enciende los brillos al hacer clic
 blocks/sh-subtitulo.liquid         producto · nombre corto y subtítulo
 blocks/sh-beneficios.liquid        producto · 3 beneficios
 blocks/sh-confianza.liquid         producto · confianza bajo el botón
@@ -46,6 +51,26 @@ templates/page.envios-y-cambios.json página de envíos ya armada
 docs/metafields-y-contenido.md     metafields y reescritura de productos
 preview/squishy-heaven-preview.html previsualización visual
 ```
+
+### Sobre la etiqueta `{% schema %}`
+
+Las **13 secciones y bloques** llevan su `{% schema %}` con `presets`, verificado
+con `@shopify/theme-check-node`: 0 avisos.
+
+Los **3 snippets no la llevan, y no deben llevarla**: Shopify solo acepta
+`{% schema %}` en `sections/` y `blocks/`. Un snippet con schema es un error de
+tema. Lo que sí llevan ahora es `{% doc %}`, que es su equivalente: declara los
+parámetros que reciben, y el editor de código de Shopify los muestra al
+escribir `{% render %}`.
+
+Si el editor de Shopify te marca «falta la etiqueta schema» en alguno de estos
+archivos, casi siempre es una de dos cosas:
+
+- El archivo se subió a la carpeta equivocada. Un snippet en `sections/` da ese
+  error exacto. Cada archivo va en la carpeta que dice su ruta aquí arriba.
+- El pegado se cortó. La `{% schema %}` es lo último de cada archivo de sección;
+  si copias y pegas a mano y se pierde el final, el archivo queda sin ella.
+  Sube los archivos completos o usa `shopify theme push`.
 
 ## Instalación
 
@@ -68,6 +93,35 @@ preview/squishy-heaven-preview.html previsualización visual
    «Plantilla de tema», elige `page.envios-y-cambios`. Viene armada con las
    cuatro políticas y tres preguntas frecuentes. **Reemplaza cada plazo por el
    real de tu operación** antes de publicarla.
+7. **Brillos en toda la tienda:** la sección `SH · Brillos al clic` no dibuja
+   nada, solo enciende el efecto en la página donde esté. Agrégala **una sola
+   vez al grupo del pie de página** para que funcione en toda la tienda. Si la
+   dejas solo en la home, solo brilla la home.
+
+## Orden de la home
+
+`templates/index.squishy-heaven.json` viene armada en este orden, que es el que
+repiten las tiendas de peluche y squishy con tracción: primero navegar, después
+comprar, y las objeciones resueltas antes de que se conviertan en una devolución.
+
+1. **Hero** — una promesa y un botón.
+2. **Categorías** — navegación inmediata, la columna vertebral de la conversión.
+3. **Favoritos** — producto con precio y botón de compra en cada tarjeta, sin
+   obligar a entrar a la ficha.
+4. **Squishy interactivo** — el momento de «pruébalo». Llega justo cuando ya
+   vieron producto pero todavía no se decidieron, y termina en un CTA.
+5. **Tamaño real** — «llegó más pequeño de lo que pensé» es la devolución
+   número uno de la categoría. Se contesta aquí, con la mano al lado y la
+   medida en grande.
+6. **Texturas** — segunda entrada al catálogo, por sensación en vez de por
+   categoría heredada del proveedor.
+7. **Historia** — por qué confiar, después de haber visto el producto.
+8. **Confianza** — envío, pago, ayuda y fotos reales.
+9. **FAQ** — lo que queda.
+10. **Newsletter** — la salida para quien no compra hoy.
+11. **Brillos** — invisible, solo enciende el efecto.
+
+Puedes reordenar todo desde el editor: ninguna sección depende de otra.
 
 ## Controles del editor
 
@@ -80,9 +134,12 @@ que armar una página es elegir contenido y mover barras — sin tocar código.
 | Espacio arriba / abajo (móvil) | todas | 0 a 96 px, independiente del escritorio |
 | Alineación del encabezado | secciones con titular | centrada o izquierda |
 | Etiqueta del titular | hero, envíos, FAQ | H1, H2 o H3, para no repetir H1 en una página |
-| Columnas en escritorio | productos, categorías, texturas, envíos | 2 a 5 |
+| Columnas en escritorio | productos, categorías, texturas, tamaños, envíos | 2 a 5 |
 | En móvil | las mismas | 1 columna, 2 columnas o carrusel deslizable |
 | Fondo de la sección | todas | los tintes pastel del design system |
+| Sonido, brillos y contador | squishy interactivo | cada uno se enciende o apaga por separado |
+| Cómo vuelve a su forma | squishy interactivo | slow rising (despacio) o rebote rápido |
+| Cuántas estrellitas por clic | brillos | pocas, normal o muchas; y si aplica también al tocar en el teléfono |
 
 El carrusel deslizable usa `scroll-snap` nativo: se desliza con el dedo, sin
 JavaScript ni librerías.
@@ -104,6 +161,8 @@ Todo el contenido es un ajuste del editor; el código no trae texto quemado.
 | Hero | 1 foto (con nota de la toma mientras no exista) | antetítulo, titular, párrafo, 2 botones, 4 etiquetas de confianza |
 | Categorías | 1 foto por categoría, o icono | título y contador por categoría |
 | Productos | vienen del producto y sus metafields | antetítulo, titular, párrafo, botón |
+| Squishy interactivo | 1 foto opcional; sin ella va el dibujo de mantequilla | antetítulo, titular, párrafo, hasta 4 puntos, botón, pista, textos del contador y del mensaje sorpresa |
+| Tamaño real | 1 foto por bloque (producto en la mano) | medida, comparación, descripción por bloque y nota al pie |
 | Texturas | 1 foto por bloque | antetítulo, titular, párrafo, chips, pies de foto |
 | Historia | 1 foto | antetítulo, titular, párrafo, lista de puntos, botón |
 | Confianza | iconos del set | etiqueta y detalle por señal |
@@ -111,15 +170,75 @@ Todo el contenido es un ajuste del editor; el código no trae texto quemado.
 | Newsletter | — | antetítulo, titular, párrafo, texto de ejemplo, botón, nota legal |
 | Envíos | iconos del set | título y texto por política |
 
-### Detalle de rendimiento (opcional)
+## Interactividad
 
-Cada sección enlaza `sh-squishy.css` por su cuenta, así que funcionan sueltas.
-Si prefieres una sola etiqueta, agrega esto en `layout/theme.liquid` antes de
-`</head>`:
+Tres cosas que hacen que la tienda se sienta hecha a mano, sin librerías ni
+dependencias externas. Todo suma **4,5 KB de JavaScript comprimido**, en un
+único archivo (`sh-interactivo.js`) que las dos secciones que lo usan cargan
+con `defer` — nunca bloquea el pintado.
+
+**El squishy que se aprieta.** Mantén pulsado con el ratón o el dedo: se
+aplasta *hacia donde lo tocas* (arriba se achata a lo alto, de lado se achata a
+lo ancho), entrecierra los ojos, suena, vibra en el teléfono y vuelve despacio
+como un slow rising real. Lleva la cuenta de apretones en el navegador de cada
+visitante y suelta un mensaje sorpresa a los 25.
+
+- **El sonido no descarga nada.** Se sintetiza con Web Audio: una capa de ruido
+  filtrado que barre en frecuencia (el aire saliendo) y un seno que dobla el
+  tono (el material cediendo), con el tono ligeramente distinto cada vez. Un mp3
+  de squish serían 30-60 KB y una petición más.
+- **Solo suena cuando alguien aprieta**, así que ningún navegador lo bloquea y
+  nadie escucha algo que no provocó. Siempre hay un botón para silenciarlo, y
+  la elección se recuerda.
+- Es un `<button>`, así que funciona con teclado y lo anuncian los lectores de
+  pantalla. Sin JavaScript se ve igual, quieto, y el botón de la sección sigue
+  llevando al catálogo.
+- Mientras no exista una foto, el juguete es un dibujo de mantequilla hecho en
+  CSS: pesa cero. Cuando tengas la foto recortada, la subes en «Imagen» y
+  reemplaza al dibujo conservando toda la interacción.
+
+**Brillos al hacer clic.** Estrellitas y destellos en los colores de la marca,
+en cualquier parte de la página. Un solo escuchador para todo el documento, tope
+de 80 partículas vivas, y no se disparan al escribir en un campo de texto.
+
+**El squish como física de la interfaz.** Botones y tarjetas no se encogen al
+pulsarlos: se achatan a lo ancho, igual que el producto. Es un detalle de dos
+líneas de CSS que hace que toda la tienda se sienta del mismo material.
+
+Las tres respetan `prefers-reduced-motion`: si el visitante pidió menos
+movimiento en su sistema, no hay animación, ni brillos, ni vibración.
+
+## Rendimiento
+
+Qué se hizo para que la página no se sienta lenta al entrar:
+
+| | |
+| --- | --- |
+| `content-visibility: auto` en cada sección | El navegador no pinta lo que todavía no se ve. `contain-intrinsic-size: auto` hace que recuerde el alto real tras el primer pintado, así la barra de scroll no salta |
+| Entrada al hacer scroll sin JavaScript | `animation-timeline: view()` dentro de un `@supports`; donde no está soportado, el contenido simplemente ya está visible |
+| Solo se animan `transform` y `opacity` | Van en la GPU y no obligan a recalcular el layout. Ninguna animación mueve cajas |
+| Imágenes | La del hero en `eager` con `fetchpriority="high"`; todas las demás `lazy` + `decoding="async"`, con `srcset` y `sizes` reales |
+| Fuentes | Alojadas en el tema, variables (un archivo por familia) y con `font-display: swap` |
+| Iconos | SVG inline, cero JavaScript |
+| Peso añadido | CSS 8,5 KB y JS 4,5 KB comprimidos. Cero librerías, cero peticiones a terceros |
+
+### Una sola etiqueta de CSS (opcional)
+
+Cada sección enlaza `sh-squishy.css` por su cuenta, así que funcionan sueltas —
+el navegador descarga el archivo una sola vez. Si prefieres pedirlo desde el
+principio del HTML en vez de a mitad, agrega esto en `layout/theme.liquid` antes
+de `</head>`:
 
 ```liquid
 {{ 'sh-squishy.css' | asset_url | stylesheet_tag: preload: true }}
 ```
+
+**Las fuentes no se precargan a propósito.** `asset_url` añade `?v=` para romper
+la caché, pero dentro del CSS las fuentes se piden con ruta relativa, sin esa
+parte. Precargar la URL con `?v=` serían dos direcciones distintas para el mismo
+archivo y el navegador bajaría cada fuente dos veces — 58 KB de más para
+«optimizar». Con `font-display: swap` el texto se ve desde el primer instante,
+así que no hace falta.
 
 ## Compatibilidad con Horizon
 

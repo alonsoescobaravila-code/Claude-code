@@ -230,7 +230,8 @@ body.show-fixes .fix { display:block; }
 .sh-btn--block { display:flex; width:100%; }
 .sh-btn--primary { background:var(--accent-primary); color:#fff; }
 .sh-btn--primary:hover { background:var(--accent-primary-hover); box-shadow:var(--shadow-pink); transform:translateY(-3px); }
-.sh-btn--primary:active { transform:scale(.96); box-shadow:none; }
+.sh-btn--primary:active { box-shadow:none; }
+.sh-btn:active { transform:scale(1.05,.9); transition-duration:var(--duration-fast); }
 .sh-btn--grape { background:var(--accent-secondary); color:#fff; }
 .sh-btn--grape:hover { background:var(--accent-secondary-hover); box-shadow:var(--shadow-grape); transform:translateY(-3px); }
 .sh-btn--outline { background:transparent; color:var(--ink-700); border-color:var(--border-strong); box-shadow:none; }
@@ -256,6 +257,7 @@ body.show-fixes .fix { display:block; }
 .sh-card { background:#fff; border:1px solid var(--border-soft); border-radius:var(--radius-card);
   box-shadow:var(--shadow-sm); transition:all var(--duration-base) var(--ease-squish); }
 a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02,.97); transition-duration:var(--duration-fast); }
 
 /* pozo de foto + marca provisional de producto */
 .sh-photo { position:relative; overflow:hidden; border-radius:var(--radius-image);
@@ -459,6 +461,118 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   display:flex; justify-content:space-between; gap:var(--space-5); flex-wrap:wrap;
   font-size:var(--text-2xs); color:rgba(255,255,255,.6); }
 
+/* --------- brillos al hacer clic --------- */
+.sh-fx { position:fixed; inset:0; pointer-events:none; z-index:9999; contain:layout style paint; }
+.sh-fx__p {
+  position:absolute; top:0; left:0;
+  width:var(--sz,10px); height:var(--sz,10px);
+  margin:calc(var(--sz,10px) / -2) 0 0 calc(var(--sz,10px) / -2);
+  will-change:transform,opacity;
+  animation:sh-fx-pop var(--d,520ms) cubic-bezier(.22,.68,.32,1) forwards;
+  clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.sh-fx__p--destello { clip-path:polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 50%, 42% 42%); }
+@keyframes sh-fx-pop {
+  0%   { transform:translate(var(--x),var(--y)) scale(.2) rotate(0deg); opacity:0; }
+  22%  { opacity:1; }
+  100% { transform:translate(calc(var(--x) + var(--dx)),calc(var(--y) + var(--dy))) scale(.35) rotate(var(--r)); opacity:0; }
+}
+@media (prefers-reduced-motion: reduce) { .sh-fx { display:none; } }
+
+/* --------- el squishy que se aprieta --------- */
+.sh-squish { display:grid; grid-template-columns:1.05fr .95fr; gap:var(--space-12); align-items:center; }
+.sh-squish__panel {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:var(--yellow-100); border-radius:var(--radius-2xl);
+  padding:var(--space-12) var(--space-8) var(--space-8); overflow:clip;
+}
+.sh-squish__boton {
+  appearance:none; border:0; background:none; padding:0;
+  display:block; width:78%; max-width:320px; cursor:pointer;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  border-radius:var(--radius-2xl);
+}
+.sh-squish__boton:focus-visible { outline:none; box-shadow:0 0 0 4px var(--focus-ring); }
+.sh-squish__stage { position:relative; display:block; }
+@media (prefers-reduced-motion: no-preference) {
+  .sh-squish__stage { animation:sh-respirar 3.8s ease-in-out infinite; }
+  .sh-squish:not([data-sh-estado="libre"]) .sh-squish__stage { animation-play-state:paused; }
+}
+@keyframes sh-respirar { 0%,100% { transform:scale(1); } 50% { transform:scale(1.016,.984); } }
+.sh-squish__toy {
+  position:relative; display:block;
+  transform:translate(var(--gx,0),var(--gy,0)) scale(var(--sx,1),var(--sy,1)) rotate(var(--giro,0deg));
+  transform-origin:50% 62%;
+  transition:transform var(--duration-squish) var(--ease-squish);
+  will-change:transform;
+}
+.sh-squish[data-sh-estado="apretado"] .sh-squish__toy { transition-duration:90ms; transition-timing-function:var(--ease-soft); }
+.sh-squish[data-sh-estado="subiendo"] .sh-squish__toy { transition:transform 900ms cubic-bezier(.16,.84,.3,1); }
+.sh-squish__sombra {
+  position:absolute; left:50%; bottom:-18px; width:62%; height:16px; border-radius:50%;
+  background:rgba(91,75,99,.16); transform:translateX(-50%) scaleX(1);
+  transition:transform var(--duration-squish) var(--ease-squish), opacity var(--duration-squish) var(--ease-squish);
+}
+.sh-squish[data-sh-estado="apretado"] .sh-squish__sombra { transform:translateX(-50%) scaleX(1.22); opacity:.75; }
+.sh-squish__dedo {
+  position:absolute; top:var(--py,50%); left:var(--px,50%);
+  width:64px; height:64px; border-radius:50%;
+  background:rgba(255,255,255,.5); box-shadow:0 0 22px 14px rgba(255,255,255,.34);
+  transform:translate(-50%,-50%) scale(.5); opacity:0; pointer-events:none;
+  transition:opacity 120ms linear, transform 120ms var(--ease-soft);
+}
+.sh-squish[data-sh-estado="apretado"] .sh-squish__dedo { opacity:1; transform:translate(-50%,-50%) scale(1); }
+.sh-butter {
+  display:block; position:relative; width:100%; aspect-ratio:5 / 3.4;
+  background:var(--yellow-500); border-radius:38px;
+  box-shadow:inset 0 -14px 0 rgba(245,201,92,.55), var(--shadow-md);
+  overflow:hidden;
+}
+.sh-butter__top { position:absolute; inset:0 0 auto 0; height:30%; background:var(--yellow-200); border-radius:38px 38px 22px 22px; }
+.sh-butter__band {
+  position:absolute; left:-3%; right:-3%; bottom:13%;
+  display:flex; align-items:center; justify-content:center;
+  min-height:21%; padding:4px 0;
+  background:var(--white); color:var(--ink-500);
+  font-family:var(--font-body); font-weight:700;
+  font-size:var(--text-3xs); letter-spacing:var(--tracking-caps); text-transform:uppercase;
+  box-shadow:0 2px 0 rgba(91,75,99,.06);
+}
+.sh-butter__face { position:absolute; left:0; right:0; top:34%; display:flex; align-items:center; justify-content:center; gap:26px; }
+.sh-butter__eye { display:block; width:13px; height:15px; border-radius:50%; background:var(--ink-700);
+  transition:transform var(--duration-base) var(--ease-squish); }
+.sh-butter__mouth {
+  position:absolute; top:22px; left:50%; transform:translateX(-50%);
+  width:20px; height:10px; border:2.5px solid var(--ink-700); border-top:0; border-radius:0 0 20px 20px;
+  transition:width var(--duration-base) var(--ease-squish), height var(--duration-base) var(--ease-squish);
+}
+.sh-squish[data-sh-estado="apretado"] .sh-butter__eye { transform:scaleY(.16); }
+.sh-squish[data-sh-estado="apretado"] .sh-butter__mouth { width:26px; height:14px; }
+.sh-squish__pista { margin:var(--space-6) 0 0; font-family:var(--font-body); font-weight:700; font-size:var(--text-xs); color:var(--text-muted); }
+.sh-squish__cuenta { margin:var(--space-6) 0 0; min-height:1.4em; font-family:var(--font-display); font-weight:600; font-size:var(--text-sm); color:var(--grape-700); }
+.sh-squish__mute {
+  display:inline-flex; align-items:center; gap:8px;
+  margin-top:var(--space-5); padding:8px 16px; min-height:40px;
+  appearance:none; cursor:pointer; background:var(--white); color:var(--text-muted);
+  border:1px solid var(--border-soft); border-radius:var(--radius-pill);
+  font-family:var(--font-body); font-weight:600; font-size:var(--text-2xs);
+  transition:all var(--duration-base) var(--ease-squish);
+}
+.sh-squish__mute:hover { color:var(--ink-700); border-color:var(--border-strong); }
+.sh-squish__mute .sh-squish__mute-off { display:none; }
+.sh-squish__mute[data-off="1"] .sh-squish__mute-on { display:none; }
+.sh-squish__mute[data-off="1"] .sh-squish__mute-off { display:inline; }
+.sh-squish__texto .sh-checks { margin-top:var(--space-6); }
+.sh-squish__acciones { display:flex; flex-wrap:wrap; gap:var(--space-4); margin-top:var(--space-8); }
+
+/* --------- tamaño real --------- */
+.sh-size__item { display:flex; flex-direction:column; gap:var(--space-3); text-align:center; }
+.sh-size__medida { align-self:center; font-family:var(--font-display); font-weight:600; font-size:var(--text-2xl); color:var(--text-heading); line-height:1; }
+.sh-size__label { margin:0; font-family:var(--font-body); font-size:var(--text-xs); color:var(--text-muted); }
+.sh-size__ref { display:inline-flex; align-items:center; gap:6px; align-self:center;
+  font-family:var(--font-body); font-weight:700; font-size:var(--text-3xs);
+  text-transform:uppercase; letter-spacing:var(--tracking-caps); color:var(--text-faint); }
+
 /* --------- respuesta al ancho del escenario, no del navegador --------- */
 @container (max-width: 989px) {
   .sh-hero { grid-template-columns:1fr; padding:var(--space-8); gap:var(--space-8); }
@@ -495,6 +609,10 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   .sh-pdp__buy { flex-wrap:wrap; }
   .sh-pdp__buy .sh-btn { width:100%; }
   .st-foot__in { grid-template-columns:1fr; }
+  .sh-squish { grid-template-columns:1fr; gap:var(--space-8); }
+  .sh-squish__panel { order:-1; padding:var(--space-8) var(--space-5) var(--space-6); }
+  .sh-squish__boton { width:72%; }
+  .sh-squish__acciones .sh-btn { width:100%; }
 }
 @container (max-width: 419px) {
   .sh { --gutter:16px; }
@@ -510,6 +628,10 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
   .sh-faq__q { padding:var(--space-4) var(--space-5); font-size:var(--text-sm); }
   .sh-faq__a { padding:0 var(--space-5) var(--space-4); }
   .sh-pdp__thumbs { gap:var(--space-2); }
+  .sh-butter { border-radius:30px; }
+  .sh-butter__top { border-radius:30px 30px 20px 20px; }
+  .sh-butter__face { gap:20px; }
+  .sh-size__medida { font-size:var(--text-xl); }
 }
 </style>
 
@@ -537,6 +659,7 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
 <div class="intro">
   <h1>Cómo queda la tienda con las secciones nuevas</h1>
   <p>Render de las secciones Liquid del paquete, con los tokens del design system de Squishy Heaven sin modificar. Las fotos todavía no existen: cada hueco muestra una marca provisional con el brief de la toma. Activa <strong>Ver correcciones</strong> para ver qué cambia frente a la tienda actual y de qué prioridad del audit viene.</p>
+  <p><strong>Esto se toca.</strong> El squishy de mantequilla de la home se aprieta de verdad: hazle clic o mantén pulsado y se aplasta hacia donde lo tocas, suena, entrecierra los ojos y vuelve despacio. Y cada clic en cualquier parte de la página suelta estrellitas. Es el mismo código que se sube a la tienda, no una maqueta.</p>
 </div>
 
 <div class="stage" id="stage" data-view="desktop">
@@ -711,6 +834,90 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
       <div style="display:flex;justify-content:center;margin-top:var(--space-10)">
         <a href="#" class="sh-btn sh-btn--grape">Ver toda la tienda</a>
       </div>
+    </div>
+  </section>
+
+  <section class="sh" data-tone="white">
+    <div class="fix"><b>Prioridad 6 · Conversión</b>Sección nueva e interactiva. Apriétalo con el ratón o el dedo: se aplasta hacia donde lo tocas, suena, entrecierra los ojos y lleva la cuenta. Es el «pruébalo antes de comprar» de una categoría que se vende por tacto.</div>
+    <div class="sh__wrap">
+      <div class="sh-squish" data-sh-squish data-sh-estado="libre"
+           data-sh-sonido="1" data-sh-brillos="1" data-sh-rebote="slow"
+           data-sh-cuenta-texto="Lo has apretado {{ veces }} veces"
+           data-sh-cuenta-una="Lo has apretado 1 vez"
+           data-sh-premio="Ya somos amigos. Este es el que más se aprieta en la tienda."
+           data-sh-premio-en="25">
+        <div class="sh-squish__texto">
+          <p class="sh__eyebrow">Pruébalo aquí</p>
+          <h2 class="sh__title">Aprieta antes de comprar.</h2>
+          <p class="sh__sub">Así se siente un slow rising: cede despacio bajo el dedo y vuelve a su forma sin prisa. Este es de mantequilla, y es uno de los favoritos de la casa.</p>
+          <ul class="sh-checks">
+            <li><svg width="17" height="17"><use href="#i-check"/></svg>Espuma suave con acabado mate</li>
+            <li><svg width="17" height="17"><use href="#i-check"/></svg>Vuelve a su forma en segundos</li>
+            <li><svg width="17" height="17"><use href="#i-check"/></svg>Cabe en la mano de un adulto</li>
+          </ul>
+          <div class="sh-squish__acciones">
+            <a href="#" class="sh-btn sh-btn--primary sh-btn--lg">Elegir mi squishy</a>
+          </div>
+        </div>
+        <div class="sh-squish__panel">
+          <button type="button" class="sh-squish__boton" data-sh-squish-boton aria-label="Apretar el squishy de mantequilla">
+            <span class="sh-squish__stage">
+              <span class="sh-squish__toy" data-sh-squish-cuerpo>
+                <span class="sh-butter">
+                  <span class="sh-butter__top"></span>
+                  <span class="sh-butter__face">
+                    <span class="sh-butter__eye"></span>
+                    <span class="sh-butter__eye"></span>
+                    <span class="sh-butter__mouth"></span>
+                  </span>
+                  <span class="sh-butter__band">Squishy Heaven</span>
+                </span>
+              </span>
+              <span class="sh-squish__dedo" data-sh-squish-dedo aria-hidden="true"></span>
+              <span class="sh-squish__sombra" aria-hidden="true"></span>
+            </span>
+          </button>
+          <p class="sh-squish__pista" data-sh-squish-pista>Tócalo. En serio.</p>
+          <p class="sh-squish__cuenta" data-sh-squish-cuenta hidden aria-live="polite"></p>
+          <button type="button" class="sh-squish__mute" data-sh-squish-mute aria-pressed="false" data-off="0">
+            <svg width="14" height="14"><use href="#i-star"/></svg>
+            <span class="sh-squish__mute-on">Sonido activado</span>
+            <span class="sh-squish__mute-off">Sonido silenciado</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sh" data-tone="cream">
+    <div class="fix"><b>Prioridad 2 · Producto</b>Sección nueva. «Llegó más pequeño de lo que pensé» es la devolución número uno de la categoría: las tiendas de peluche y squishy que funcionan la resuelven enseñando el producto en la mano y con la medida al lado, en grande.</div>
+    <div class="sh__wrap">
+      <div class="sh__head" data-align="center">
+        <p class="sh__eyebrow">Tamaño real</p>
+        <h2 class="sh__title">¿Qué tan grande es?</h2>
+        <p class="sh__sub">Fotos con la mano al lado para que sepas exactamente qué te llega. La medida exacta de cada modelo está en su ficha.</p>
+      </div>
+      <div class="sh-grid" style="--sh-cols:3;--sh-cols-t:3;--sh-cols-m:2">
+        <div class="sh-size__item">
+          <div class="sh-photo" data-tone="0" style="aspect-ratio:1/1"><div class="sh-photo__note"><span>Squishy mini sostenido en una mano adulta, fondo pastel plano.</span></div></div>
+          <p class="sh-size__medida">8 cm</p>
+          <span class="sh-size__ref"><svg width="13" height="13"><use href="#i-ruler"/></svg>Como un huevo</span>
+          <p class="sh-size__label">Mini: cabe cerrado en el puño y entra en cualquier bolsillo.</p>
+        </div>
+        <div class="sh-size__item">
+          <div class="sh-photo" data-tone="2" style="aspect-ratio:1/1"><div class="sh-photo__note"><span>Squishy mediano junto a una taza, misma distancia que las demás tomas.</span></div></div>
+          <p class="sh-size__medida">12 cm</p>
+          <span class="sh-size__ref"><svg width="13" height="13"><use href="#i-ruler"/></svg>Como una taza</span>
+          <p class="sh-size__label">Mediano: el tamaño de escritorio, el que más se repite.</p>
+        </div>
+        <div class="sh-size__item">
+          <div class="sh-photo" data-tone="1" style="aspect-ratio:1/1"><div class="sh-photo__note"><span>Squishy jumbo sostenido con las dos manos, fondo pastel plano.</span></div></div>
+          <p class="sh-size__medida">20 cm</p>
+          <span class="sh-size__ref"><svg width="13" height="13"><use href="#i-ruler"/></svg>Como un plato</span>
+          <p class="sh-size__label">Jumbo: se aprieta con las dos manos, es el de regalo.</p>
+        </div>
+      </div>
+      <p class="sh-note" style="text-align:center">Las medidas son aproximadas y pueden variar un poco entre unidades, como pasa con cualquier pieza de espuma.</p>
     </div>
   </section>
 
@@ -1093,5 +1300,368 @@ a.sh-card:hover, .sh-card--link:hover { transform:translateY(-3px); box-shadow:v
       out.textContent = n;
     });
   }
+})();
+</script>
+
+<!-- Marcador de los brillos: en la tienda lo pone la sección «SH · Brillos al clic». -->
+<div data-sh-sparkles data-sh-cantidad="6" data-sh-movil="1" hidden></div>
+
+<!-- ============================================================
+     assets/sh-interactivo.js — copia literal del archivo del tema.
+     Va inline para que esta previsualización siga siendo un solo
+     archivo que se abre con doble clic.
+     ============================================================ -->
+<script>
+/* ============================================================
+   Squishy Heaven — interacciones
+   Dos cosas, un solo archivo (una sola petición):
+     1. El squishy que se aprieta de verdad, con sonido y rebote.
+     2. Los brillos que salen al hacer clic en cualquier parte.
+
+   Reglas que respeta:
+   - Nada se mueve si el visitante pidió menos movimiento.
+   - El audio nace del primer gesto real, nunca antes: así ningún
+     navegador lo bloquea y nadie escucha algo que no provocó.
+   - Solo anima transform y opacity, que van en la GPU y no
+     obligan al navegador a recalcular el layout.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* Cada sección enlaza este archivo para funcionar suelta. El navegador
+     descarga uno solo, pero sí ejecuta cada etiqueta: este candado evita
+     que se dupliquen las capas y los escuchadores. */
+  if (window.__shFx) return;
+  window.__shFx = true;
+
+  var reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function quieto() { return reduceMQ.matches; }
+
+  function guardar(clave, valor) {
+    try { localStorage.setItem(clave, valor); } catch (e) { /* modo privado */ }
+  }
+  function leer(clave) {
+    try { return localStorage.getItem(clave); } catch (e) { return null; }
+  }
+
+  /* ============================================================
+     Sonido — sintetizado, sin archivos de audio
+
+     Un mp3 de squish son 30-60 KB y una petición más. Aquí el sonido
+     se arma con dos capas: ruido filtrado que barre en frecuencia (el
+     aire saliendo del material) y un seno que dobla el tono (el cuerpo
+     que cede). Cada apretón cambia de tono un poco para que la décima
+     vez no suene idéntica a la primera.
+     ============================================================ */
+  var actx = null;
+  var ruido = null;
+  var master = null;
+
+  function audio() {
+    if (actx) return actx;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    actx = new AC();
+    master = actx.createGain();
+    master.gain.value = 0.9;
+    master.connect(actx.destination);
+
+    // Un buffer de ruido blanco reutilizado por todos los apretones.
+    var largo = Math.floor(actx.sampleRate * 0.3);
+    ruido = actx.createBuffer(1, largo, actx.sampleRate);
+    var datos = ruido.getChannelData(0);
+    for (var i = 0; i < largo; i++) datos[i] = Math.random() * 2 - 1;
+    return actx;
+  }
+
+  function sonarSquish(soltando) {
+    var ctx = audio();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    var t = ctx.currentTime;
+    var tono = 0.85 + Math.random() * 0.3;
+
+    // Capa 1 · aire. Al apretar el barrido baja; al soltar sube.
+    var fuente = ctx.createBufferSource();
+    fuente.buffer = ruido;
+    var bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.Q.value = 1.4;
+    var ga = ctx.createGain();
+    bp.frequency.setValueAtTime((soltando ? 700 : 1500) * tono, t);
+    bp.frequency.exponentialRampToValueAtTime((soltando ? 1900 : 430) * tono, t + 0.16);
+    ga.gain.setValueAtTime(0.0001, t);
+    ga.gain.exponentialRampToValueAtTime(soltando ? 0.05 : 0.09, t + 0.012);
+    ga.gain.exponentialRampToValueAtTime(0.0001, t + 0.19);
+    fuente.connect(bp);
+    bp.connect(ga);
+    ga.connect(master);
+    fuente.start(t);
+    fuente.stop(t + 0.21);
+
+    // Capa 2 · cuerpo.
+    var osc = ctx.createOscillator();
+    osc.type = 'sine';
+    var go = ctx.createGain();
+    osc.frequency.setValueAtTime((soltando ? 95 : 195) * tono, t);
+    osc.frequency.exponentialRampToValueAtTime((soltando ? 215 : 92) * tono, t + 0.14);
+    go.gain.setValueAtTime(0.0001, t);
+    go.gain.exponentialRampToValueAtTime(0.06, t + 0.015);
+    go.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    osc.connect(go);
+    go.connect(master);
+    osc.start(t);
+    osc.stop(t + 0.24);
+  }
+
+  /* ============================================================
+     Brillos
+     ============================================================ */
+  var capa = null;
+  var ultimoBrillo = 0;
+  var TOPE = 80; // partículas vivas a la vez
+
+  var paleta = ['#ff9ec4', '#b98cff', '#7fe0c2', '#8ecbff', '#ffe08a', '#ffc9a3'];
+
+  function capaFx() {
+    if (capa && capa.isConnected) return capa;
+    capa = document.createElement('div');
+    capa.className = 'sh-fx';
+    capa.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(capa);
+    return capa;
+  }
+
+  /* x e y son coordenadas de viewport: la capa es fixed, así que no hace
+     falta leer scroll ni medir nada durante el clic. */
+  function brillar(x, y, cantidad) {
+    if (quieto()) return;
+    var ahora = Date.now();
+    if (ahora - ultimoBrillo < 55) return;
+    ultimoBrillo = ahora;
+
+    var lienzo = capaFx();
+    if (lienzo.childElementCount > TOPE) return;
+
+    for (var i = 0; i < cantidad; i++) {
+      var p = document.createElement('span');
+      p.className = 'sh-fx__p' + (Math.random() < 0.45 ? ' sh-fx__p--destello' : '');
+      var ang = Math.random() * Math.PI * 2;
+      var dist = 24 + Math.random() * 48;
+      var st = p.style;
+      st.setProperty('--x', x + 'px');
+      st.setProperty('--y', y + 'px');
+      st.setProperty('--dx', (Math.cos(ang) * dist).toFixed(1) + 'px');
+      st.setProperty('--dy', (Math.sin(ang) * dist - 16).toFixed(1) + 'px');
+      st.setProperty('--r', ((Math.random() * 240 - 120) | 0) + 'deg');
+      st.setProperty('--sz', (7 + Math.random() * 9).toFixed(1) + 'px');
+      st.setProperty('--d', ((440 + Math.random() * 320) | 0) + 'ms');
+      st.background = paleta[(Math.random() * paleta.length) | 0];
+      p.addEventListener('animationend', quitar);
+      lienzo.appendChild(p);
+    }
+  }
+  function quitar() { if (this.parentNode) this.parentNode.removeChild(this); }
+
+  /* Un solo escuchador en el documento para toda la página. */
+  var brillosListos = false;
+  function activarBrillos(config) {
+    if (brillosListos) return;
+    brillosListos = true;
+
+    document.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch' && !config.movil) return;
+      // Escribir o seleccionar texto no debería lanzar confeti.
+      var t = e.target;
+      if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]')) return;
+      brillar(e.clientX, e.clientY, config.cantidad);
+    }, { passive: true });
+  }
+
+  /* ============================================================
+     El squishy
+     ============================================================ */
+  function montarSquish(raiz) {
+    if (raiz.dataset.shListo === '1') return;
+    raiz.dataset.shListo = '1';
+
+    var boton = raiz.querySelector('[data-sh-squish-boton]');
+    var cuerpo = raiz.querySelector('[data-sh-squish-cuerpo]');
+    var dedo = raiz.querySelector('[data-sh-squish-dedo]');
+    var marcador = raiz.querySelector('[data-sh-squish-cuenta]');
+    var pista = raiz.querySelector('[data-sh-squish-pista]');
+    var mute = raiz.querySelector('[data-sh-squish-mute]');
+    if (!boton || !cuerpo) return;
+
+    var conSonido = raiz.dataset.shSonido === '1';
+    var conBrillos = raiz.dataset.shBrillos === '1';
+    var lento = raiz.dataset.shRebote === 'slow';
+    var plantilla = raiz.dataset.shCuentaTexto || '';
+    var plantillaUna = raiz.dataset.shCuentaUna || '';
+    var premio = raiz.dataset.shPremio || '';
+    var metaPremio = parseInt(raiz.dataset.shPremioEn, 10) || 0;
+
+    var silenciado = leer('sh-sonido') === 'off';
+    var apretado = false;
+    var cuenta = parseInt(leer('sh-squish-cuenta'), 10) || 0;
+
+    pintarCuenta();
+    pintarMute();
+
+    function pintarCuenta() {
+      if (!marcador) return;
+      if (cuenta < 1) { marcador.hidden = true; return; }
+      marcador.hidden = false;
+      // «1 veces» delata que el texto lo escribió una máquina.
+      var texto = (cuenta === 1 && plantillaUna) ? plantillaUna : plantilla;
+      // Si el merchant no puso el hueco, se respeta su texto tal cual en vez
+      // de pegarle un número al final.
+      marcador.textContent = texto.replace('{{ veces }}', cuenta);
+    }
+
+    function pintarMute() {
+      if (!mute) return;
+      mute.setAttribute('aria-pressed', silenciado ? 'true' : 'false');
+      mute.dataset.off = silenciado ? '1' : '0';
+    }
+
+    if (mute) {
+      mute.addEventListener('click', function (e) {
+        e.stopPropagation();
+        silenciado = !silenciado;
+        guardar('sh-sonido', silenciado ? 'off' : 'on');
+        pintarMute();
+        if (!silenciado) sonarSquish(false);
+      });
+    }
+
+    /* La deformación sigue al dedo: si aprietas arriba se aplasta a lo
+       alto, si aprietas de lado se aplasta a lo ancho. Es la diferencia
+       entre "una animación" y "se siente como el objeto real". */
+    function apretar(x, y) {
+      if (apretado) return;
+      apretado = true;
+
+      var sx = 1, sy = 1, gx = 0, gy = 0, giro = 0;
+
+      if (!quieto()) {
+        var r = boton.getBoundingClientRect(); // una sola lectura por gesto
+        var cx = r.left + r.width / 2;
+        var cy = r.top + r.height / 2;
+        var dx = r.width ? (x - cx) / (r.width / 2) : 0;
+        var dy = r.height ? (y - cy) / (r.height / 2) : 0;
+        dx = Math.max(-1, Math.min(1, dx));
+        dy = Math.max(-1, Math.min(1, dy));
+
+        var ax = Math.abs(dx), ay = Math.abs(dy);
+        var vertical = ay / (ax + ay + 0.0001); // 1 = presión de arriba
+        var fuerza = 0.26;
+
+        sy = 1 - fuerza * vertical + fuerza * (1 - vertical) * 0.9;
+        sx = 1 + fuerza * vertical * 0.9 - fuerza * (1 - vertical);
+        gx = dx * 6;
+        gy = dy * 6;
+        giro = dx * -2.5;
+
+        if (dedo) {
+          dedo.style.setProperty('--px', ((x - r.left) / (r.width || 1) * 100).toFixed(1) + '%');
+          dedo.style.setProperty('--py', ((y - r.top) / (r.height || 1) * 100).toFixed(1) + '%');
+        }
+      }
+
+      cuerpo.style.setProperty('--sx', sx.toFixed(3));
+      cuerpo.style.setProperty('--sy', sy.toFixed(3));
+      cuerpo.style.setProperty('--gx', gx.toFixed(1) + 'px');
+      cuerpo.style.setProperty('--gy', gy.toFixed(1) + 'px');
+      cuerpo.style.setProperty('--giro', giro.toFixed(2) + 'deg');
+      raiz.dataset.shEstado = 'apretado';
+
+      if (conSonido && !silenciado) sonarSquish(false);
+      if (navigator.vibrate && !quieto()) { try { navigator.vibrate(11); } catch (e) {} }
+      if (conBrillos) brillar(x, y, 7);
+
+      if (pista) pista.hidden = true;
+      cuenta++;
+      guardar('sh-squish-cuenta', cuenta);
+      pintarCuenta();
+
+      if (premio && metaPremio && cuenta === metaPremio && marcador) {
+        marcador.textContent = premio;
+      }
+    }
+
+    function soltar() {
+      if (!apretado) return;
+      apretado = false;
+      cuerpo.style.setProperty('--sx', '1');
+      cuerpo.style.setProperty('--sy', '1');
+      cuerpo.style.setProperty('--gx', '0px');
+      cuerpo.style.setProperty('--gy', '0px');
+      cuerpo.style.setProperty('--giro', '0deg');
+      raiz.dataset.shEstado = lento ? 'subiendo' : 'libre';
+      if (conSonido && !silenciado && !lento) sonarSquish(true);
+      if (lento) {
+        setTimeout(function () {
+          if (!apretado) {
+            raiz.dataset.shEstado = 'libre';
+            if (conSonido && !silenciado) sonarSquish(true);
+          }
+        }, 700);
+      }
+    }
+
+    boton.addEventListener('pointerdown', function (e) {
+      // Capturar el puntero mantiene el apretón aunque el dedo se salga del
+      // botón, y garantiza que el pointerup llegue aquí y no a otro elemento.
+      if (boton.setPointerCapture && e.pointerId != null) {
+        try { boton.setPointerCapture(e.pointerId); } catch (err) { /* puntero ya inactivo */ }
+      }
+      apretar(e.clientX, e.clientY);
+    });
+    boton.addEventListener('pointerup', soltar);
+    boton.addEventListener('pointercancel', soltar);
+    boton.addEventListener('pointerleave', soltar);
+
+    /* Teclado: el centro del elemento hace de punto de presión. */
+    boton.addEventListener('keydown', function (e) {
+      if (e.key !== ' ' && e.key !== 'Enter' && e.key !== 'Spacebar') return;
+      if (e.repeat) return;
+      e.preventDefault();
+      var r = boton.getBoundingClientRect();
+      apretar(r.left + r.width / 2, r.top + r.height * 0.3);
+    });
+    boton.addEventListener('keyup', function (e) {
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar') soltar();
+    });
+    boton.addEventListener('blur', soltar);
+  }
+
+  /* ============================================================
+     Arranque
+     ============================================================ */
+  function iniciar(ambito) {
+    var alcance = ambito || document;
+
+    var juguetes = alcance.querySelectorAll('[data-sh-squish]');
+    for (var i = 0; i < juguetes.length; i++) montarSquish(juguetes[i]);
+
+    var fx = document.querySelector('[data-sh-sparkles]');
+    if (fx) {
+      activarBrillos({
+        cantidad: parseInt(fx.dataset.shCantidad, 10) || 6,
+        movil: fx.dataset.shMovil !== '0'
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { iniciar(); });
+  } else {
+    iniciar();
+  }
+
+  // El editor de temas monta y desmonta secciones sin recargar la página.
+  document.addEventListener('shopify:section:load', function (e) { iniciar(e.target); });
 })();
 </script>

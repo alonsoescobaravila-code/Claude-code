@@ -96,6 +96,91 @@
         "pad_bottom_mobile": 48
       }
     },
+    "interactivo": {
+      "type": "sh-squish-toy",
+      "settings": {
+        "eyebrow": "Pruébalo aquí",
+        "heading": "Aprieta antes de comprar.",
+        "body": "Así se siente un slow rising: cede despacio bajo el dedo y vuelve a su forma sin prisa. Este es de mantequilla, y es uno de los favoritos de la casa.",
+        "bullets": "Espuma suave con acabado mate | Vuelve a su forma en segundos | Cabe en la mano de un adulto",
+        "cta_label": "Elegir mi squishy",
+        "cta_link": "shopify://collections/all",
+        "show_face": true,
+        "band_label": "Squishy Heaven",
+        "rebound": "slow",
+        "hint_label": "Tócalo. En serio.",
+        "aria_label": "Apretar el squishy de mantequilla",
+        "sound_enabled": true,
+        "sound_on_label": "Sonido activado",
+        "sound_off_label": "Sonido silenciado",
+        "sparkles_on_squish": true,
+        "show_counter": true,
+        "counter_label": "Lo has apretado {{ veces }} veces",
+        "counter_label_one": "Lo has apretado 1 vez",
+        "milestone_label": "Ya somos amigos. Este es el que más se aprieta en la tienda.",
+        "milestone_at": 25,
+        "tone": "white",
+        "heading_tag": "h2",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "tamano": {
+      "type": "sh-tamano",
+      "blocks": {
+        "z1": {
+          "type": "size",
+          "settings": {
+            "measure": "8 cm",
+            "reference": "Como un huevo",
+            "label": "Mini: cabe cerrado en el puño y entra en cualquier bolsillo.",
+            "photo_brief": "Squishy mini sostenido en una mano adulta, fondo pastel plano.",
+            "photo_tone": "0"
+          }
+        },
+        "z2": {
+          "type": "size",
+          "settings": {
+            "measure": "12 cm",
+            "reference": "Como una taza",
+            "label": "Mediano: el tamaño de escritorio, el que más se repite.",
+            "photo_brief": "Squishy mediano junto a una taza, misma distancia que las demás tomas.",
+            "photo_tone": "2"
+          }
+        },
+        "z3": {
+          "type": "size",
+          "settings": {
+            "measure": "20 cm",
+            "reference": "Como un plato",
+            "label": "Jumbo: se aprieta con las dos manos, es el de regalo.",
+            "photo_brief": "Squishy jumbo sostenido con las dos manos, fondo pastel plano.",
+            "photo_tone": "1"
+          }
+        }
+      },
+      "block_order": [
+        "z1",
+        "z2",
+        "z3"
+      ],
+      "settings": {
+        "eyebrow": "Tamaño real",
+        "heading": "¿Qué tan grande es?",
+        "body": "Fotos con la mano al lado para que sepas exactamente qué te llega. La medida exacta de cada modelo está en su ficha.",
+        "footnote": "Las medidas son aproximadas y pueden variar un poco entre unidades, como pasa con cualquier pieza de espuma.",
+        "tone": "cream",
+        "align": "center",
+        "columns": 3,
+        "columns_mobile": "2",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
     "textura": {
       "type": "sh-textura",
       "blocks": {
@@ -346,16 +431,26 @@
         "pad_top_mobile": 32,
         "pad_bottom_mobile": 48
       }
+    },
+    "brillos": {
+      "type": "sh-brillos",
+      "settings": {
+        "density": "6",
+        "on_mobile": true
+      }
     }
   },
   "order": [
     "hero",
     "categorias",
     "favoritos",
+    "interactivo",
+    "tamano",
     "textura",
     "historia",
     "confianza",
     "faq",
-    "newsletter"
+    "newsletter",
+    "brillos"
   ]
 }
