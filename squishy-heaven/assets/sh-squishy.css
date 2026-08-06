@@ -559,6 +559,70 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active {
 .sh-squish__acciones { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-8); }
 
 /* ============================================================
+   Reseñas con foto
+   ============================================================ */
+.sh-rev { display: flex; flex-direction: column; overflow: hidden; height: 100%; }
+.sh-rev__promedio { justify-content: center; margin: var(--space-4) 0 0; font-size: var(--text-sm); }
+.sh-rev__promedio strong { color: var(--text-heading); font-family: var(--font-display); font-size: var(--text-lg); }
+.sh-rating__vacia { color: var(--ink-300); display: inline-flex; }
+
+/* La foto es un botón para poder ampliarla. Se le quita todo el aspecto de
+   botón menos el foco, que sí tiene que verse. */
+.sh-rev__shot {
+  appearance: none; border: 0; padding: 0; background: none;
+  display: block; width: 100%; cursor: zoom-in;
+  border-radius: var(--radius-image);
+}
+.sh-rev__shot:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring); }
+.sh-rev__shot:hover .sh-photo img { transform: scale(1.04); }
+.sh-rev .sh-photo { width: 100%; }
+.sh-rev__body {
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3);
+  padding: var(--space-5); flex: 1;
+}
+.sh-rev__texto {
+  margin: 0; border: 0; padding: 0;
+  font-family: var(--font-body); font-size: var(--text-sm);
+  line-height: var(--leading-relaxed); color: var(--text-body);
+}
+.sh-rev__quien {
+  margin: auto 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+  font-family: var(--font-body); font-size: var(--text-xs); color: var(--text-muted);
+}
+.sh-rev__quien strong { color: var(--text-heading); font-weight: 700; }
+.sh-rev__ok { display: inline-flex; align-items: center; gap: 5px;
+  font-weight: 700; font-size: var(--text-3xs); color: var(--mint-700); }
+.sh-rev__producto {
+  font-family: var(--font-body); font-weight: 600; font-size: var(--text-2xs);
+  color: var(--grape-700); text-decoration: none;
+  border-bottom: 1px solid var(--grape-200); padding-bottom: 1px;
+}
+.sh-rev__producto:hover { border-bottom-color: var(--grape-500); }
+.sh-rev__pie { text-align: center; margin-top: var(--space-8); }
+
+/* Foto en grande. <dialog> trae el cierre con Escape, el foco atrapado y el
+   fondo inerte de fábrica: nada de eso hay que programarlo. */
+.sh-lightbox {
+  border: 0; padding: 0; background: transparent;
+  max-width: min(92vw, 720px); max-height: 90vh;
+  border-radius: var(--radius-lg); overflow: visible;
+}
+.sh-lightbox::backdrop { background: rgba(61, 49, 69, .72); }
+.sh-lightbox img {
+  display: block; width: 100%; height: auto; max-height: 90vh; object-fit: contain;
+  border-radius: var(--radius-lg);
+}
+.sh-lightbox__x {
+  position: absolute; top: -14px; right: -14px;
+  width: 40px; height: 40px; border-radius: var(--radius-pill);
+  appearance: none; cursor: pointer;
+  background: var(--white); color: var(--ink-700);
+  border: 1px solid var(--border-soft); box-shadow: var(--shadow-md);
+  font-family: var(--font-display); font-size: var(--text-lg); line-height: 1;
+}
+.sh-lightbox__x:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring); }
+
+/* ============================================================
    Tamaño real — la duda que más devuelve un squishy
    ============================================================ */
 .sh-size__item { display: flex; flex-direction: column; gap: var(--space-3); text-align: center; }

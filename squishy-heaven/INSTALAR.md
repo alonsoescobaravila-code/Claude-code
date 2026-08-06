@@ -48,7 +48,7 @@ Estos tres **no llevan `{% schema %}` y no deben llevarla** — Shopify solo la
 acepta en `sections/` y `blocks/`. Ninguno se agrega desde el editor de temas:
 son piezas que las secciones usan por dentro.
 
-### `sections/` — 12 archivos
+### `sections/` — 13 archivos
 
 Se agregan desde el editor de temas. En el buscador de secciones aparecen todas
 como **`SH · …`**.
@@ -60,6 +60,7 @@ como **`SH · …`**.
 | `sh-featured-products.liquid` | SH · Productos | Grilla de productos con botón de compra |
 | `sh-squish-toy.liquid` | SH · Squishy interactivo | El de mantequilla, se aprieta de verdad |
 | `sh-tamano.liquid` | SH · Tamaño real | «¿Qué tan grande es?» |
+| `sh-resenas.liquid` | SH · Reseñas con foto | Reseñas con la foto real del cliente |
 | `sh-textura.liquid` | SH · Elige por textura | Entrada al catálogo por sensación |
 | `sh-story.liquid` | SH · Historia | Por qué confiar |
 | `sh-trust-row.liquid` | SH · Confianza | Envío, pago, ayuda, fotos reales |
@@ -128,7 +129,7 @@ cómo se ve la tienda, y el que más se olvida.
 Editor de temas → arriba, en el selector de plantilla, elige **`squishy-heaven`**.
 
 Viene armada en este orden: hero → categorías → favoritos → squishy interactivo
-→ tamaño real → texturas → historia → confianza → preguntas → newsletter.
+→ tamaño real → texturas → historia → reseñas → confianza → preguntas → newsletter.
 
 Si prefieres armarla a mano, agrega las secciones `SH · …` en el orden que
 quieras: ninguna depende de otra.
@@ -177,13 +178,49 @@ La plantilla de la home ya la trae. Si la dejas solo ahí, solo brilla la home.
 
 ---
 
-## Paso 7 · Antes de publicar
+## Paso 7 · Conseguir las reseñas con foto
+
+`SH · Reseñas con foto` **muestra** las reseñas; no las recoge. Eso es lo que
+cobra una app como Loox. El circuito a mano cuesta cinco minutos por reseña y no
+cuesta dinero:
+
+1. **Pide.** Entre 7 y 10 días después de marcar el pedido como entregado,
+   escribe al cliente. Un correo corto y concreto funciona mejor que una
+   plantilla:
+
+   > Hola [nombre], ¿te llegó bien tu squishy? Si te animas a mandarnos una foto
+   > y contarnos qué tal, la publicamos en la tienda con tu nombre. Con
+   > responder a este correo basta.
+
+2. **Guarda el permiso.** No publiques una foto sin que te la hayan mandado a
+   ti. Deja el correo archivado: es tu respaldo si alguien pregunta.
+3. **Sube la foto** a Shopify (Contenido → Archivos) y agrega un bloque
+   «Reseña» en la sección.
+4. **Copia el texto tal cual.** Sin corregirle el estilo. Una reseña demasiado
+   bien escrita se lee como publicidad.
+5. **Pon solo el nombre y la inicial del apellido.** «Camila R.» basta y protege
+   sus datos.
+6. **«Compra verificada» solo si la verificaste.** Busca el pedido en tu panel.
+   Es una afirmación sobre tu tienda, no un adorno.
+
+El promedio y el total se calculan solos con lo que publiques. No hay ningún
+campo donde escribirlos, a propósito.
+
+> Cuándo sí vale pagar una app: cuando tengas volumen suficiente para que pedir
+> reseñas a mano se te coma la semana. Hasta entonces esto hace el mismo trabajo
+> de cara al cliente.
+
+---
+
+## Paso 8 · Antes de publicar
 
 - [ ] Recorre la copia del tema en el teléfono, no solo en el ordenador.
 - [ ] Aprieta el squishy con el dedo y comprueba que suena.
 - [ ] Los plazos de envío son los reales, no los de ejemplo.
 - [ ] El vendor de los productos dice `Squishy Heaven`, no `My Store 4`.
 - [ ] La calificación del hero sigue apagada si todavía no hay reseñas reales.
+- [ ] Todas las reseñas publicadas son reales y tienes el permiso de cada
+      persona. El promedio sigue apagado si aún son pocas.
 - [ ] Ninguna página tiene dos H1 (revisa «Etiqueta del titular» en el hero).
 
 Cuando esté, **Temas** → en la copia, **Publicar**.

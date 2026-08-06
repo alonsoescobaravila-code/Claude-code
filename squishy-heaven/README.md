@@ -41,6 +41,7 @@ sections/sh-collection-tiles.liquid categorías
 sections/sh-featured-products.liquid grilla de productos
 sections/sh-squish-toy.liquid      el squishy de mantequilla interactivo
 sections/sh-tamano.liquid          tamaño real, con la medida al lado
+sections/sh-resenas.liquid         reseñas con foto real del cliente
 sections/sh-textura.liquid         elige por textura + fotos
 sections/sh-story.liquid           historia y credibilidad
 sections/sh-trust-row.liquid       fila de confianza
@@ -65,7 +66,7 @@ Las cinco primeras carpetas van al tema. `INSTALAR.md`, `README.md`, `docs/` y
 
 ### Sobre la etiqueta `{% schema %}`
 
-Las **12 secciones y los 4 bloques** llevan su `{% schema %}` con `presets`, verificado
+Las **13 secciones y los 4 bloques** llevan su `{% schema %}` con `presets`, verificado
 con `@shopify/theme-check-node`: 0 avisos.
 
 Los **3 snippets no la llevan, y no deben llevarla**: Shopify solo acepta
@@ -96,10 +97,11 @@ comprar, y las objeciones resueltas antes de que se conviertan en una devolució
 6. **Texturas** — segunda entrada al catálogo, por sensación en vez de por
    categoría heredada del proveedor.
 7. **Historia** — por qué confiar, después de haber visto el producto.
-8. **Confianza** — envío, pago, ayuda y fotos reales.
-9. **FAQ** — lo que queda.
-10. **Newsletter** — la salida para quien no compra hoy.
-11. **Brillos** — invisible, solo enciende el efecto.
+8. **Reseñas con foto** — la prueba: clientes reales con el producto en su casa.
+9. **Confianza** — envío, pago, ayuda y fotos reales.
+10. **FAQ** — lo que queda.
+11. **Newsletter** — la salida para quien no compra hoy.
+12. **Brillos** — invisible, solo enciende el efecto.
 
 Puedes reordenar todo desde el editor: ninguna sección depende de otra.
 
@@ -114,7 +116,7 @@ que armar una página es elegir contenido y mover barras — sin tocar código.
 | Espacio arriba / abajo (móvil) | todas | 0 a 96 px, independiente del escritorio |
 | Alineación del encabezado | secciones con titular | centrada o izquierda |
 | Etiqueta del titular | hero, envíos, FAQ | H1, H2 o H3, para no repetir H1 en una página |
-| Columnas en escritorio | productos, categorías, texturas, tamaños, envíos | 2 a 5 |
+| Columnas en escritorio | productos, categorías, texturas, tamaños, reseñas, envíos | 2 a 5 |
 | En móvil | las mismas | 1 columna, 2 columnas o carrusel deslizable |
 | Fondo de la sección | todas | los tintes pastel del design system |
 | Sonido, brillos y contador | squishy interactivo | cada uno se enciende o apaga por separado |
@@ -141,6 +143,7 @@ Todo el contenido es un ajuste del editor; el código no trae texto quemado.
 | Hero | 1 foto (con nota de la toma mientras no exista) | antetítulo, titular, párrafo, 2 botones, 4 etiquetas de confianza |
 | Categorías | 1 foto por categoría, o icono | título y contador por categoría |
 | Productos | vienen del producto y sus metafields | antetítulo, titular, párrafo, botón |
+| Reseñas | 1 foto por reseña, la que manda el cliente | estrellas, texto, quién, compra verificada y producto por reseña |
 | Squishy interactivo | 1 foto opcional; sin ella va el dibujo de mantequilla | antetítulo, titular, párrafo, hasta 4 puntos, botón, pista, textos del contador y del mensaje sorpresa |
 | Tamaño real | 1 foto por bloque (producto en la mano) | medida, comparación, descripción por bloque y nota al pie |
 | Texturas | 1 foto por bloque | antetítulo, titular, párrafo, chips, pies de foto |
@@ -153,7 +156,7 @@ Todo el contenido es un ajuste del editor; el código no trae texto quemado.
 ## Interactividad
 
 Tres cosas que hacen que la tienda se sienta hecha a mano, sin librerías ni
-dependencias externas. Todo suma **4,5 KB de JavaScript comprimido**, en un
+dependencias externas. Todo suma **4,9 KB de JavaScript comprimido**, en un
 único archivo (`sh-interactivo.js`) que las dos secciones que lo usan cargan
 con `defer` — nunca bloquea el pintado.
 
@@ -188,6 +191,30 @@ líneas de CSS que hace que toda la tienda se sienta del mismo material.
 Las tres respetan `prefers-reduced-motion`: si el visitante pidió menos
 movimiento en su sistema, no hay animación, ni brillos, ni vibración.
 
+## Reseñas sin app
+
+`sh-resenas` hace la mitad de lo que hace Loox: **muestra** reseñas con foto,
+con estrellas, nombre, «compra verificada» y enlace al producto que compraron.
+La otra mitad —pedir la reseña por correo, recibirla y guardarla sola— no la
+hace, y ninguna sección de tema puede hacerla. Tú pegas cada reseña en el
+editor. A cambio no pagas mensualidad, no hay JavaScript de terceros en el
+storefront, y las fotos viven en tu propia tienda.
+
+**El promedio no se escribe a mano.** Se calcula sumando las reseñas que hay
+publicadas en la sección. Es la misma regla que mantiene apagada la calificación
+del hero: un número que nadie puede comprobar en la página resta confianza en
+vez de sumarla. Si publicas 8 reseñas, el promedio es el de esas 8, y el texto
+lo dice: «sobre 8 reseñas publicadas».
+
+Viene **apagado** en la plantilla de la home a propósito. Enciéndelo cuando
+tengas suficientes: tres reseñas y un 5,0 se leen como inventadas.
+
+La foto se amplía al hacer clic usando `<dialog>`, que trae el cierre con
+Escape, el foco atrapado y el fondo inerte de fábrica. Sin JavaScript la foto se
+ve igual dentro de la tarjeta, solo que no se amplía.
+
+Cómo conseguir las fotos está en [`INSTALAR.md`](INSTALAR.md), paso 7.
+
 ## Rendimiento
 
 Qué se hizo para que la página no se sienta lenta al entrar:
@@ -200,7 +227,7 @@ Qué se hizo para que la página no se sienta lenta al entrar:
 | Imágenes | La del hero en `eager` con `fetchpriority="high"`; todas las demás `lazy` + `decoding="async"`, con `srcset` y `sizes` reales |
 | Fuentes | Alojadas en el tema, variables (un archivo por familia) y con `font-display: swap` |
 | Iconos | SVG inline, cero JavaScript |
-| Peso añadido | CSS 8,5 KB y JS 4,5 KB comprimidos. Cero librerías, cero peticiones a terceros |
+| Peso añadido | CSS 8,9 KB y JS 4,9 KB comprimidos. Cero librerías, cero peticiones a terceros |
 
 ### Una sola etiqueta de CSS (opcional)
 

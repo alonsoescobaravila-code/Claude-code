@@ -30,7 +30,7 @@ Tu tema es de una versión anterior a la que soporta `{% doc %}`. No rompe nada
 ### La carpeta `blocks/` no existe en mi tema
 
 Entonces no es Horizon, o es una versión anterior a los bloques de tema. Las
-12 secciones funcionan igual, pero los 4 bloques de la ficha de producto no se
+13 secciones funcionan igual, pero los 4 bloques de la ficha de producto no se
 pueden usar. Actualiza a Horizon o pon ese contenido con las secciones.
 
 ---
@@ -181,6 +181,54 @@ descuadra, pero la imagen se verá cortada.
 
 No debería — el botón lleva `touch-action: manipulation` justo para eso. Si te
 pasa, es que el archivo CSS no se subió o es una versión anterior.
+
+---
+
+## Las reseñas con foto
+
+### No aparece el promedio
+
+Está apagado. Es el ajuste «Mostrar promedio» de la sección, y viene apagado a
+propósito en la plantilla de la home: tres reseñas y un 5,0 se leen como
+inventadas. Enciéndelo cuando tengas suficientes.
+
+### No encuentro dónde escribir el promedio ni el total
+
+No existe ese campo, a propósito. **Los dos se calculan** sumando las reseñas
+que publiques en la sección. Un número escrito a mano que nadie puede comprobar
+en la página resta confianza en vez de sumarla — es la misma regla que mantiene
+apagada la calificación del hero.
+
+Si quieres que aparezca «sobre 40 reseñas», publica 40 reseñas.
+
+### El promedio no cuadra con lo que esperaba
+
+Cuenta solo las reseñas de esta sección, y solo las que tienen estrellas. Las
+estrellas dibujadas se redondean al entero más cercano —un 4,7 pinta 5— pero el
+número exacto va siempre al lado, que es el dato que vale.
+
+### La foto no se amplía al hacer clic
+
+- Ese bloque **no tiene foto subida**, solo la nota de qué fotografiar. Sin foto
+  no hay nada que ampliar.
+- `sh-interactivo.js` no llegó a `assets/`. Sin él la foto se ve igual dentro de
+  la tarjeta, solo que no se agranda.
+
+### Las fotos se ven recortadas o descuadradas
+
+Es lo que hace la sección: las fotos de cliente llegan de mil formas, y el
+ajuste «Proporción de las fotos» las iguala recortando desde el centro. Si a
+alguna le corta lo importante, recórtala tú antes de subirla, o cambia la
+proporción de toda la sección — 4:5 es la que mejor encaja con fotos hechas con
+el móvil.
+
+### ¿Puedo poner reseñas inventadas para arrancar?
+
+Puedes, técnicamente. No lo hagas. Es el mismo tipo de claim sin respaldo que el
+audit marcó como el problema de fondo de la tienda, y una reseña inventada se
+nota: no tiene foto real, el texto está demasiado bien escrito y el promedio es
+un 5,0 redondo. Sale más barato publicar tres reseñas verdaderas que veinte
+falsas.
 
 ---
 

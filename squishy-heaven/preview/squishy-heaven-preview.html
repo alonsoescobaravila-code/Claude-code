@@ -134,10 +134,10 @@ body.show-fixes .fix { display:block; }
   --sky-50:#f2f9ff; --sky-100:#e6f3ff; --sky-200:#cbe6ff;
   --sky-500:#8ecbff; --sky-600:#6db6f5; --sky-700:#4a97d9;
   --peach-100:#fff0e6; --peach-500:#ffc9a3;
-  --yellow-100:#fff6dd; --yellow-500:#ffe08a; --yellow-600:#f5c95c;
+  --yellow-100:#fff6dd; --yellow-200:#ffedbb; --yellow-500:#ffe08a; --yellow-600:#f5c95c;
 
   --white:#fff; --ink-900:#3d3145; --ink-700:#5b4b63; --ink-500:#8a7b93;
-  --ink-400:#a89bb0; --line:#f2e6ee; --line-strong:#e6d6e2;
+  --ink-400:#a89bb0; --ink-300:#c9bfd0; --line:#f2e6ee; --line-strong:#e6d6e2;
 
   --text-heading:var(--ink-700); --text-body:var(--ink-700);
   --text-muted:var(--ink-500); --text-faint:var(--ink-400);
@@ -163,13 +163,14 @@ body.show-fixes .fix { display:block; }
   --shadow-pink:0 8px 20px rgba(249,127,176,.28);
   --shadow-grape:0 8px 20px rgba(162,115,240,.24);
 
-  --duration-base:200ms; --duration-slow:320ms;
+  --duration-fast:120ms; --duration-base:200ms; --duration-slow:320ms; --duration-squish:420ms;
   --ease-soft:cubic-bezier(.32,.72,.35,1);
   --ease-squish:cubic-bezier(.34,1.56,.64,1);
 
   font-family: var(--font-body); color: var(--text-body); background: var(--cream);
 }
 @media (prefers-reduced-motion: reduce) {
+  .st { --duration-fast:0ms; --duration-base:0ms; --duration-slow:0ms; --duration-squish:0ms; }
   .st *, .st *::before, .st *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
 
@@ -565,6 +566,47 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
 .sh-squish__texto .sh-checks { margin-top:var(--space-6); }
 .sh-squish__acciones { display:flex; flex-wrap:wrap; gap:var(--space-4); margin-top:var(--space-8); }
 
+/* --------- reseñas con foto --------- */
+.sh-rating { display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-body); font-weight:600; font-size:var(--text-xs); color:var(--text-muted); }
+.sh-rating__stars { display:inline-flex; gap:2px; color:var(--yellow-600); }
+.sh-rating__stars svg { fill:currentColor; }
+.sh-rev { display:flex; flex-direction:column; overflow:hidden; height:100%; }
+.sh-rev__promedio { justify-content:center; margin:var(--space-4) 0 0; font-size:var(--text-sm); }
+.sh-rev__promedio strong { color:var(--text-heading); font-family:var(--font-display); font-size:var(--text-lg); }
+.sh-rating__vacia { color:var(--ink-300); display:inline-flex; }
+.sh-rev__shot {
+  appearance:none; border:0; padding:0; background:none;
+  display:block; width:100%; cursor:zoom-in; border-radius:var(--radius-image);
+}
+.sh-rev__shot:focus-visible { outline:none; box-shadow:0 0 0 4px var(--focus-ring); }
+.sh-rev__shot:hover .sh-photo img { transform:scale(1.04); }
+.sh-rev .sh-photo { width:100%; }
+.sh-rev__body { display:flex; flex-direction:column; align-items:flex-start; gap:var(--space-3);
+  padding:var(--space-5); flex:1; }
+.sh-rev__texto { margin:0; border:0; padding:0; font-family:var(--font-body);
+  font-size:var(--text-sm); line-height:var(--leading-relaxed); color:var(--text-body); }
+.sh-rev__quien { margin:auto 0 0; display:flex; flex-wrap:wrap; align-items:center; gap:var(--space-3);
+  font-family:var(--font-body); font-size:var(--text-xs); color:var(--text-muted); }
+.sh-rev__quien strong { color:var(--text-heading); font-weight:700; }
+.sh-rev__ok { display:inline-flex; align-items:center; gap:5px; font-weight:700;
+  font-size:var(--text-3xs); color:var(--mint-700); }
+.sh-rev__producto { font-family:var(--font-body); font-weight:600; font-size:var(--text-2xs);
+  color:var(--grape-700); text-decoration:none; border-bottom:1px solid var(--grape-200); padding-bottom:1px; }
+.sh-rev__pie { text-align:center; margin-top:var(--space-8); }
+.sh-lightbox { border:0; padding:0; background:transparent; max-width:min(92vw,720px);
+  max-height:90vh; border-radius:var(--radius-lg); overflow:visible; }
+.sh-lightbox::backdrop { background:rgba(61,49,69,.72); }
+.sh-lightbox img { display:block; width:100%; height:auto; max-height:90vh; object-fit:contain;
+  border-radius:var(--radius-lg); }
+.sh-lightbox__x {
+  position:absolute; top:-14px; right:-14px; width:40px; height:40px;
+  border-radius:var(--radius-pill); appearance:none; cursor:pointer;
+  background:var(--white); color:var(--ink-700);
+  border:1px solid var(--border-soft); box-shadow:var(--shadow-md);
+  font-family:var(--font-display); font-size:var(--text-lg); line-height:1;
+}
+
 /* --------- tamaño real --------- */
 .sh-size__item { display:flex; flex-direction:column; gap:var(--space-3); text-align:center; }
 .sh-size__medida { align-self:center; font-family:var(--font-display); font-weight:600; font-size:var(--text-2xl); color:var(--text-heading); line-height:1; }
@@ -842,7 +884,7 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
     <div class="sh__wrap">
       <div class="sh-squish" data-sh-squish data-sh-estado="libre"
            data-sh-sonido="1" data-sh-brillos="1" data-sh-rebote="slow"
-           data-sh-cuenta-texto="Lo has apretado {{ veces }} veces"
+           data-sh-cuenta-texto="Lo has apretado [veces] veces"
            data-sh-cuenta-una="Lo has apretado 1 vez"
            data-sh-premio="Ya somos amigos. Este es el que más se aprieta en la tienda."
            data-sh-premio-en="25">
@@ -971,6 +1013,51 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
           <div class="sh-story__cta"><a href="#" class="sh-btn sh-btn--grape">Ver toda la tienda</a></div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="sh" data-tone="white">
+    <div class="fix"><b>Prioridad 1 · Confianza</b>Sección nueva. Reseñas con la foto real que manda el cliente, sin pagar una app de reseñas. El promedio no se escribe a mano: se calcula sumando las reseñas publicadas, así el número siempre se puede comprobar en la propia página. Aquí viene apagado porque tres reseñas y un 4,7 no son un promedio.</div>
+    <div class="sh__wrap">
+      <div class="sh__head" data-align="center">
+        <p class="sh__eyebrow">Fotos de quienes ya lo tienen</p>
+        <h2 class="sh__title">Así llega a casa</h2>
+        <p class="sh__sub">Fotos que nos mandan los clientes después de recibir su pedido. Sin retoque y sin estudio: el squishy tal como se ve en una mesa cualquiera.</p>
+      </div>
+      <div class="sh-grid" style="--sh-cols:3;--sh-cols-t:3;--sh-cols-m:1" data-mobile="scroll">
+
+        <figure class="sh-card sh-rev">
+          <span class="sh-photo" data-tone="0" style="aspect-ratio:4/5"><span class="sh-photo__note"><span>Foto del cliente con el squishy recibido, sin retoque, tal como la manda.</span></span></span>
+          <figcaption class="sh-rev__body">
+            <span class="sh-rating__stars" aria-label="5 de 5"><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg></span>
+            <blockquote class="sh-rev__texto">Llegó en una semana y es igual que en las fotos. La textura es lo mejor, no lo suelto.</blockquote>
+            <p class="sh-rev__quien"><strong>Camila R.</strong><span class="sh-rev__ok"><svg width="13" height="13"><use href="#i-shield"/></svg>Compra verificada</span></p>
+            <a class="sh-rev__producto" href="#">Squishy Fresa Jumbo</a>
+          </figcaption>
+        </figure>
+
+        <figure class="sh-card sh-rev">
+          <span class="sh-photo" data-tone="2" style="aspect-ratio:4/5"><span class="sh-photo__note"><span>Foto del cliente con el squishy recibido, sin retoque, tal como la manda.</span></span></span>
+          <figcaption class="sh-rev__body">
+            <span class="sh-rating__stars" aria-label="5 de 5"><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg></span>
+            <blockquote class="sh-rev__texto">Lo compré de regalo y terminé pidiendo otro para mí. Se siente exactamente como esperaba.</blockquote>
+            <p class="sh-rev__quien"><strong>Diego M.</strong><span class="sh-rev__ok"><svg width="13" height="13"><use href="#i-shield"/></svg>Compra verificada</span></p>
+            <a class="sh-rev__producto" href="#">Patito Anti-Estrés</a>
+          </figcaption>
+        </figure>
+
+        <figure class="sh-card sh-rev">
+          <span class="sh-photo" data-tone="1" style="aspect-ratio:4/5"><span class="sh-photo__note"><span>Foto del cliente con el squishy recibido, sin retoque, tal como la manda.</span></span></span>
+          <figcaption class="sh-rev__body">
+            <span class="sh-rating__stars" aria-label="4 de 5"><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><svg width="15" height="15"><use href="#i-star"/></svg><span class="sh-rating__vacia"><svg width="15" height="15"><use href="#i-star"/></svg></span></span>
+            <blockquote class="sh-rev__texto">Tardó un poco más de lo que decía, pero me avisaron por correo y llegó perfecto. El tamaño es el que pone en la ficha.</blockquote>
+            <p class="sh-rev__quien"><strong>Valentina P.</strong><span class="sh-rev__ok"><svg width="13" height="13"><use href="#i-shield"/></svg>Compra verificada</span></p>
+            <a class="sh-rev__producto" href="#">Mini Sandía Satisfying</a>
+          </figcaption>
+        </figure>
+
+      </div>
+      <p class="sh-note sh-rev__pie">Publicamos las fotos con permiso de cada persona. ¿Quieres que salga la tuya? Respóndenos al correo de tu pedido.</p>
     </div>
   </section>
 
@@ -1517,7 +1604,7 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
       var texto = (cuenta === 1 && plantillaUna) ? plantillaUna : plantilla;
       // Si el merchant no puso el hueco, se respeta su texto tal cual en vez
       // de pegarle un número al final.
-      marcador.textContent = texto.replace('{{ veces }}', cuenta);
+      marcador.textContent = texto.replace('[veces]', cuenta);
     }
 
     function pintarMute() {
@@ -1638,6 +1725,49 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
   }
 
   /* ============================================================
+     Foto de reseña en grande
+
+     <dialog> hace el trabajo pesado: cierra con Escape, atrapa el foco
+     dentro y deja el resto de la página inerte. Nada de eso hay que
+     programarlo, y ninguna librería lo hace mejor.
+     ============================================================ */
+  var visor = null;
+  var visorListo = false;
+
+  function abrirFoto(src, alt) {
+    if (!visor) {
+      visor = document.createElement('dialog');
+      visor.className = 'sh-lightbox';
+      var img = document.createElement('img');
+      var cerrar = document.createElement('button');
+      cerrar.type = 'button';
+      cerrar.className = 'sh-lightbox__x';
+      cerrar.setAttribute('aria-label', 'Cerrar');
+      cerrar.textContent = '×';
+      cerrar.addEventListener('click', function () { visor.close(); });
+      visor.appendChild(img);
+      visor.appendChild(cerrar);
+      // Clic fuera de la imagen: el backdrop es el propio dialog.
+      visor.addEventListener('click', function (e) { if (e.target === visor) visor.close(); });
+      document.body.appendChild(visor);
+    }
+    var foto = visor.querySelector('img');
+    foto.src = src;
+    foto.alt = alt || '';
+    if (visor.showModal) visor.showModal();
+  }
+
+  function activarVisor() {
+    if (visorListo) return;
+    visorListo = true;
+    document.addEventListener('click', function (e) {
+      var boton = e.target.closest && e.target.closest('[data-sh-foto]');
+      if (!boton) return;
+      abrirFoto(boton.dataset.shFoto, boton.dataset.shAlt);
+    });
+  }
+
+  /* ============================================================
      Arranque
      ============================================================ */
   function iniciar(ambito) {
@@ -1653,6 +1783,8 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
         movil: fx.dataset.shMovil !== '0'
       });
     }
+
+    if (document.querySelector('[data-sh-foto]')) activarVisor();
   }
 
   if (document.readyState === 'loading') {

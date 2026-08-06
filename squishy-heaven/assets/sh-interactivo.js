@@ -203,7 +203,7 @@
       var texto = (cuenta === 1 && plantillaUna) ? plantillaUna : plantilla;
       // Si el merchant no puso el hueco, se respeta su texto tal cual en vez
       // de pegarle un número al final.
-      marcador.textContent = texto.replace('{{ veces }}', cuenta);
+      marcador.textContent = texto.replace('[veces]', cuenta);
     }
 
     function pintarMute() {
@@ -324,6 +324,49 @@
   }
 
   /* ============================================================
+     Foto de reseña en grande
+
+     <dialog> hace el trabajo pesado: cierra con Escape, atrapa el foco
+     dentro y deja el resto de la página inerte. Nada de eso hay que
+     programarlo, y ninguna librería lo hace mejor.
+     ============================================================ */
+  var visor = null;
+  var visorListo = false;
+
+  function abrirFoto(src, alt) {
+    if (!visor) {
+      visor = document.createElement('dialog');
+      visor.className = 'sh-lightbox';
+      var img = document.createElement('img');
+      var cerrar = document.createElement('button');
+      cerrar.type = 'button';
+      cerrar.className = 'sh-lightbox__x';
+      cerrar.setAttribute('aria-label', 'Cerrar');
+      cerrar.textContent = '×';
+      cerrar.addEventListener('click', function () { visor.close(); });
+      visor.appendChild(img);
+      visor.appendChild(cerrar);
+      // Clic fuera de la imagen: el backdrop es el propio dialog.
+      visor.addEventListener('click', function (e) { if (e.target === visor) visor.close(); });
+      document.body.appendChild(visor);
+    }
+    var foto = visor.querySelector('img');
+    foto.src = src;
+    foto.alt = alt || '';
+    if (visor.showModal) visor.showModal();
+  }
+
+  function activarVisor() {
+    if (visorListo) return;
+    visorListo = true;
+    document.addEventListener('click', function (e) {
+      var boton = e.target.closest && e.target.closest('[data-sh-foto]');
+      if (!boton) return;
+      abrirFoto(boton.dataset.shFoto, boton.dataset.shAlt);
+    });
+  }
+
+  /* ============================================================
      Arranque
      ============================================================ */
   function iniciar(ambito) {
@@ -339,6 +382,8 @@
         movil: fx.dataset.shMovil !== '0'
       });
     }
+
+    if (document.querySelector('[data-sh-foto]')) activarVisor();
   }
 
   if (document.readyState === 'loading') {

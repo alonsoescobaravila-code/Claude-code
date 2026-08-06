@@ -115,7 +115,7 @@
         "sound_off_label": "Sonido silenciado",
         "sparkles_on_squish": true,
         "show_counter": true,
-        "counter_label": "Lo has apretado {{ veces }} veces",
+        "counter_label": "Lo has apretado [veces] veces",
         "counter_label_one": "Lo has apretado 1 vez",
         "milestone_label": "Ya somos amigos. Este es el que más se aprieta en la tienda.",
         "milestone_at": 25,
@@ -312,6 +312,71 @@
         "pad_bottom_mobile": 48
       }
     },
+    "resenas": {
+      "type": "sh-resenas",
+      "blocks": {
+        "r1": {
+          "type": "resena",
+          "settings": {
+            "stars": 5,
+            "text": "Llegó en una semana y es igual que en las fotos. La textura es lo mejor, no lo suelto.",
+            "author": "Camila R.",
+            "verified": true,
+            "alt_text": "Squishy de fresa sobre un escritorio de madera",
+            "photo_brief": "Foto del cliente con el squishy recibido, sin retoque, tal como la manda.",
+            "photo_tone": "0"
+          }
+        },
+        "r2": {
+          "type": "resena",
+          "settings": {
+            "stars": 5,
+            "text": "Lo compré de regalo y terminé pidiendo otro para mí. Se siente exactamente como esperaba.",
+            "author": "Diego M.",
+            "verified": true,
+            "alt_text": "Squishy de pato sostenido en una mano",
+            "photo_brief": "Foto del cliente con el squishy recibido, sin retoque, tal como la manda.",
+            "photo_tone": "2"
+          }
+        },
+        "r3": {
+          "type": "resena",
+          "settings": {
+            "stars": 4,
+            "text": "Tardó un poco más de lo que decía, pero me avisaron por correo y llegó perfecto. El tamaño es el que pone en la ficha.",
+            "author": "Valentina P.",
+            "verified": true,
+            "alt_text": "Squishy junto a una taza para comparar el tamaño",
+            "photo_brief": "Foto del cliente con el squishy recibido, sin retoque, tal como la manda.",
+            "photo_tone": "1"
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "settings": {
+        "eyebrow": "Fotos de quienes ya lo tienen",
+        "heading": "Así llega a casa",
+        "body": "Fotos que nos mandan los clientes después de recibir su pedido. Sin retoque y sin estudio: el squishy tal como se ve en una mesa cualquiera.",
+        "footnote": "Publicamos las fotos con permiso de cada persona. ¿Quieres que salga la tuya? Respóndenos al correo de tu pedido.",
+        "show_average": false,
+        "average_label": "sobre [total] reseñas publicadas",
+        "verified_label": "Compra verificada",
+        "zoom_label": "Ver la foto en grande",
+        "tone": "white",
+        "align": "center",
+        "photo_ratio": "4/5",
+        "columns": 3,
+        "columns_mobile": "scroll",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
     "confianza": {
       "type": "sh-trust-row",
       "blocks": {
@@ -448,6 +513,7 @@
     "tamano",
     "textura",
     "historia",
+    "resenas",
     "confianza",
     "faq",
     "newsletter",
