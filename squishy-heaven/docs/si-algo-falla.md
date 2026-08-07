@@ -21,6 +21,23 @@ Ordenado por lo que ves, no por lo que lo causa. Busca tu síntoma.
    termina en `{% endschema %}`. Si no, vuelve a subirlo entero o usa
    `shopify theme push`.
 
+### «Invalid schema: 'X' is not a valid attribute»
+
+Shopify valida el `{% schema %}` **al guardar**, y es más estricto que cualquier
+linter. Si te sale, el archivo no se guardó: la tienda sigue con la versión
+anterior, no se rompió nada.
+
+Ya pasó una vez con este paquete, con `max_blocks`. Está en la documentación de
+Shopify y el propio Horizon lo usa, pero solo en secciones cuyos bloques son
+referencias a archivos de `blocks/`. En una sección que define sus bloques en
+línea —como las de aquí— el servidor lo rechaza. Se quitó de las tres secciones
+que lo tenían y el número recomendado pasó al texto que se lee en el editor.
+
+Si te aparece con otro atributo después de editar tú un schema: bórralo, guarda,
+y si lo necesitabas búscalo en la documentación de Shopify para ver con qué se
+puede combinar. La carpeta `verificar/` trae `pasada1b.mjs`, que compara todos
+los schemas contra la lista de atributos válidos y contra un Horizon real.
+
 ### «Unknown tag 'doc'» o similar al abrir un snippet
 
 Tu tema es de una versión anterior a la que soporta `{% doc %}`. No rompe nada
