@@ -1,0 +1,533 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Zona de contacto.
+
+  Usa el formulario nativo de Shopify, así que los mensajes llegan al correo de
+  la tienda sin apps ni servicios de terceros. El campo de número de pedido y el
+  motivo van dentro del cuerpo del mensaje, que es como Shopify entrega los
+  campos extra.
+
+  Los accesos rápidos y las respuestas de abajo solo se dibujan si su destino
+  existe de verdad: una política sin escribir no deja un enlace muerto.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign correo = s.contact_email | default: shop.email
+-%}
+
+<section class="sh sh-contacto" data-tone="{{ s.tone }}" id="contacto" {% render 'sh-section-attrs', s: s %}>
+  <div class="sh__wrap">
+    <div class="sh-contacto__grid">
+
+      <div class="sh-contacto__lado">
+        {%- if s.eyebrow != blank -%}
+          <p class="sh__eyebrow">{{ s.eyebrow }}</p>
+        {%- endif -%}
+
+        {%- assign sh_tag = s.heading_tag | default: 'h1' -%}
+        <{{ sh_tag }} class="sh__title">{{ s.heading }}</{{ sh_tag }}>
+
+        {%- if s.body != blank -%}
+          <p class="sh__sub">{{ s.body }}</p>
+        {%- endif -%}
+
+        <div class="sh-contacto__directo">
+          <p class="sh-contacto__dato">
+            <span class="sh-contacto__dato-et">{{ s.email_label }}</span>
+            <a href="mailto:{{ correo | escape }}" class="sh-contacto__correo">{{ correo }}</a>
+          </p>
+          {%- if s.response_time != blank -%}
+            <p class="sh-contacto__dato">
+              <span class="sh-contacto__dato-et">{{ s.response_label }}</span>
+              <strong>{{ s.response_time }}</strong>
+            </p>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Accesos rápidos: cada uno solo aparece si su destino existe. {%- endcomment -%}
+        {%- capture atajos -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'atajo' -%}
+              {%- capture destino -%}
+                {%- render 'sh-destino',
+                    tipo: block.settings.destino,
+                    producto: block.settings.producto,
+                    coleccion: block.settings.coleccion,
+                    pagina: block.settings.pagina,
+                    url: block.settings.url -%}
+              {%- endcapture -%}
+              {%- assign destino = destino | strip -%}
+              {%- if destino != blank and block.settings.label != blank -%}
+                <a href="{{ destino }}" class="sh-chip" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {%- assign atajos = atajos | strip -%}
+        {%- if atajos != blank -%}
+          <nav class="sh-contacto__atajos" aria-label="{{ s.shortcuts_label | escape }}">{{ atajos }}</nav>
+        {%- endif -%}
+
+        {%- comment -%} Respuestas rápidas: acordeones con ancla propia. {%- endcomment -%}
+        {%- assign hay_faq = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'respuesta' -%}{%- assign hay_faq = true -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if hay_faq -%}
+          <div class="sh-faq sh-contacto__faq">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'respuesta' -%}
+                <details class="sh-faq__item" id="{{ block.settings.ancla | default: block.id | handle }}" {{ block.shopify_attributes }}>
+                  <summary class="sh-faq__q">
+                    {{ block.settings.question }}
+                    {% render 'sh-icon', name: 'chevron-down', size: 20 %}
+                  </summary>
+                  <div class="sh-faq__a">
+                    {{ block.settings.answer }}
+                    {%- capture destino -%}
+                      {%- render 'sh-destino',
+                          tipo: block.settings.destino,
+                          producto: block.settings.producto,
+                          coleccion: block.settings.coleccion,
+                          pagina: block.settings.pagina,
+                          url: block.settings.url -%}
+                    {%- endcapture -%}
+                    {%- assign destino = destino | strip -%}
+                    {%- if destino != blank and block.settings.link_label != blank -%}
+                      <p><a href="{{ destino }}" class="sh-contacto__mas">{{ block.settings.link_label }}</a></p>
+                    {%- endif -%}
+                  </div>
+                </details>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="sh-contacto__panel">
+        <h2 class="sh-contacto__panel-t">{{ s.form_heading }}</h2>
+        {%- if s.form_intro != blank -%}
+          <p class="sh-contacto__panel-s">{{ s.form_intro }}</p>
+        {%- endif -%}
+
+        {%- form 'contact', id: 'sh-contacto-form', class: 'sh-contacto__form' -%}
+          {%- if form.posted_successfully? -%}
+            <p class="sh-form-msg sh-form-msg--ok" role="status" tabindex="-1">{{ s.success_text }}</p>
+          {%- endif -%}
+
+          {%- if form.errors -%}
+            <div class="sh-form-msg sh-form-msg--err" role="alert" tabindex="-1">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+
+          <p class="sh-contacto__campo">
+            <label for="sh-nombre">{{ s.name_label }}</label>
+            <input type="text" id="sh-nombre" name="contact[name]" class="sh-input" autocomplete="name"
+                   value="{{ form.name | default: customer.name | escape }}" required>
+          </p>
+
+          <p class="sh-contacto__campo">
+            <label for="sh-email">{{ s.email_field_label }}</label>
+            <input type="email" id="sh-email" name="contact[email]" class="sh-input" autocomplete="email"
+                   spellcheck="false" value="{{ form.email | default: customer.email | escape }}" required>
+          </p>
+
+          {%- if s.show_order -%}
+            <p class="sh-contacto__campo">
+              <label for="sh-pedido">{{ s.order_label }}</label>
+              <input type="text" id="sh-pedido" name="contact[Numero de pedido]" class="sh-input"
+                     placeholder="{{ s.order_placeholder | escape }}">
+            </p>
+          {%- endif -%}
+
+          {%- assign motivos = s.reasons | split: '|' -%}
+          {%- if motivos.size > 0 -%}
+            <p class="sh-contacto__campo">
+              <label for="sh-motivo">{{ s.reason_label }}</label>
+              <select id="sh-motivo" name="contact[Motivo]" class="sh-input sh-contacto__select">
+                {%- for m in motivos -%}
+                  <option value="{{ m | strip | escape }}">{{ m | strip }}</option>
+                {%- endfor -%}
+              </select>
+            </p>
+          {%- endif -%}
+
+          <p class="sh-contacto__campo">
+            <label for="sh-mensaje">{{ s.message_label }}</label>
+            <textarea id="sh-mensaje" name="contact[body]" class="sh-input sh-contacto__area" rows="5"
+                      placeholder="{{ s.message_placeholder | escape }}" required>{{ form.body }}</textarea>
+          </p>
+
+          <button type="submit" class="sh-btn sh-btn--primary sh-btn--lg sh-btn--block">{{ s.submit_label }}</button>
+
+          {%- if s.legal_note != blank -%}
+            <p class="sh-note">{{ s.legal_note }}</p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sh-contacto__panel-t { font-family: var(--font-display); font-weight: 600;
+    font-size: var(--text-xl); color: var(--text-heading); margin: 0 0 var(--space-2); }
+  .sh-contacto__panel-s { margin: 0 0 var(--space-6); font-size: var(--text-sm); color: var(--text-muted); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Contacto",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Formulario nativo de Shopify: los mensajes llegan al correo de la tienda, sin apps. Los accesos rápidos y las respuestas de abajo solo se muestran si su destino existe — una política que aún no has escrito no deja un enlace roto."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Antetítulo",
+      "default": "Hablamos"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titular",
+      "default": "¿Te ayudamos con algo?"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto",
+      "default": "Escríbenos por lo que sea: una duda antes de comprar, un pedido en camino o algo que llegó mal. Contestamos personas, no un robot."
+    },
+    {
+      "type": "header",
+      "content": "Contacto directo"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Correo de contacto",
+      "info": "Si lo dejas vacío usa el correo de la tienda. Revisa que esté bien escrito: un correo con una letra de más no da error, simplemente nadie recibe nada."
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Etiqueta del correo",
+      "default": "Escríbenos a"
+    },
+    {
+      "type": "text",
+      "id": "response_label",
+      "label": "Etiqueta del tiempo de respuesta",
+      "default": "Respondemos en"
+    },
+    {
+      "type": "text",
+      "id": "response_time",
+      "label": "Tiempo de respuesta",
+      "info": "Pon el plazo que puedas cumplir de verdad, no el que suena mejor.",
+      "default": "menos de 24 horas hábiles"
+    },
+    {
+      "type": "text",
+      "id": "shortcuts_label",
+      "label": "Nombre de los accesos rápidos (lectores de pantalla)",
+      "default": "Accesos rápidos"
+    },
+    {
+      "type": "header",
+      "content": "Formulario"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Titular del formulario",
+      "default": "Cuéntanos"
+    },
+    {
+      "type": "text",
+      "id": "form_intro",
+      "label": "Texto del formulario",
+      "default": "Mientras más detalles nos des, menos correos de ida y vuelta."
+    },
+    {
+      "type": "text",
+      "id": "name_label",
+      "label": "Etiqueta: nombre",
+      "default": "Tu nombre"
+    },
+    {
+      "type": "text",
+      "id": "email_field_label",
+      "label": "Etiqueta: correo",
+      "default": "Tu correo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_order",
+      "label": "Pedir número de pedido",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "order_label",
+      "label": "Etiqueta: número de pedido",
+      "default": "Número de pedido (si ya compraste)"
+    },
+    {
+      "type": "text",
+      "id": "order_placeholder",
+      "label": "Ejemplo del número de pedido",
+      "default": "#1234"
+    },
+    {
+      "type": "text",
+      "id": "reason_label",
+      "label": "Etiqueta: motivo",
+      "default": "¿De qué se trata?"
+    },
+    {
+      "type": "text",
+      "id": "reasons",
+      "label": "Motivos (separados por |)",
+      "default": "Una duda antes de comprar | Mi pedido en camino | Llegó dañado o incompleto | Cambio o devolución | Otra cosa"
+    },
+    {
+      "type": "text",
+      "id": "message_label",
+      "label": "Etiqueta: mensaje",
+      "default": "Tu mensaje"
+    },
+    {
+      "type": "text",
+      "id": "message_placeholder",
+      "label": "Ejemplo del mensaje",
+      "default": "Cuéntanos qué pasó. Si llegó dañado, adjunta una foto respondiendo al correo que te llegue."
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Texto del botón",
+      "default": "Enviar mensaje"
+    },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Mensaje al enviar",
+      "default": "Recibido. Te contestamos al correo que nos dejaste."
+    },
+    {
+      "type": "textarea",
+      "id": "legal_note",
+      "label": "Nota bajo el botón",
+      "default": "Usamos tu correo solo para responderte."
+    },
+    {
+      "type": "header",
+      "content": "Fondo"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        { "value": "cream", "label": "Crema" },
+        { "value": "white", "label": "Blanco" },
+        { "value": "pink", "label": "Rosa 50" },
+        { "value": "grape", "label": "Uva 50" },
+        { "value": "mint", "label": "Menta 50" },
+        { "value": "sky", "label": "Cielo 50" },
+        { "value": "yellow", "label": "Amarillo 50" }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta del titular",
+      "info": "H1 si esta sección es el encabezado de la página de contacto. H2 si la pones dentro de otra página que ya tiene su H1.",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "label": "Espacio arriba (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "label": "Espacio abajo (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Espacio arriba (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Espacio abajo (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "atajo",
+      "name": "Acceso rápido",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Texto",
+          "default": "Ver productos"
+        },
+        {
+          "type": "select",
+          "id": "destino",
+          "label": "A dónde lleva",
+          "info": "Si eliges una política que todavía no has escrito en Admin, este acceso no se muestra. Es a propósito: mejor que no aparezca a que lleve a una página en blanco.",
+          "options": [
+            { "value": "catalogo", "label": "Todos los productos" },
+            { "value": "coleccion", "label": "Una colección" },
+            { "value": "producto", "label": "Un producto" },
+            { "value": "pagina", "label": "Una página" },
+            { "value": "reembolso", "label": "Política de reembolso" },
+            { "value": "envio", "label": "Política de envío" },
+            { "value": "privacidad", "label": "Política de privacidad" },
+            { "value": "terminos", "label": "Términos del servicio" },
+            { "value": "carrito", "label": "El carrito" },
+            { "value": "buscar", "label": "El buscador" },
+            { "value": "url", "label": "Una dirección que yo escriba" }
+          ],
+          "default": "catalogo"
+        },
+        { "type": "collection", "id": "coleccion", "label": "Colección" },
+        { "type": "product", "id": "producto", "label": "Producto" },
+        { "type": "page", "id": "pagina", "label": "Página" },
+        { "type": "url", "id": "url", "label": "Dirección propia" }
+      ]
+    },
+    {
+      "type": "respuesta",
+      "name": "Respuesta rápida",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Pregunta",
+          "default": "¿Y si llega dañado?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta",
+          "default": "<p>Escríbenos con una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso. No necesitas devolver un producto dañado.</p>"
+        },
+        {
+          "type": "text",
+          "id": "ancla",
+          "label": "Ancla",
+          "info": "Para poder enlazar directo a esta respuesta desde el pie de página. Solo letras minúsculas y guiones.",
+          "default": "ayuda-y-reembolsos"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Texto del enlace de la respuesta"
+        },
+        {
+          "type": "select",
+          "id": "destino",
+          "label": "A dónde lleva ese enlace",
+          "options": [
+            { "value": "", "label": "A ningún sitio" },
+            { "value": "catalogo", "label": "Todos los productos" },
+            { "value": "coleccion", "label": "Una colección" },
+            { "value": "producto", "label": "Un producto" },
+            { "value": "pagina", "label": "Una página" },
+            { "value": "reembolso", "label": "Política de reembolso" },
+            { "value": "envio", "label": "Política de envío" },
+            { "value": "privacidad", "label": "Política de privacidad" },
+            { "value": "terminos", "label": "Términos del servicio" },
+            { "value": "url", "label": "Una dirección que yo escriba" }
+          ],
+          "default": ""
+        },
+        { "type": "collection", "id": "coleccion", "label": "Colección" },
+        { "type": "product", "id": "producto", "label": "Producto" },
+        { "type": "page", "id": "pagina", "label": "Página" },
+        { "type": "url", "id": "url", "label": "Dirección propia" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Contacto",
+      "blocks": [
+        { "type": "atajo", "settings": { "label": "Ver productos", "destino": "catalogo" } },
+        { "type": "atajo", "settings": { "label": "Política de reembolso", "destino": "reembolso" } },
+        { "type": "atajo", "settings": { "label": "Privacidad", "destino": "privacidad" } },
+        {
+          "type": "respuesta",
+          "settings": {
+            "question": "¿Y si llega dañado?",
+            "ancla": "ayuda-y-reembolsos",
+            "answer": "<p>Escríbenos con una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso. No necesitas devolver un producto dañado.</p>"
+          }
+        },
+        {
+          "type": "respuesta",
+          "settings": {
+            "question": "¿Dónde está mi pedido?",
+            "ancla": "donde-esta-mi-pedido",
+            "answer": "<p>Te mandamos el número de seguimiento por correo apenas sale del almacén. Si no lo encuentras, revisa spam y escríbenos con tu número de pedido.</p>"
+          }
+        },
+        {
+          "type": "respuesta",
+          "settings": {
+            "question": "¿Puedo cambiar mi pedido?",
+            "ancla": "cambiar-mi-pedido",
+            "answer": "<p>Si todavía no salió del almacén, sí. Escríbenos lo antes posible con el número de pedido y lo ajustamos.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

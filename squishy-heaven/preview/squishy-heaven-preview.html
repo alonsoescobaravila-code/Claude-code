@@ -1768,6 +1768,27 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
   }
 
   /* ============================================================
+     Marquesina — solo el botón de pausa
+
+     El movimiento y la parada al pasar el ratón o al enfocar son CSS puro.
+     Esto solo añade el botón, porque un texto que se mueve tiene que poder
+     pararse también con un clic, no solo dejando el cursor encima.
+     ============================================================ */
+  function montarMarquesina(raiz) {
+    if (raiz.dataset.shListo === '1') return;
+    raiz.dataset.shListo = '1';
+
+    var btn = raiz.querySelector('[data-sh-marq-btn]');
+    if (!btn) return;
+
+    btn.addEventListener('click', function () {
+      var parada = raiz.dataset.parada === '1';
+      raiz.dataset.parada = parada ? '0' : '1';
+      btn.setAttribute('aria-pressed', parada ? 'false' : 'true');
+    });
+  }
+
+  /* ============================================================
      Arranque
      ============================================================ */
   function iniciar(ambito) {
@@ -1775,6 +1796,9 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active { transform:scale(1.02
 
     var juguetes = alcance.querySelectorAll('[data-sh-squish]');
     for (var i = 0; i < juguetes.length; i++) montarSquish(juguetes[i]);
+
+    var cintas = alcance.querySelectorAll('[data-sh-pausa="true"]');
+    for (var j = 0; j < cintas.length; j++) montarMarquesina(cintas[j]);
 
     var fx = document.querySelector('[data-sh-sparkles]');
     if (fx) {

@@ -564,6 +564,168 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active {
 .sh-squish__acciones { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-8); }
 
 /* ============================================================
+   Contacto
+   ============================================================ */
+.sh-contacto__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12); align-items: start; }
+.sh-contacto__directo {
+  margin-top: var(--space-8); padding: var(--space-5) var(--space-6);
+  background: var(--white); border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+}
+.sh-contacto__dato { margin: 0; display: flex; flex-wrap: wrap; gap: 4px var(--space-3); align-items: baseline;
+  font-family: var(--font-body); font-size: var(--text-sm); }
+.sh-contacto__dato + .sh-contacto__dato { margin-top: var(--space-3); }
+.sh-contacto__dato-et { color: var(--text-muted); font-weight: 600; }
+.sh-contacto__correo { font-family: var(--font-display); font-weight: 600; font-size: var(--text-base);
+  color: var(--grape-700); word-break: break-all; }
+.sh-contacto__atajos { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+.sh-contacto__faq { margin-top: var(--space-8); }
+.sh-contacto__mas { font-family: var(--font-body); font-weight: 700; font-size: var(--text-xs); color: var(--grape-700); }
+
+.sh-contacto__panel {
+  background: var(--white); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-2xl); padding: var(--space-10); box-shadow: var(--shadow-md);
+}
+.sh-contacto__campo { margin: 0 0 var(--space-5); }
+.sh-contacto__campo label {
+  display: block; margin-bottom: var(--space-2);
+  font-family: var(--font-body); font-weight: 700; font-size: var(--text-xs); color: var(--text-heading);
+}
+.sh-contacto__campo .sh-input { width: 100%; flex: none; }
+.sh-contacto__area { border-radius: var(--radius-md); resize: vertical; min-height: 128px; line-height: var(--leading-normal); }
+/* La flecha del select la dibuja el navegador; solo se le hace sitio. */
+.sh-contacto__select { padding-right: var(--space-10); cursor: pointer; }
+.sh-contacto__form .sh-form-msg { margin: 0 0 var(--space-5); padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md); }
+.sh-contacto__form .sh-form-msg--ok { background: var(--mint-100); }
+.sh-contacto__form .sh-form-msg--err { background: var(--pink-100); }
+.sh-contacto__form .sh-form-msg ul { margin: 0; padding-left: 18px; }
+.sh-contacto__form .sh-note { text-align: center; }
+
+/* ============================================================
+   Marquesina
+   ============================================================ */
+.sh-marq { position: relative; overflow: hidden; padding-block: var(--space-4); }
+.sh-marq__pista { display: flex; width: max-content; }
+.sh-marq__cinta {
+  display: flex; align-items: center; flex: none;
+  animation: sh-marq-correr var(--sh-marq-vel, 30s) linear infinite;
+  will-change: transform;
+}
+@keyframes sh-marq-correr { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+/* Se para al pasar el ratón y al llegar con el teclado a un mensaje.
+   El focus-within va en la pista, no en la sección: si fuera en la sección, el
+   botón de pausa —que queda enfocado después de pulsarlo— dejaría la cinta
+   parada para siempre y el botón de reanudar no serviría de nada. */
+.sh-marq:hover .sh-marq__cinta,
+.sh-marq__pista:focus-within .sh-marq__cinta,
+.sh-marq[data-parada="1"] .sh-marq__cinta { animation-play-state: paused; }
+
+/* Y no arranca siquiera si el visitante pidió menos movimiento: la cinta se
+   queda quieta y se puede leer entera desplazando a mano. */
+@media (prefers-reduced-motion: reduce) {
+  .sh-marq__cinta { animation: none; }
+  .sh-marq__pista { width: 100%; overflow-x: auto; }
+  .sh-marq__cinta[aria-hidden="true"] { display: none; }
+}
+
+.sh-marq__item {
+  display: inline-flex; align-items: center; gap: 9px; white-space: nowrap;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--text-xs);
+  color: var(--ink-700); text-decoration: none;
+}
+.sh-marq__item svg { flex: none; color: var(--grape-700); }
+.sh-marq__item--link { border-radius: var(--radius-pill); padding: 6px 4px; }
+.sh-marq__item--link:hover span { text-decoration: underline; }
+.sh-marq__item--link:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
+.sh-marq__sep { padding: 0 var(--space-6); color: var(--ink-400); }
+
+.sh-marq__btn {
+  position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
+  width: 30px; height: 30px; border-radius: var(--radius-pill);
+  appearance: none; cursor: pointer; padding: 0;
+  background: var(--white); border: 1px solid var(--border-soft); box-shadow: var(--shadow-xs);
+  display: flex; align-items: center; justify-content: center;
+}
+/* El botón se ve de 30px porque la cinta es fina, pero se toca en 44: el área
+   sensible se estira con un pseudo-elemento invisible en vez de engordar el
+   dibujo. */
+.sh-marq__btn::before { content: ""; position: absolute; inset: -7px; border-radius: inherit; }
+.sh-marq__btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
+/* Dos barras = pausa. Al estar pausada pasa a un triángulo de reproducir. */
+.sh-marq__btn-ico { width: 10px; height: 11px; background: var(--ink-700);
+  clip-path: polygon(0 0,35% 0,35% 100%,0 100%,0 0,65% 0,100% 0,100% 100%,65% 100%,65% 0); }
+.sh-marq__btn[aria-pressed="true"] .sh-marq__btn-ico {
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+@media (prefers-reduced-motion: reduce) { .sh-marq__btn { display: none; } }
+
+/* ============================================================
+   Pie de página
+   ============================================================ */
+.sh-pie { border-top: 1px solid var(--border-soft); }
+.sh-pie__alto { display: grid; grid-template-columns: 1.2fr 2fr; gap: var(--space-12); }
+.sh-pie__nombre {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xl);
+  color: var(--text-heading); text-decoration: none; display: inline-block;
+}
+.sh-pie__logo { display: inline-block; max-width: 180px; }
+.sh-pie__logo img { width: 100%; height: auto; display: block; }
+.sh-pie__tagline { margin: var(--space-4) 0 0; max-width: 34ch;
+  font-family: var(--font-body); font-size: var(--text-sm); color: var(--text-muted); }
+.sh-pie__correo { margin: var(--space-5) 0 0; font-family: var(--font-body); font-weight: 700; font-size: var(--text-sm); }
+.sh-pie__correo a { color: var(--grape-700); }
+.sh-pie__redes { display: flex; gap: var(--space-3); margin-top: var(--space-5); }
+.sh-pie__red {
+  width: 44px; height: 44px; border-radius: var(--radius-pill);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--white); border: 1px solid var(--border-soft); color: var(--ink-700);
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-xs); text-decoration: none;
+  transition: transform var(--duration-base) var(--ease-squish), box-shadow var(--duration-base) var(--ease-squish);
+}
+.sh-pie__red:hover { transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+.sh-pie__red:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--focus-ring); }
+
+.sh-pie__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-8); }
+.sh-pie__col-t {
+  font-family: var(--font-body); font-weight: 700; font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-caps); text-transform: uppercase;
+  color: var(--text-faint); margin: 0 0 var(--space-4);
+}
+.sh-pie__lista { list-style: none; margin: 0; padding: 0; }
+.sh-pie__lista li { margin-bottom: 2px; }
+.sh-pie__lista a {
+  display: inline-block; padding: 9px 0; min-height: 44px;
+  font-family: var(--font-body); font-size: var(--text-sm); color: var(--text-body); text-decoration: none;
+}
+.sh-pie__lista a:hover { color: var(--grape-700); text-decoration: underline; }
+.sh-pie__lista a:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); border-radius: var(--radius-xs); }
+
+.sh-pie__senales {
+  display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-8);
+  list-style: none; margin: var(--space-12) 0 0; padding: var(--space-6) 0 0;
+  border-top: 1px solid var(--border-soft);
+}
+.sh-pie__senales li { display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-body); font-weight: 600; font-size: var(--text-xs); color: var(--text-muted); }
+.sh-pie__senales svg { color: var(--mint-700); flex: none; }
+
+.sh-pie__bajo {
+  display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-8);
+  align-items: center; justify-content: space-between;
+  margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--border-soft);
+}
+.sh-pie__copy { margin: 0; font-family: var(--font-body); font-size: var(--text-2xs); color: var(--text-faint); }
+.sh-pie__legal { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); }
+.sh-pie__legal a {
+  font-family: var(--font-body); font-size: var(--text-2xs); color: var(--text-muted);
+  text-decoration: none; padding: 11px 0; min-height: 44px; display: inline-flex; align-items: center;
+}
+.sh-pie__legal a:hover { color: var(--ink-700); text-decoration: underline; }
+.sh-pie__legal a:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); border-radius: var(--radius-xs); }
+.sh-pie__aviso { margin: 0; max-width: 46ch; }
+
+/* ============================================================
    Reseñas con foto
    ============================================================ */
 .sh-rev { display: flex; flex-direction: column; overflow: hidden; height: 100%; }
@@ -669,6 +831,13 @@ a.sh-card:active, .sh-card--link:active, .sh-pcard:active {
   }
   [data-mobile="scroll"] .sh-grid::-webkit-scrollbar { display: none; }
   [data-mobile="scroll"] .sh-grid > * { flex: 0 0 72%; scroll-snap-align: start; }
+
+  .sh-contacto__grid { grid-template-columns: 1fr; gap: var(--space-8); }
+  .sh-contacto__panel { padding: var(--space-6); border-radius: var(--radius-xl); }
+  .sh-pie__alto { grid-template-columns: 1fr; gap: var(--space-10); }
+  .sh-pie__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+  .sh-pie__bajo { flex-direction: column; align-items: flex-start; }
+  .sh-marq__sep { padding: 0 var(--space-4); }
 
   /* En el teléfono el juguete va primero: es el gancho, no el adorno. */
   .sh-squish { grid-template-columns: 1fr; gap: var(--space-8); }

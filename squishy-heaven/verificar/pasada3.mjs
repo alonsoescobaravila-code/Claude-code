@@ -113,7 +113,7 @@ if (!preview.includes(marcaJS)) aviso('el JS inline del preview no coincide con 
 for (const [rel, src] of liquid) {
   if (!rel.startsWith('sections/')) continue;
   if (!src.includes("'sh-squishy.css' | asset_url")) aviso(`${rel}: no enlaza sh-squishy.css`);
-  const usaJS = /data-sh-(squish|sparkles|foto)/.test(src);
+  const usaJS = /data-sh-(squish|sparkles|foto|pausa)/.test(src);
   const enlazaJS = src.includes("'sh-interactivo.js' | asset_url");
   if (usaJS && !enlazaJS) aviso(`${rel}: usa el JavaScript y no lo enlaza`);
   if (!usaJS && enlazaJS) aviso(`${rel}: enlaza el JavaScript sin necesitarlo`);

@@ -1,0 +1,362 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Pie de página.
+
+  La regla de todo el archivo: un enlace que no lleva a ningún sitio no se
+  dibuja. Cada destino se resuelve con la snippet sh-destino, y si devuelve
+  vacío —una política sin escribir, una página borrada— el enlace desaparece
+  en vez de mandar al cliente a un 404. Una columna que se queda sin enlaces
+  tampoco se muestra.
+
+  Es el fallo más caro de un pie de página, porque nadie lo revisa nunca y es
+  justo lo que mira un revisor de anuncios.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign correo = s.contact_email | default: shop.email
+  assign anio = 'now' | date: '%Y'
+-%}
+
+<footer class="sh sh-pie" data-tone="{{ s.tone }}" {% render 'sh-section-attrs', s: s %}>
+  <div class="sh__wrap">
+
+    <div class="sh-pie__alto">
+      <div class="sh-pie__marca">
+        {%- if s.logo != blank -%}
+          {%- assign sh_alt = s.logo.alt | default: shop.name -%}
+          <a href="{{ routes.root_url }}" class="sh-pie__logo">
+            {{ s.logo | image_url: width: 400 | image_tag: loading: 'lazy', decoding: 'async', widths: '160,240,400', sizes: '180px', alt: sh_alt }}
+          </a>
+        {%- else -%}
+          <a href="{{ routes.root_url }}" class="sh-pie__nombre">{{ s.brand_name | default: shop.name }}</a>
+        {%- endif -%}
+
+        {%- if s.tagline != blank -%}
+          <p class="sh-pie__tagline">{{ s.tagline }}</p>
+        {%- endif -%}
+
+        <p class="sh-pie__correo">
+          <a href="mailto:{{ correo | escape }}">{{ correo }}</a>
+        </p>
+
+        {%- if s.show_social -%}
+          {%- capture redes -%}
+            {%- if s.instagram != blank -%}
+              <a href="{{ s.instagram }}" class="sh-pie__red" rel="me noopener" target="_blank" aria-label="Instagram">IG</a>
+            {%- endif -%}
+            {%- if s.tiktok != blank -%}
+              <a href="{{ s.tiktok }}" class="sh-pie__red" rel="me noopener" target="_blank" aria-label="TikTok">TT</a>
+            {%- endif -%}
+            {%- if s.whatsapp != blank -%}
+              <a href="{{ s.whatsapp }}" class="sh-pie__red" rel="noopener" target="_blank" aria-label="WhatsApp">WA</a>
+            {%- endif -%}
+          {%- endcapture -%}
+          {%- assign redes = redes | strip -%}
+          {%- if redes != blank -%}
+            <div class="sh-pie__redes">{{ redes }}</div>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+
+      {%- comment -%}
+        Cada columna se arma primero en una variable. Si al terminar no tiene ni
+        un enlace vivo, la columna entera no se dibuja.
+      {%- endcomment -%}
+      <div class="sh-pie__cols">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'columna' -%}
+            {%- assign ids = block.settings.enlaces | split: '|' -%}
+            {%- capture links -%}
+              {%- for par in ids -%}
+                {%- assign trozos = par | split: '>' -%}
+                {%- assign etiqueta = trozos[0] | strip -%}
+                {%- assign tipo = trozos[1] | strip -%}
+                {%- if etiqueta != blank and tipo != blank -%}
+                  {%- capture destino -%}{%- render 'sh-destino', tipo: tipo -%}{%- endcapture -%}
+                  {%- assign destino = destino | strip -%}
+                  {%- if destino != blank -%}
+                    <li><a href="{{ destino }}">{{ etiqueta }}</a></li>
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+            {%- assign links = links | strip -%}
+            {%- if links != blank -%}
+              <nav class="sh-pie__col" {{ block.shopify_attributes }}>
+                <h2 class="sh-pie__col-t">{{ block.settings.title }}</h2>
+                <ul class="sh-pie__lista">{{ links }}</ul>
+              </nav>
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- if block.type == 'destacados' -%}
+            {%- capture prods -%}
+              {%- for p in block.settings.coleccion.products limit: block.settings.limite -%}
+                {%- assign m = p.metafields.squishy -%}
+                {%- assign nombre = m.nombre.value | default: p.title -%}
+                {%- unless m.nombre.value -%}
+                  {%- assign nombre = nombre | split: ' - ' | first | truncatewords: 4 -%}
+                {%- endunless -%}
+                <li><a href="{{ p.url }}">{{ nombre }}</a></li>
+              {%- endfor -%}
+            {%- endcapture -%}
+            {%- assign prods = prods | strip -%}
+            {%- if prods != blank -%}
+              <nav class="sh-pie__col" {{ block.shopify_attributes }}>
+                <h2 class="sh-pie__col-t">{{ block.settings.title }}</h2>
+                <ul class="sh-pie__lista">{{ prods }}</ul>
+              </nav>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- if s.trust_labels != blank -%}
+      {%- assign senales = s.trust_labels | split: '|' -%}
+      <ul class="sh-pie__senales">
+        {%- for senal in senales limit: 4 -%}
+          <li>{% render 'sh-icon', name: 'check', size: 15 %}{{ senal | strip }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <div class="sh-pie__bajo">
+      <p class="sh-pie__copy">© {{ anio }} {{ s.brand_name | default: shop.name }}</p>
+
+      {%- comment -%} Las legales, cada una solo si existe de verdad. {%- endcomment -%}
+      {%- capture legales -%}
+        {%- assign legal = 'reembolso,Reembolsos|envio,Envíos|privacidad,Privacidad|terminos,Términos|contacto_legal,Datos de contacto' | split: '|' -%}
+        {%- for item in legal -%}
+          {%- assign trozos = item | split: ',' -%}
+          {%- capture destino -%}{%- render 'sh-destino', tipo: trozos[0] -%}{%- endcapture -%}
+          {%- assign destino = destino | strip -%}
+          {%- if destino != blank -%}
+            <a href="{{ destino }}">{{ trozos[1] }}</a>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign legales = legales | strip -%}
+      {%- if legales != blank -%}
+        <nav class="sh-pie__legal" aria-label="Políticas de la tienda">{{ legales }}</nav>
+      {%- else -%}
+        {%- if request.design_mode -%}
+          <p class="sh-note sh-pie__aviso">
+            No hay ninguna política escrita todavía, así que esta fila está vacía.
+            Escríbelas en Admin → Configuración → Políticas y aparecerán solas.
+            Este aviso solo se ve en el editor.
+          </p>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "SH · Pie de página",
+  "tag": "footer",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Los enlaces de políticas se sacan solos de Admin → Configuración → Políticas. Si una no está escrita, su enlace no aparece — nunca manda a una página en blanco. Lo mismo con las columnas: una columna sin enlaces vivos no se dibuja."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "info": "Si no subes nada se muestra el nombre en tipografía de marca."
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Nombre de la marca",
+      "info": "Vacío usa el nombre de la tienda.",
+      "default": "Squishy Heaven"
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Frase de marca",
+      "default": "Squishies suaves para bajar el ritmo, acompañar tu escritorio y regalar un momento tierno."
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Correo de contacto",
+      "info": "Vacío usa el correo de la tienda. Compruébalo letra por letra."
+    },
+    {
+      "type": "text",
+      "id": "trust_labels",
+      "label": "Señales de confianza (separadas por |)",
+      "info": "Máximo 4. Solo lo que puedas cumplir: esto se ve en todas las páginas.",
+      "default": "Envío con seguimiento | Si llega dañado, te ayudamos | Fotos reales del producto"
+    },
+    {
+      "type": "header",
+      "content": "Redes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Mostrar redes",
+      "default": true
+    },
+    { "type": "url", "id": "instagram", "label": "Instagram" },
+    { "type": "url", "id": "tiktok", "label": "TikTok" },
+    { "type": "url", "id": "whatsapp", "label": "WhatsApp" },
+    {
+      "type": "header",
+      "content": "Fondo"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo del pie",
+      "info": "El design system de la marca no usa fondos oscuros: sobre crema o rosa el pie se lee mejor y no rompe con el resto de la página.",
+      "options": [
+        { "value": "cream", "label": "Crema" },
+        { "value": "white", "label": "Blanco" },
+        { "value": "pink", "label": "Rosa 50" },
+        { "value": "grape", "label": "Uva 50" },
+        { "value": "mint", "label": "Menta 50" },
+        { "value": "sky", "label": "Cielo 50" },
+        { "value": "yellow", "label": "Amarillo 50" }
+      ],
+      "default": "pink"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "label": "Espacio arriba (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "label": "Espacio abajo (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Espacio arriba (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Espacio abajo (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "columna",
+      "name": "Columna de enlaces",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Escribe un enlace por línea con el formato Texto > destino. Destinos válidos: catalogo, contacto, carrito, buscar, home, reembolso, envio, privacidad, terminos, contacto_legal."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título de la columna",
+          "default": "Ayuda"
+        },
+        {
+          "type": "textarea",
+          "id": "enlaces",
+          "label": "Enlaces (uno por línea, Texto > destino)",
+          "info": "Separa cada enlace con | o con un salto de línea. Los que apunten a algo inexistente no se muestran.",
+          "default": "Ayuda y reembolsos > reembolso| Envíos > envio| Escríbenos > contacto| Privacidad > privacidad"
+        }
+      ]
+    },
+    {
+      "type": "destacados",
+      "name": "Productos destacados",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Toma los productos de una colección, así el pie se actualiza solo cuando cambias el catálogo. Muestra el nombre corto del metafield si existe."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título de la columna",
+          "default": "Los más queridos"
+        },
+        {
+          "type": "collection",
+          "id": "coleccion",
+          "label": "Colección"
+        },
+        {
+          "type": "range",
+          "id": "limite",
+          "label": "Cuántos mostrar",
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "default": 4
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Pie de página",
+      "blocks": [
+        {
+          "type": "columna",
+          "settings": {
+            "title": "Comprar",
+            "enlaces": "Todos los productos > catalogo| Buscar > buscar| Mi carrito > carrito"
+          }
+        },
+        {
+          "type": "columna",
+          "settings": {
+            "title": "Ayuda",
+            "enlaces": "Ayuda y reembolsos > reembolso| Envíos > envio| Escríbenos > contacto"
+          }
+        },
+        {
+          "type": "columna",
+          "settings": {
+            "title": "Legal",
+            "enlaces": "Privacidad > privacidad| Términos > terminos| Datos de contacto > contacto_legal"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

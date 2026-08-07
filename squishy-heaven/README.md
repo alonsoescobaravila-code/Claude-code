@@ -36,6 +36,7 @@ assets/sh-quicksand.woff2          fuente de texto, alojada en el tema
 snippets/sh-icon.liquid            iconos Lucide inline, sin JS externo
 snippets/sh-product-card.liquid    tarjeta de producto con nombre corto
 snippets/sh-section-attrs.liquid   traduce los ajustes de diseño a variables CSS
+snippets/sh-destino.liquid         resuelve un destino a URL, o a nada si no existe
 sections/sh-hero.liquid            hero pastel con confianza
 sections/sh-collection-tiles.liquid categorías
 sections/sh-featured-products.liquid grilla de productos
@@ -49,6 +50,9 @@ sections/sh-faq.liquid             preguntas frecuentes
 sections/sh-newsletter.liquid      newsletter
 sections/sh-policies.liquid        envíos, cambios, ayuda y seguridad
 sections/sh-brillos.liquid         enciende los brillos al hacer clic
+sections/sh-contacto.liquid        zona de contacto con formulario real
+sections/sh-marquesina.liquid      cinta de texto en movimiento
+sections/sh-pie.liquid             pie de página, sin enlaces muertos
 blocks/sh-subtitulo.liquid         producto · nombre corto y subtítulo
 blocks/sh-beneficios.liquid        producto · 3 beneficios
 blocks/sh-confianza.liquid         producto · confianza bajo el botón
@@ -67,10 +71,10 @@ Las cinco primeras carpetas van al tema. `INSTALAR.md`, `README.md`, `docs/`,
 
 ### Sobre la etiqueta `{% schema %}`
 
-Las **13 secciones y los 4 bloques** llevan su `{% schema %}` con `presets`, verificado
+Las **16 secciones y los 4 bloques** llevan su `{% schema %}` con `presets`, verificado
 con `@shopify/theme-check-node`: 0 avisos.
 
-Los **3 snippets no la llevan, y no deben llevarla**: Shopify solo acepta
+Los **4 snippets no la llevan, y no deben llevarla**: Shopify solo acepta
 `{% schema %}` en `sections/` y `blocks/`. Un snippet con schema es un error de
 tema. Lo que sí llevan es `{% doc %}`, que es su equivalente: declara los
 parámetros que reciben, y el editor de código de Shopify los muestra al
@@ -157,7 +161,7 @@ Todo el contenido es un ajuste del editor; el código no trae texto quemado.
 ## Interactividad
 
 Tres cosas que hacen que la tienda se sienta hecha a mano, sin librerías ni
-dependencias externas. Todo suma **4,9 KB de JavaScript comprimido**, en un
+dependencias externas. Todo suma **5,3 KB de JavaScript comprimido**, en un
 único archivo (`sh-interactivo.js`) que las dos secciones que lo usan cargan
 con `defer` — nunca bloquea el pintado.
 
@@ -228,7 +232,7 @@ Qué se hizo para que la página no se sienta lenta al entrar:
 | Imágenes | La del hero en `eager` con `fetchpriority="high"`; todas las demás `lazy` + `decoding="async"`, con `srcset` y `sizes` reales |
 | Fuentes | Alojadas en el tema, variables (un archivo por familia) y con `font-display: swap` |
 | Iconos | SVG inline, cero JavaScript |
-| Peso añadido | CSS 8,9 KB y JS 4,9 KB comprimidos. Cero librerías, cero peticiones a terceros |
+| Peso añadido | CSS 10,9 KB y JS 5,3 KB comprimidos. Cero librerías, cero peticiones a terceros |
 
 ### Una sola etiqueta de CSS (opcional)
 

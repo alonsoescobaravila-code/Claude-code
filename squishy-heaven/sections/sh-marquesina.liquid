@@ -1,0 +1,204 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.pausable -%}
+  <script src="{{ 'sh-interactivo.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- comment -%}
+  Marquesina de texto en movimiento.
+
+  Sin JavaScript: la cinta se duplica y se desplaza con una animación CSS, así
+  el bucle no tiene costura. La copia va con aria-hidden para que un lector de
+  pantalla no lea todo dos veces.
+
+  Se para sola en tres casos: al pasar el ratón, al llegar con el teclado, y si
+  el visitante pidió menos movimiento en su sistema. Lo tercero no es un detalle
+  —un texto que se mueve sin poder pararlo es un problema de accesibilidad— y
+  por eso además hay un botón de pausa opcional.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign vel = s.speed | default: 30
+-%}
+
+<section
+  class="sh sh--flush sh-marq"
+  data-tone="{{ s.tone }}"
+  data-sh-pausa="{{ s.pausable }}"
+  style="--sh-marq-vel:{{ vel }}s"
+  aria-label="{{ s.aria_label | escape }}"
+>
+  <div class="sh-marq__pista">
+    {%- comment -%} Dos copias idénticas: la segunda es la que hace el bucle continuo. {%- endcomment -%}
+    {%- for i in (1..2) -%}
+      <div class="sh-marq__cinta"{% if i == 2 %} aria-hidden="true"{% endif %}>
+        {%- for block in section.blocks -%}
+          {%- if block.settings.text != blank -%}
+            {%- capture destino -%}
+              {%- render 'sh-destino',
+                  tipo: block.settings.destino,
+                  producto: block.settings.producto,
+                  coleccion: block.settings.coleccion,
+                  pagina: block.settings.pagina,
+                  url: block.settings.url -%}
+            {%- endcapture -%}
+            {%- assign destino = destino | strip -%}
+
+            {%- if destino != blank and i == 1 -%}
+              <a class="sh-marq__item sh-marq__item--link" href="{{ destino }}" {{ block.shopify_attributes }}>
+                {% render 'sh-icon', name: block.settings.icon, size: 16 %}
+                <span>{{ block.settings.text }}</span>
+              </a>
+            {%- else -%}
+              <span class="sh-marq__item"{% if i == 1 %} {{ block.shopify_attributes }}{% endif %}>
+                {% render 'sh-icon', name: block.settings.icon, size: 16 %}
+                <span>{{ block.settings.text }}</span>
+              </span>
+            {%- endif -%}
+
+            <span class="sh-marq__sep" aria-hidden="true">{{ s.separator }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- if s.pausable -%}
+    <button type="button" class="sh-marq__btn" data-sh-marq-btn
+            aria-label="{{ s.pause_label | escape }}" aria-pressed="false">
+      <span class="sh-marq__btn-ico" aria-hidden="true"></span>
+    </button>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "SH · Marquesina",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Una cinta de texto que se desplaza sola. Se para al pasar el ratón, al llegar con el teclado y si el visitante pidió menos movimiento. Escribe solo cosas que puedas cumplir: esta cinta se ve en todas las páginas donde la pongas."
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Qué es esta cinta (lectores de pantalla)",
+      "default": "Mensajes de la tienda"
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separador entre mensajes",
+      "default": "·"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Segundos por vuelta",
+      "info": "Más segundos, más lento. Con muchos mensajes sube el número o pasará volando.",
+      "min": 10,
+      "max": 80,
+      "step": 2,
+      "unit": "s",
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "pausable",
+      "label": "Mostrar botón de pausa",
+      "info": "Déjalo activo. Un texto que se mueve sin forma de pararlo es una barrera para quien lee despacio.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "pause_label",
+      "label": "Texto del botón de pausa (lectores de pantalla)",
+      "default": "Pausar los mensajes"
+    },
+    {
+      "type": "header",
+      "content": "Fondo"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la cinta",
+      "options": [
+        { "value": "pink", "label": "Rosa" },
+        { "value": "grape", "label": "Uva" },
+        { "value": "mint", "label": "Menta" },
+        { "value": "sky", "label": "Cielo" },
+        { "value": "yellow", "label": "Amarillo" },
+        { "value": "cream", "label": "Crema" }
+      ],
+      "default": "grape"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mensaje",
+      "name": "Mensaje",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto",
+          "default": "Envío con seguimiento"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icono",
+          "options": [
+            { "value": "truck", "label": "Envío" },
+            { "value": "shield-check", "label": "Pago seguro" },
+            { "value": "life-buoy", "label": "Ayuda" },
+            { "value": "camera", "label": "Fotos reales" },
+            { "value": "gift", "label": "Regalo" },
+            { "value": "heart", "label": "Corazón" },
+            { "value": "sparkles", "label": "Brillos" },
+            { "value": "package", "label": "Paquete" },
+            { "value": "hand-heart", "label": "Cuidado" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "select",
+          "id": "destino",
+          "label": "A dónde lleva",
+          "info": "Si el destino no existe todavía, el mensaje se muestra sin enlace en vez de llevar a una página en blanco.",
+          "options": [
+            { "value": "", "label": "A ningún sitio" },
+            { "value": "catalogo", "label": "Todos los productos" },
+            { "value": "coleccion", "label": "Una colección" },
+            { "value": "producto", "label": "Un producto" },
+            { "value": "pagina", "label": "Una página" },
+            { "value": "contacto", "label": "La página de contacto" },
+            { "value": "reembolso", "label": "Política de reembolso" },
+            { "value": "envio", "label": "Política de envío" },
+            { "value": "url", "label": "Una dirección que yo escriba" }
+          ],
+          "default": ""
+        },
+        { "type": "collection", "id": "coleccion", "label": "Colección" },
+        { "type": "product", "id": "producto", "label": "Producto" },
+        { "type": "page", "id": "pagina", "label": "Página" },
+        { "type": "url", "id": "url", "label": "Dirección propia" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Marquesina",
+      "blocks": [
+        { "type": "mensaje", "settings": { "text": "Envío con seguimiento a todo el país", "icon": "truck", "destino": "" } },
+        { "type": "mensaje", "settings": { "text": "Si llega dañado, te ayudamos", "icon": "life-buoy", "destino": "" } },
+        { "type": "mensaje", "settings": { "text": "Fotos reales del producto", "icon": "camera", "destino": "catalogo" } },
+        { "type": "mensaje", "settings": { "text": "Texturas para apretar, regalar y coleccionar", "icon": "heart", "destino": "catalogo" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

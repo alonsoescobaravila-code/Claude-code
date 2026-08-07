@@ -36,19 +36,20 @@ tema. Cada archivo va **en la carpeta que lleva su mismo nombre**: los de
 **Los nombres no se cambian.** El CSS pide las fuentes por su nombre exacto; si
 renombras un `.woff2`, los titulares salen con otra tipografía.
 
-### `snippets/` — 3 archivos
+### `snippets/` — 4 archivos
 
 | Archivo | Qué es |
 | --- | --- |
 | `sh-icon.liquid` | Los iconos, dibujados en el propio HTML |
 | `sh-product-card.liquid` | La tarjeta de producto con el nombre corto |
 | `sh-section-attrs.liquid` | Traduce los controles de diseño del editor a la sección |
+| `sh-destino.liquid` | Convierte un destino del editor en una URL real, y en nada si ese destino no existe |
 
-Estos tres **no llevan `{% schema %}` y no deben llevarla** — Shopify solo la
+Estos cuatro **no llevan `{% schema %}` y no deben llevarla** — Shopify solo la
 acepta en `sections/` y `blocks/`. Ninguno se agrega desde el editor de temas:
 son piezas que las secciones usan por dentro.
 
-### `sections/` — 13 archivos
+### `sections/` — 16 archivos
 
 Se agregan desde el editor de temas. En el buscador de secciones aparecen todas
 como **`SH · …`**.
@@ -68,6 +69,9 @@ como **`SH · …`**.
 | `sh-newsletter.liquid` | SH · Newsletter | Captura de correo |
 | `sh-policies.liquid` | SH · Envíos y cambios | Las cuatro políticas |
 | `sh-brillos.liquid` | SH · Brillos al clic | No dibuja nada: enciende las estrellitas |
+| `sh-contacto.liquid` | SH · Contacto | Formulario real, accesos rápidos y respuestas |
+| `sh-marquesina.liquid` | SH · Marquesina | Cinta de texto en movimiento, con pausa |
+| `sh-pie.liquid` | SH · Pie de página | Footer que nunca deja un enlace muerto |
 
 ### `blocks/` — 4 archivos
 

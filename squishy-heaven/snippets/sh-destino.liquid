@@ -1,0 +1,98 @@
+{% doc %}
+  Convierte un destino elegido en el editor en una URL real, y devuelve vacío
+  si ese destino no existe todavía.
+
+  Esa es toda la gracia: quien lo llama solo dibuja el enlace si esto devuelve
+  algo. Así una política que aún no has escrito no deja un enlace muerto en el
+  pie de página — simplemente no aparece hasta que exista.
+
+  @param {string} tipo - Destino: home, catalogo, coleccion, producto, pagina, contacto, reembolso, envio, privacidad, terminos, contacto_legal, carrito, buscar o url.
+  @param {product} [producto] - Producto, cuando tipo es "producto".
+  @param {collection} [coleccion] - Colección, cuando tipo es "coleccion".
+  @param {page} [pagina] - Página, cuando tipo es "pagina".
+  @param {string} [url] - Dirección propia, cuando tipo es "url".
+
+  @example
+  {%- capture destino -%}{%- render 'sh-destino', tipo: block.settings.destino, producto: block.settings.producto -%}{%- endcapture -%}
+  {%- assign destino = destino | strip -%}
+  {%- if destino != blank -%}<a href="{{ destino }}">Texto</a>{%- endif -%}
+{% enddoc %}
+
+{%- liquid
+  case tipo
+    when 'home'
+      echo routes.root_url
+
+    when 'catalogo'
+      echo routes.all_products_collection_url
+
+    when 'coleccion'
+      if coleccion != blank
+        echo coleccion.url
+      endif
+
+    when 'producto'
+      if producto != blank
+        echo producto.url
+      endif
+
+    when 'pagina'
+      if pagina != blank
+        echo pagina.url
+      endif
+
+    when 'contacto'
+      comment
+        La página de contacto puede tener el handle en inglés o en español según
+        cómo se creara. Se prueban los dos antes de rendirse.
+      endcomment
+      if pagina != blank
+        echo pagina.url
+      elsif pages['contact'] != blank
+        echo pages['contact'].url
+      elsif pages['contacto'] != blank
+        echo pages['contacto'].url
+      endif
+
+    comment
+      Las políticas: si no están escritas en Admin, el objeto viene vacío y esto
+      no devuelve nada. Es justo lo que queremos — el enlace desaparece en vez
+      de llevar a un 404.
+    endcomment
+    when 'reembolso'
+      if shop.refund_policy != blank
+        echo shop.refund_policy.url
+      endif
+
+    when 'envio'
+      if shop.shipping_policy != blank
+        echo shop.shipping_policy.url
+      endif
+
+    when 'privacidad'
+      if shop.privacy_policy != blank
+        echo shop.privacy_policy.url
+      endif
+
+    when 'terminos'
+      if shop.terms_of_service != blank
+        echo shop.terms_of_service.url
+      endif
+
+    when 'contacto_legal'
+      if shop.contact_information != blank
+        echo shop.contact_information.url
+      endif
+
+    when 'carrito'
+      echo routes.cart_url
+
+    when 'buscar'
+      echo routes.search_url
+
+    when 'url'
+      if url != blank
+        echo url
+      endif
+  endcase
+-%}

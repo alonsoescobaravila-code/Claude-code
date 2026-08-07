@@ -73,7 +73,9 @@ for (const rel of archivos) {
     for (const salida of (m[1].match(/\{\{[^}]*\}\}/g) || [])) {
       const id = (salida.match(/settings\.([a-z0-9_]+)/) || [])[1];
       if (!id || !libres.has(id)) continue;
-      if (/\|\s*escape\b/.test(salida)) continue;
+      // `handle` sanea más que `escape` para un id o una clase: baja a
+      // minúsculas y deja solo letras, números y guiones.
+      if (/\|\s*(escape|handle|handleize|url_encode)\b/.test(salida)) continue;
       sinEscapar.push(salida.trim());
     }
   }

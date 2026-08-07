@@ -47,7 +47,7 @@ Tu tema es de una versión anterior a la que soporta `{% doc %}`. No rompe nada
 ### La carpeta `blocks/` no existe en mi tema
 
 Entonces no es Horizon, o es una versión anterior a los bloques de tema. Las
-13 secciones funcionan igual, pero los 4 bloques de la ficha de producto no se
+16 secciones funcionan igual, pero los 4 bloques de la ficha de producto no se
 pueden usar. Actualiza a Horizon o pon ese contenido con las secciones.
 
 ---
