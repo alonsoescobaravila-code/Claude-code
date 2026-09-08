@@ -12,13 +12,17 @@ más hoy.
 
 ## Estado
 
-**Prompt 0 completo: esqueleto y configuración.** No hay lógica de juego todavía
-—eso es deliberado— pero el proyecto arranca, los sistemas se cargan en orden y
-la configuración está entera y validada.
+**Prompt 0 completo** — esqueleto, tipos y configuración.
 
-Lo siguiente es el Prompt 1, la IA de zombis, que es el sistema que decide si el
-servidor aguanta. Antes de eso hace falta el blockout del Sector 1 hecho a mano
-en Studio, porque sin espacio no hay dónde medir.
+**Prompt 1 escrito, sin medir** — la IA de zombis: un solo bucle a paso fijo,
+tres bandas de coste según la distancia, reserva de instancias, reparto de
+peticiones de ruta y movimiento en bloque. Falta lo único que no se puede hacer
+fuera de Studio: correr el benchmark y sacar el número real de zombis que el
+servidor aguanta. Hasta entonces `MaxLive = 40` es el objetivo del plan, no una
+medición. Está todo en [docs/prompt-1-ia-de-zombis.md](docs/prompt-1-ia-de-zombis.md).
+
+Lo siguiente, en este orden: blockout del Sector 1 a mano en Studio, medir sobre
+él, y entonces el Prompt 2 (combate).
 
 ## Estructura
 
@@ -30,10 +34,13 @@ hiciera falta.
 ReplicatedStorage/          -> ReplicatedStorage
   Types.luau                   tipos compartidos: la forma de todo lo que cruza
   Remotes.luau                 el contrato de red. Sin RemoteFunctions
+  Signal.luau                  aviso de un sistema a otro sin que se conozcan
   Config/                      todos los números tuneables, congelados al cargar
 ServerScriptService/        -> ServerScriptService
   Bootstrap.server.luau        el único Script del servidor. Init a todos, luego Start
   Systems/                     14 sistemas, todos con autoridad de servidor
+  Zombies/                     la entidad, la reserva y el reparto de rutas
+  Benchmark/                   se llama a mano desde Studio. No arranca solo
 StarterPlayerScripts/       -> StarterPlayerScripts
   Bootstrap.client.luau        el único LocalScript
   Controllers/                 entrada, interfaz, efectos y predicción. Nada más
@@ -65,9 +72,10 @@ Cada uno lleva de dónde viene:
   medido. El prompt que se indica es el que tiene que reemplazarlo por un valor
   real. Hoy hay 108.
 
-`MaxLive = 40` es el más importante de los que faltan: el Prompt 1 tiene que
-entregar el número real que mantiene el frame time del servidor bajo 16 ms, con
-la medición delante.
+`MaxLive = 40` es el más importante de los que faltan. El benchmark ya está
+escrito y explica por qué el criterio no puede ser «la media bajó de 16 ms»: el
+servidor de Roblox ya corre a 60 Hz cuando puede, así que ese número sale solo
+incluso vacío. Lo que se mide es si se mantiene.
 
 Los `AssetId = 0` de `Config/Monetisation` son ids de Roblox sin crear todavía.
 El arranque del servidor avisa por consola de cada uno, porque un id inventado
@@ -81,6 +89,9 @@ python3 verificar/coherencia.py
 
 Y el verificador de tipos, que necesita descargarse una vez: ver
 `verificar/README.md`. Las dos pasadas están en verde.
+
+Los errores del verificador de tipos salen por la salida de error, no por la
+estándar. Si la rediriges a /dev/null, una ejecución con fallos parece limpia.
 
 ## Antes de tocar nada
 

@@ -16,7 +16,20 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG = os.path.join(ROOT, "ReplicatedStorage", "Config")
 SYSTEMS = os.path.join(ROOT, "ServerScriptService", "Systems")
+ZOMBIES = os.path.join(ROOT, "ServerScriptService", "Zombies")
 CONTROLLERS = os.path.join(ROOT, "StarterPlayerScripts", "Controllers")
+
+# Carpetas de código de juego, donde manda la regla 8. Benchmark/ queda fuera a
+# propósito: es una herramienta de medición, no juego, y sus umbrales tienen que
+# estar donde se leen para poder discutirlos.
+CODIGO_DE_JUEGO = (SYSTEMS, ZOMBIES, CONTROLLERS)
+
+# Un literal aceptable fuera de Config. 0 y 1 son el neutro y la unidad, y 2 es
+# partir por la mitad o saltar el primer elemento: ninguno es un número de
+# balance. Cualquier otro tiene que estar en Config o ser una constante con
+# nombre en mayúsculas al principio del archivo, que es lo que separa un valor
+# explicado de un número mágico.
+LITERALES_LIBRES = {"0", "1", "2"}
 
 fallos = []
 avisos = []
@@ -156,16 +169,25 @@ if len(clases) != len(tradeoffs):
 # 4. Reglas duras del CLAUDE.md que se pueden comprobar leyendo
 # ---------------------------------------------------------------------------
 # Rule 8: ningún número de juego fuera de Config
-for carpeta in (SYSTEMS, CONTROLLERS):
+for carpeta in CODIGO_DE_JUEGO:
+    if not os.path.isdir(carpeta):
+        continue
     for archivo in sorted(os.listdir(carpeta)):
         if not archivo.endswith(".luau"):
             continue
         codigo = sin_comentarios(leer(os.path.join(carpeta, archivo)))
-        for numero, linea in [
-            (m.group(0), codigo[: m.start()].count("\n") + 1)
-            for m in re.finditer(r"(?<![\w.])\d+(\.\d+)?(?![\w.])", codigo)
-        ]:
-            fallo(f"{os.path.basename(carpeta)}/{archivo}:{linea}: número {numero} fuera de Config (regla 8)")
+        lineas = codigo.split("\n")
+        for indice, linea_txt in enumerate(lineas, start=1):
+            # Una constante con nombre en mayúsculas está explicada por su nombre.
+            if re.match(r"\s*local [A-Z][A-Z0-9_]* =", linea_txt):
+                continue
+            for m in re.finditer(r"(?<![\w.])\d+(\.\d+)?(?![\w.])", linea_txt):
+                if m.group(0) in LITERALES_LIBRES:
+                    continue
+                fallo(
+                    f"{os.path.basename(carpeta)}/{archivo}:{indice}: número {m.group(0)} "
+                    f"fuera de Config y sin nombre (regla 8)"
+                )
 
 # Rule 1 y 2: el cliente no calcula. Nada de daño ni de contador en el cliente.
 prohibido_cliente = ("TakeDamage", "Humanoid.Health =", "BreachKills", "AddScrap", "GrantXp")
@@ -177,6 +199,36 @@ for archivo in sorted(os.listdir(CONTROLLERS)) + ["../Bootstrap.client.luau"]:
     for prohibido in prohibido_cliente:
         if prohibido in codigo:
             fallo(f"cliente/{archivo}: usa '{prohibido}'. El cliente no calcula resultados (reglas 1 y 2)")
+
+# Rule 2: la baja es el único camino al contador. ZombieAI emite y no reparte.
+zombie_ai = leer(os.path.join(SYSTEMS, "ZombieAI.luau"))
+if "OnZombieKilled" not in zombie_ai:
+    fallo("Systems/ZombieAI: no emite OnZombieKilled. Es la única entrada legítima al contador de brecha")
+for reparto in ("AddScrap", "GrantXp", "BreachKills +=", "Breach.Add"):
+    if reparto in sin_comentarios(zombie_ai):
+        fallo(f"Systems/ZombieAI: reparte recompensas ('{reparto}'). Solo debe emitir la baja (regla 1)")
+
+# Rule 7: un solo bucle. Ninguna otra conexión por frame en el código de juego.
+for carpeta in (SYSTEMS, ZOMBIES):
+    if not os.path.isdir(carpeta):
+        continue
+    for archivo in sorted(os.listdir(carpeta)):
+        if not archivo.endswith(".luau"):
+            continue
+        codigo = sin_comentarios(leer(os.path.join(carpeta, archivo)))
+        conexiones = re.findall(r"RunService\.(Heartbeat|Stepped|RenderStepped):Connect", codigo)
+        if conexiones and archivo != "ZombieAI.luau":
+            fallo(f"{os.path.basename(carpeta)}/{archivo}: se conecta a un evento por frame. Solo ZombieAI tiene bucle (regla 7)")
+        if archivo == "ZombieAI.luau" and len(conexiones) > 1:
+            fallo(f"Systems/ZombieAI: {len(conexiones)} conexiones por frame. Tiene que ser una sola (regla 7)")
+
+# Las cuatro banderas obligatorias en cada parte de zombi.
+pool = leer(os.path.join(ZOMBIES, "Pool.luau")) if os.path.isdir(ZOMBIES) else ""
+for bandera in ("CanCollide", "CanQuery", "CanTouch", "CastShadow"):
+    if not re.search(rf"{bandera} = false", pool):
+        fallo(f"Zombies/Pool: la parte del zombi no pone {bandera} en false (Prompt 1)")
+if "BulkMoveTo" not in leer(os.path.join(SYSTEMS, "ZombieAI.luau")):
+    fallo("Systems/ZombieAI: no usa la API de movimiento masivo (Prompt 1)")
 
 # Rule 4: sin PvP en ninguna parte
 for base, _, archivos in os.walk(ROOT):

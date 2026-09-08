@@ -59,3 +59,6 @@ by name. `ReplicatedStorage/Config/` is this project's `src/shared/Config/`.
   Sync pairs folders by service name, so the tree uses `ServerScriptService/`,
   `ReplicatedStorage/` and `StarterPlayerScripts/` instead. Rule 8 points at the
   real path. Do not rename these folders back.
+- 2026-09-08 — Type-check errors from `luau-lsp analyze` go to STDERR. A run
+  piped with `2>/dev/null` looked clean while three real errors were sitting
+  there. Always `2>&1`, or check the exit code.

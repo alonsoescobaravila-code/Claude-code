@@ -31,9 +31,17 @@ export type System = {
 
 export type ZombieTypeId = string
 
+-- Identificador de una instancia viva. Es el índice en la reserva, así que es
+-- estable durante toda la vida del servidor y sirve como clave barata.
+export type ZombieId = number
+
 export type ZombieType = {
 	Id: ZombieTypeId,
 	DisplayName: string,
+	-- Los tipos se distinguen por tamaño, color, velocidad y comportamiento, no
+	-- por animaciones propias. SOURCE: informe.
+	Size: Vector3,
+	Color: Color3,
 	Health: number,
 	WalkSpeed: number,
 	Damage: number,
@@ -57,6 +65,17 @@ export type PlannedZombieType = {
 	DisplayName: string,
 	IntroducedInSector: number,
 	Behaviour: string,
+}
+
+-- Lo que el servidor emite cuando un zombi muere. Es la única entrada legítima
+-- al contador de brecha, a la XP y a la chatarra. Rule 2.
+export type KillInfo = {
+	ZombieId: ZombieId,
+	TypeId: ZombieTypeId,
+	Position: Vector3,
+	-- Quién dio el golpe final. nil si murió sin autor (por ejemplo, un despeje
+	-- del servidor al terminar un benchmark): esas bajas no cuentan para nada.
+	Killer: Player?,
 }
 
 --------------------------------------------------------------------------------
