@@ -1,0 +1,82 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sh-interactivo.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  Brillos al hacer clic en cualquier parte de la página.
+
+  Esta sección no dibuja nada: solo enciende el efecto. Agrégala una vez
+  al grupo del pie de página y queda activa en toda la tienda; agrégala a
+  una plantilla concreta y queda solo ahí.
+
+  Se apaga solo si el visitante pidió menos movimiento en su sistema, y
+  nunca se dispara al escribir en un campo de texto.
+{%- endcomment -%}
+
+{%- liquid
+  assign en_movil = '1'
+  unless section.settings.on_mobile
+    assign en_movil = '0'
+  endunless
+-%}
+
+<div
+  data-sh-sparkles
+  data-sh-cantidad="{{ section.settings.density }}"
+  data-sh-movil="{{ en_movil }}"
+  hidden
+></div>
+
+{%- if request.design_mode -%}
+  <section class="sh" data-tone="grape" style="--sh-pt:24px;--sh-pb:24px;--sh-pt-m:20px;--sh-pb-m:20px">
+    <div class="sh__wrap">
+      <p class="sh-note" style="text-align:center;margin:0">
+        Brillos al hacer clic: activos. Este aviso solo se ve en el editor, nunca en la tienda.
+      </p>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SH · Brillos al clic",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Cada clic o toque suelta estrellitas en los colores de la marca. Para que funcione en toda la tienda, agrega esta sección una sola vez al grupo del pie de página. No dibuja nada en la página."
+    },
+    {
+      "type": "select",
+      "id": "density",
+      "label": "Cuántas estrellitas por clic",
+      "options": [
+        {
+          "value": "4",
+          "label": "Pocas"
+        },
+        {
+          "value": "6",
+          "label": "Normal"
+        },
+        {
+          "value": "9",
+          "label": "Muchas"
+        }
+      ],
+      "default": "6"
+    },
+    {
+      "type": "checkbox",
+      "id": "on_mobile",
+      "label": "También al tocar en el teléfono",
+      "info": "Desactívalo si prefieres reservar el efecto para el ratón.",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Brillos al clic"
+    }
+  ]
+}
+{% endschema %}

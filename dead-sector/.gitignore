@@ -1,0 +1,32 @@
+# Lugar compilado y bloqueos de Studio
+build.rbxl
+build.rbxlx
+*.rbxl.lock
+*.rbxlx.lock
+
+# Copias de seguridad automáticas de Studio
+*.rbxl.bak
+*.rbxlx.bak
+AutoSaves/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+.vscode/*.log
+*.code-workspace
+
+# Herramientas de Luau y Rojo
+sourcemap.json
+.luaurc.local
+luau-lsp.log
+/out/
+/dist/
+
+# Secretos: nunca en el repositorio
+.env
+*.key
+apikey.txt

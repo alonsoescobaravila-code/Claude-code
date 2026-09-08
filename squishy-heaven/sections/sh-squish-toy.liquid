@@ -1,0 +1,401 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sh-interactivo.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  El squishy de mantequilla que se aprieta de verdad.
+
+  Sin JavaScript se ve igual y no se rompe: el juguete queda quieto y el
+  botón de la sección sigue llevando al catálogo. Con JavaScript se aplasta
+  hacia donde lo tocas, suena, vibra y lleva la cuenta.
+
+  El dibujo es CSS puro mientras la marca no tenga fotos. En cuanto exista
+  una foto del producto recortada, se sube en «Imagen» y reemplaza al dibujo
+  conservando toda la interacción.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign sonido  = '0'
+  assign brillos = '0'
+  if s.sound_enabled
+    assign sonido = '1'
+  endif
+  if s.sparkles_on_squish
+    assign brillos = '1'
+  endif
+-%}
+
+<section class="sh" data-tone="{{ s.tone }}" {% render 'sh-section-attrs', s: s %}>
+  <div class="sh__wrap">
+    <div
+      class="sh-squish"
+      data-sh-squish
+      data-sh-estado="libre"
+      data-sh-sonido="{{ sonido }}"
+      data-sh-brillos="{{ brillos }}"
+      data-sh-rebote="{{ s.rebound }}"
+      data-sh-cuenta-texto="{{ s.counter_label | escape }}"
+      data-sh-cuenta-una="{{ s.counter_label_one | escape }}"
+      data-sh-premio="{{ s.milestone_label | escape }}"
+      data-sh-premio-en="{{ s.milestone_at }}"
+    >
+      <div class="sh-squish__texto">
+        {%- if s.eyebrow != blank -%}
+          <p class="sh__eyebrow">{{ s.eyebrow }}</p>
+        {%- endif -%}
+
+        {%- assign sh_tag = s.heading_tag | default: 'h2' -%}
+        <{{ sh_tag }} class="sh__title">{{ s.heading }}</{{ sh_tag }}>
+
+        {%- if s.body != blank -%}
+          <p class="sh__sub">{{ s.body }}</p>
+        {%- endif -%}
+
+        {%- assign puntos = s.bullets | split: '|' -%}
+        {%- if puntos.size > 0 -%}
+          <ul class="sh-checks">
+            {%- for punto in puntos limit: 4 -%}
+              <li>{% render 'sh-icon', name: 'check', size: 17 %}{{ punto | strip }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if s.cta_label != blank -%}
+          <div class="sh-squish__acciones">
+            <a href="{{ s.cta_link | default: '#' }}" class="sh-btn sh-btn--primary sh-btn--lg">{{ s.cta_label }}</a>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="sh-squish__panel">
+        <button
+          type="button"
+          class="sh-squish__boton"
+          data-sh-squish-boton
+          aria-label="{{ s.aria_label | default: 'Apretar el squishy' | escape }}"
+        >
+          <span class="sh-squish__stage">
+            <span class="sh-squish__toy" data-sh-squish-cuerpo>
+              {%- if s.image -%}
+                {%- assign sh_alt = s.image.alt | default: s.heading -%}
+                {{ s.image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', widths: '340,520,700', sizes: '(max-width: 749px) 76vw, 340px', alt: sh_alt }}
+              {%- else -%}
+                <span class="sh-butter">
+                  <span class="sh-butter__top"></span>
+                  {%- if s.show_face -%}
+                    <span class="sh-butter__face">
+                      <span class="sh-butter__eye"></span>
+                      <span class="sh-butter__eye"></span>
+                      <span class="sh-butter__mouth"></span>
+                    </span>
+                  {%- endif -%}
+                  {%- if s.band_label != blank -%}
+                    <span class="sh-butter__band">{{ s.band_label }}</span>
+                  {%- endif -%}
+                </span>
+              {%- endif -%}
+            </span>
+            {%- comment -%}
+              La marca del dedo va fuera del cuerpo a propósito: dentro se
+              aplastaría con él y dejaría de leerse como un punto de presión.
+            {%- endcomment -%}
+            <span class="sh-squish__dedo" data-sh-squish-dedo aria-hidden="true"></span>
+            <span class="sh-squish__sombra" aria-hidden="true"></span>
+          </span>
+        </button>
+
+        {%- if s.hint_label != blank -%}
+          <p class="sh-squish__pista" data-sh-squish-pista>{{ s.hint_label }}</p>
+        {%- endif -%}
+
+        {%- if s.show_counter -%}
+          <p class="sh-squish__cuenta" data-sh-squish-cuenta hidden aria-live="polite"></p>
+        {%- endif -%}
+
+        {%- if s.sound_enabled -%}
+          <button type="button" class="sh-squish__mute" data-sh-squish-mute aria-pressed="false" data-off="0">
+            {% render 'sh-icon', name: 'sparkles', size: 14 %}
+            <span class="sh-squish__mute-on">{{ s.sound_on_label }}</span>
+            <span class="sh-squish__mute-off">{{ s.sound_off_label }}</span>
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SH · Squishy interactivo",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "El visitante lo aprieta con el dedo o el ratón y responde: se aplasta hacia donde lo tocas, suena, vibra en el teléfono y lleva la cuenta. Sin foto usa un dibujo de mantequilla hecho en CSS, así que pesa cero y funciona desde el primer día."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Antetítulo",
+      "default": "Pruébalo aquí"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titular",
+      "default": "Aprieta antes de comprar."
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto",
+      "default": "Así se siente un slow rising: cede despacio bajo el dedo y vuelve a su forma sin prisa. Este es de mantequilla, y es uno de los favoritos de la casa."
+    },
+    {
+      "type": "text",
+      "id": "bullets",
+      "label": "Puntos (separados por |)",
+      "info": "Máximo 4. El separador es la barra vertical porque las frases llevan comas.",
+      "default": "Espuma suave con acabado mate | Vuelve a su forma en segundos | Cabe en la mano de un adulto"
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Texto del botón",
+      "default": "Elegir mi squishy"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "El juguete"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen (opcional)",
+      "info": "Reemplaza el dibujo de mantequilla. Usa un PNG con fondo transparente y el producto recortado; la interacción sigue funcionando igual."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_face",
+      "label": "Mostrar carita",
+      "info": "Entrecierra los ojos cuando lo aprietas. Solo aplica al dibujo, no a una foto.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "band_label",
+      "label": "Texto de la envoltura",
+      "default": "Squishy Heaven"
+    },
+    {
+      "type": "select",
+      "id": "rebound",
+      "label": "Cómo vuelve a su forma",
+      "options": [
+        {
+          "value": "slow",
+          "label": "Slow rising (despacio)"
+        },
+        {
+          "value": "fast",
+          "label": "Rebote rápido"
+        }
+      ],
+      "default": "slow"
+    },
+    {
+      "type": "text",
+      "id": "hint_label",
+      "label": "Pista antes del primer apretón",
+      "info": "Desaparece en cuanto lo aprietan.",
+      "default": "Tócalo. En serio."
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Descripción para lectores de pantalla",
+      "default": "Apretar el squishy de mantequilla"
+    },
+    {
+      "type": "header",
+      "content": "Sonido y efectos"
+    },
+    {
+      "type": "checkbox",
+      "id": "sound_enabled",
+      "label": "Sonido al apretar",
+      "info": "El sonido se genera en el navegador, no descarga ningún archivo, y solo suena cuando la persona aprieta. Siempre aparece un botón para silenciarlo.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sound_on_label",
+      "label": "Texto con sonido activo",
+      "default": "Sonido activado"
+    },
+    {
+      "type": "text",
+      "id": "sound_off_label",
+      "label": "Texto con sonido silenciado",
+      "default": "Sonido silenciado"
+    },
+    {
+      "type": "checkbox",
+      "id": "sparkles_on_squish",
+      "label": "Brillos al apretar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counter",
+      "label": "Llevar la cuenta de apretones",
+      "info": "Se guarda en el navegador de cada visitante. No sale de su equipo y no se envía a ninguna parte.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "counter_label",
+      "label": "Texto de la cuenta",
+      "info": "Escribe [veces] donde quieras que aparezca el número.",
+      "default": "Lo has apretado [veces] veces"
+    },
+    {
+      "type": "text",
+      "id": "counter_label_one",
+      "label": "Texto de la cuenta cuando va 1",
+      "default": "Lo has apretado 1 vez"
+    },
+    {
+      "type": "text",
+      "id": "milestone_label",
+      "label": "Mensaje sorpresa",
+      "default": "Ya somos amigos. Este es el que más se aprieta en la tienda."
+    },
+    {
+      "type": "range",
+      "id": "milestone_at",
+      "label": "Aparece a los",
+      "min": 5,
+      "max": 100,
+      "step": 5,
+      "unit": "×",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Fondo"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        {
+          "value": "cream",
+          "label": "Crema"
+        },
+        {
+          "value": "white",
+          "label": "Blanco"
+        },
+        {
+          "value": "pink",
+          "label": "Rosa 50"
+        },
+        {
+          "value": "grape",
+          "label": "Uva 50"
+        },
+        {
+          "value": "mint",
+          "label": "Menta 50"
+        },
+        {
+          "value": "sky",
+          "label": "Cielo 50"
+        },
+        {
+          "value": "yellow",
+          "label": "Amarillo 50"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta del titular",
+      "options": [
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "label": "Espacio arriba (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "label": "Espacio abajo (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Espacio arriba (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Espacio abajo (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Squishy interactivo"
+    }
+  ]
+}
+{% endschema %}

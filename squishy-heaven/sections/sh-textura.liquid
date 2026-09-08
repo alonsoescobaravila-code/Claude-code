@@ -1,0 +1,378 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+<section class="sh" data-tone="{{ section.settings.tone }}" {% render 'sh-section-attrs', s: section.settings, cols: section.settings.columns %}>
+  <div class="sh__wrap">
+    <div class="sh__head" data-align="{{ section.settings.align }}">
+      {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="sh__title">{{ section.settings.heading }}</h2>
+      {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
+    </div>
+
+    {%- assign chips = section.blocks | where: 'type', 'chip' -%}
+    {%- if chips.size > 0 -%}
+      <div class="sh-textura__chips">
+        {%- for block in chips -%}
+          <a href="{{ block.settings.link | default: '#' }}" class="sh-chip"
+             {% if block.settings.active %}aria-current="true"{% endif %} {{ block.shopify_attributes }}>
+            <span class="sh-chip__dot" style="background:var(--{{ block.settings.swatch }}-500)"></span>{{ block.settings.label }}
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- assign shots = section.blocks | where: 'type', 'shot' -%}
+    {%- if shots.size > 0 -%}
+      <div class="sh-grid sh-textura__shots">
+        {%- for block in shots -%}
+          <figure class="sh-textura__shot" {{ block.shopify_attributes }}>
+            <div class="sh-photo" data-tone="{{ block.settings.tone }}" style="aspect-ratio:4/3">
+              {%- if block.settings.image -%}
+                {%- assign sh_alt = block.settings.image.alt | default: block.settings.caption -%}
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', decoding: 'async', widths: '400,600,800', sizes: '(max-width: 749px) 92vw, 360px', alt: sh_alt }}
+              {%- else -%}
+                <div class="sh-photo__note"><span>{{ block.settings.brief }}</span></div>
+              {%- endif -%}
+            </div>
+            {%- if block.settings.caption != blank -%}
+              <figcaption class="sh-textura__caption">{{ block.settings.caption }}</figcaption>
+            {%- endif -%}
+          </figure>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .sh-textura__chips { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; }
+  .sh-textura__shots { margin-top: var(--space-10); }
+  .sh-textura__shot { margin: 0; }
+  .sh-textura__caption {
+    font-family: var(--font-body); font-weight: 600; font-size: var(--text-xs);
+    color: var(--text-muted); margin-top: var(--space-3); text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Elige por textura",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Antetítulo",
+      "default": "Elige por textura"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titular",
+      "default": "Suave, mochi o slow rising"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto",
+      "default": "Cada textura se siente distinta en la mano. Elige la que mejor acompañe tu día."
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        {
+          "value": "grape",
+          "label": "Uva 50"
+        },
+        {
+          "value": "cream",
+          "label": "Crema"
+        },
+        {
+          "value": "white",
+          "label": "Blanco"
+        },
+        {
+          "value": "pink",
+          "label": "Rosa 50"
+        },
+        {
+          "value": "mint",
+          "label": "Menta 50"
+        }
+      ],
+      "default": "grape"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alineación del encabezado",
+      "options": [
+        {
+          "value": "center",
+          "label": "Centrada"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columnas en escritorio",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "En móvil",
+      "info": "El carrusel deslizable muestra una tarjeta grande y se desliza con el dedo. Con 1 o 2 columnas la elección se respeta en todos los teléfonos; en pantallas muy angostas se aprieta el interior de la tarjeta, no la cuadrícula.",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 columna"
+        },
+        {
+          "value": "2",
+          "label": "2 columnas"
+        },
+        {
+          "value": "scroll",
+          "label": "Carrusel deslizable"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "label": "Espacio arriba (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "label": "Espacio abajo (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Espacio arriba (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Espacio abajo (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "chip",
+      "name": "Textura",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etiqueta",
+          "default": "Suave"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace (colección o filtro por etiqueta)"
+        },
+        {
+          "type": "select",
+          "id": "swatch",
+          "label": "Color del punto",
+          "options": [
+            {
+              "value": "pink",
+              "label": "Rosa"
+            },
+            {
+              "value": "grape",
+              "label": "Uva"
+            },
+            {
+              "value": "mint",
+              "label": "Menta"
+            },
+            {
+              "value": "sky",
+              "label": "Cielo"
+            },
+            {
+              "value": "yellow",
+              "label": "Amarillo"
+            },
+            {
+              "value": "peach",
+              "label": "Durazno"
+            }
+          ],
+          "default": "pink"
+        },
+        {
+          "type": "checkbox",
+          "id": "active",
+          "label": "Marcar como seleccionada",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "name": "Foto",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "textarea",
+          "id": "brief",
+          "label": "Foto pendiente: qué hay que fotografiar",
+          "default": "Primer plano de manos apretando el squishy para mostrar textura."
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Pie de foto"
+        },
+        {
+          "type": "select",
+          "id": "tone",
+          "label": "Color del pozo",
+          "options": [
+            {
+              "value": "0",
+              "label": "Rosa"
+            },
+            {
+              "value": "1",
+              "label": "Uva"
+            },
+            {
+              "value": "2",
+              "label": "Menta"
+            },
+            {
+              "value": "3",
+              "label": "Cielo"
+            },
+            {
+              "value": "4",
+              "label": "Durazno"
+            },
+            {
+              "value": "5",
+              "label": "Amarillo"
+            }
+          ],
+          "default": "0"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Elige por textura",
+      "blocks": [
+        {
+          "type": "chip",
+          "settings": {
+            "label": "Suave",
+            "swatch": "pink",
+            "active": true
+          }
+        },
+        {
+          "type": "chip",
+          "settings": {
+            "label": "Mochi",
+            "swatch": "grape"
+          }
+        },
+        {
+          "type": "chip",
+          "settings": {
+            "label": "Slow rising",
+            "swatch": "mint"
+          }
+        },
+        {
+          "type": "chip",
+          "settings": {
+            "label": "Firme",
+            "swatch": "sky"
+          }
+        },
+        {
+          "type": "chip",
+          "settings": {
+            "label": "Jumbo",
+            "swatch": "yellow"
+          }
+        },
+        {
+          "type": "shot",
+          "settings": {
+            "tone": "0",
+            "brief": "Primer plano de manos apretando el squishy para mostrar textura.",
+            "caption": "Textura en la mano"
+          }
+        },
+        {
+          "type": "shot",
+          "settings": {
+            "tone": "3",
+            "brief": "Escritorio pastel con mini squishies junto al teclado.",
+            "caption": "Compañero de escritorio"
+          }
+        },
+        {
+          "type": "shot",
+          "settings": {
+            "tone": "2",
+            "brief": "Unboxing sencillo con tarjeta de agradecimiento.",
+            "caption": "Llega listo para regalar"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

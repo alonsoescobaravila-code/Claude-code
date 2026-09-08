@@ -1,0 +1,522 @@
+{
+  "sections": {
+    "hero": {
+      "type": "sh-hero",
+      "settings": {
+        "eyebrow": "Squishy Heaven",
+        "heading": "Aprieta, respira, sonríe.",
+        "body": "Squishies suaves, pastel y coleccionables. Un pequeño descanso para tus manos, en tu escritorio, tu mochila o tu regalo favorito.",
+        "cta_label": "Elegir mi squishy",
+        "cta_link": "shopify://collections/all",
+        "cta2_label": "Ver toda la tienda",
+        "cta2_link": "shopify://collections/all",
+        "show_trust": true,
+        "trust_labels": "Envío con seguimiento | Pago seguro | Si llega dañado, te ayudamos | Fotos reales del producto",
+        "show_rating": false,
+        "photo_brief": "Foto principal: manos apretando un squishy de fresa sobre fondo pastel plano, luz de día suave.",
+        "photo_ratio": "4/3",
+        "photo_tone": "3",
+        "tone": "cream",
+        "pad_top": 48,
+        "pad_bottom": 48,
+        "pad_top_mobile": 32,
+        "pad_bottom_mobile": 32
+      }
+    },
+    "categorias": {
+      "type": "sh-collection-tiles",
+      "blocks": {
+        "b1": {
+          "type": "tile",
+          "settings": {
+            "title": "Frutales",
+            "icon": "cherry",
+            "tint": "pink"
+          }
+        },
+        "b2": {
+          "type": "tile",
+          "settings": {
+            "title": "Animalitos",
+            "icon": "rabbit",
+            "tint": "sky"
+          }
+        },
+        "b3": {
+          "type": "tile",
+          "settings": {
+            "title": "Mini y Jumbo",
+            "icon": "package",
+            "tint": "mint"
+          }
+        },
+        "b4": {
+          "type": "tile",
+          "settings": {
+            "title": "Packs regalo",
+            "icon": "gift",
+            "tint": "yellow"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
+      "settings": {
+        "heading": "Explora por categoría",
+        "tone": "cream",
+        "align": "center",
+        "columns": 4,
+        "columns_mobile": "2",
+        "pad_top": 48,
+        "pad_bottom": 48,
+        "pad_top_mobile": 32,
+        "pad_bottom_mobile": 32
+      }
+    },
+    "favoritos": {
+      "type": "sh-featured-products",
+      "settings": {
+        "limit": 4,
+        "eyebrow": "Los más queridos",
+        "heading": "Favoritos de la comunidad",
+        "body": "Texturas que la gente vuelve a comprar para regalar y coleccionar.",
+        "cta_label": "Ver toda la tienda",
+        "cta_link": "shopify://collections/all",
+        "tone": "white",
+        "align": "center",
+        "columns": 4,
+        "columns_mobile": "2",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "interactivo": {
+      "type": "sh-squish-toy",
+      "settings": {
+        "eyebrow": "Pruébalo aquí",
+        "heading": "Aprieta antes de comprar.",
+        "body": "Así se siente un slow rising: cede despacio bajo el dedo y vuelve a su forma sin prisa. Este es de mantequilla, y es uno de los favoritos de la casa.",
+        "bullets": "Espuma suave con acabado mate | Vuelve a su forma en segundos | Cabe en la mano de un adulto",
+        "cta_label": "Elegir mi squishy",
+        "cta_link": "shopify://collections/all",
+        "show_face": true,
+        "band_label": "Squishy Heaven",
+        "rebound": "slow",
+        "hint_label": "Tócalo. En serio.",
+        "aria_label": "Apretar el squishy de mantequilla",
+        "sound_enabled": true,
+        "sound_on_label": "Sonido activado",
+        "sound_off_label": "Sonido silenciado",
+        "sparkles_on_squish": true,
+        "show_counter": true,
+        "counter_label": "Lo has apretado [veces] veces",
+        "counter_label_one": "Lo has apretado 1 vez",
+        "milestone_label": "Ya somos amigos. Este es el que más se aprieta en la tienda.",
+        "milestone_at": 25,
+        "tone": "white",
+        "heading_tag": "h2",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "tamano": {
+      "type": "sh-tamano",
+      "blocks": {
+        "z1": {
+          "type": "size",
+          "settings": {
+            "measure": "8 cm",
+            "reference": "Como un huevo",
+            "label": "Mini: cabe cerrado en el puño y entra en cualquier bolsillo.",
+            "photo_brief": "Squishy mini sostenido en una mano adulta, fondo pastel plano.",
+            "photo_tone": "0"
+          }
+        },
+        "z2": {
+          "type": "size",
+          "settings": {
+            "measure": "12 cm",
+            "reference": "Como una taza",
+            "label": "Mediano: el tamaño de escritorio, el que más se repite.",
+            "photo_brief": "Squishy mediano junto a una taza, misma distancia que las demás tomas.",
+            "photo_tone": "2"
+          }
+        },
+        "z3": {
+          "type": "size",
+          "settings": {
+            "measure": "20 cm",
+            "reference": "Como un plato",
+            "label": "Jumbo: se aprieta con las dos manos, es el de regalo.",
+            "photo_brief": "Squishy jumbo sostenido con las dos manos, fondo pastel plano.",
+            "photo_tone": "1"
+          }
+        }
+      },
+      "block_order": [
+        "z1",
+        "z2",
+        "z3"
+      ],
+      "settings": {
+        "eyebrow": "Tamaño real",
+        "heading": "¿Qué tan grande es?",
+        "body": "Fotos con la mano al lado para que sepas exactamente qué te llega. La medida exacta de cada modelo está en su ficha.",
+        "footnote": "Las medidas son aproximadas y pueden variar un poco entre unidades, como pasa con cualquier pieza de espuma.",
+        "tone": "cream",
+        "align": "center",
+        "columns": 3,
+        "columns_mobile": "2",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "textura": {
+      "type": "sh-textura",
+      "blocks": {
+        "c1": {
+          "type": "chip",
+          "settings": {
+            "label": "Suave",
+            "swatch": "pink",
+            "active": true
+          }
+        },
+        "c2": {
+          "type": "chip",
+          "settings": {
+            "label": "Mochi",
+            "swatch": "grape"
+          }
+        },
+        "c3": {
+          "type": "chip",
+          "settings": {
+            "label": "Slow rising",
+            "swatch": "mint"
+          }
+        },
+        "c4": {
+          "type": "chip",
+          "settings": {
+            "label": "Firme",
+            "swatch": "sky"
+          }
+        },
+        "c5": {
+          "type": "chip",
+          "settings": {
+            "label": "Jumbo",
+            "swatch": "yellow"
+          }
+        },
+        "s1": {
+          "type": "shot",
+          "settings": {
+            "tone": "0",
+            "brief": "Primer plano de manos apretando el squishy para mostrar textura.",
+            "caption": "Textura en la mano"
+          }
+        },
+        "s2": {
+          "type": "shot",
+          "settings": {
+            "tone": "3",
+            "brief": "Escritorio pastel con mini squishies junto al teclado.",
+            "caption": "Compañero de escritorio"
+          }
+        },
+        "s3": {
+          "type": "shot",
+          "settings": {
+            "tone": "2",
+            "brief": "Unboxing sencillo con tarjeta de agradecimiento.",
+            "caption": "Llega listo para regalar"
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {
+        "eyebrow": "Elige por textura",
+        "heading": "Suave, mochi o slow rising",
+        "body": "Cada textura se siente distinta en la mano. Elige la que mejor acompañe tu día.",
+        "tone": "grape",
+        "align": "center",
+        "columns": 3,
+        "columns_mobile": "1",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "historia": {
+      "type": "sh-story",
+      "blocks": {
+        "k1": {
+          "type": "check",
+          "settings": {
+            "text": "Fotos reales del producto que recibes"
+          }
+        },
+        "k2": {
+          "type": "check",
+          "settings": {
+            "text": "Envío con número de seguimiento"
+          }
+        },
+        "k3": {
+          "type": "check",
+          "settings": {
+            "text": "Si llega dañado, te ayudamos"
+          }
+        }
+      },
+      "block_order": [
+        "k1",
+        "k2",
+        "k3"
+      ],
+      "settings": {
+        "eyebrow": "Hechos con cariño",
+        "heading": "Elegimos por textura, no por catálogo",
+        "body": "Probamos cada squishy antes de sumarlo a la tienda: cómo se siente al apretarlo, cuánto tarda en volver a su forma y si el color se ve igual que en la foto.",
+        "cta_label": "Ver toda la tienda",
+        "cta_link": "shopify://collections/all",
+        "photo_brief": "Foto: colección ordenada por color sobre fondo pastel plano.",
+        "media_position": "left",
+        "photo_tone": "1",
+        "tone": "cream",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "resenas": {
+      "type": "sh-resenas",
+      "blocks": {
+        "r1": {
+          "type": "resena",
+          "settings": {
+            "stars": 5,
+            "text": "Llegó en una semana y es igual que en las fotos. La textura es lo mejor, no lo suelto.",
+            "author": "Camila R.",
+            "verified": true,
+            "alt_text": "Squishy de fresa sobre un escritorio de madera",
+            "photo_brief": "Foto del cliente con el squishy recibido, sin retoque, tal como la manda.",
+            "photo_tone": "0"
+          }
+        },
+        "r2": {
+          "type": "resena",
+          "settings": {
+            "stars": 5,
+            "text": "Lo compré de regalo y terminé pidiendo otro para mí. Se siente exactamente como esperaba.",
+            "author": "Diego M.",
+            "verified": true,
+            "alt_text": "Squishy de pato sostenido en una mano",
+            "photo_brief": "Foto del cliente con el squishy recibido, sin retoque, tal como la manda.",
+            "photo_tone": "2"
+          }
+        },
+        "r3": {
+          "type": "resena",
+          "settings": {
+            "stars": 4,
+            "text": "Tardó un poco más de lo que decía, pero me avisaron por correo y llegó perfecto. El tamaño es el que pone en la ficha.",
+            "author": "Valentina P.",
+            "verified": true,
+            "alt_text": "Squishy junto a una taza para comparar el tamaño",
+            "photo_brief": "Foto del cliente con el squishy recibido, sin retoque, tal como la manda.",
+            "photo_tone": "1"
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "settings": {
+        "eyebrow": "Fotos de quienes ya lo tienen",
+        "heading": "Así llega a casa",
+        "body": "Fotos que nos mandan los clientes después de recibir su pedido. Sin retoque y sin estudio: el squishy tal como se ve en una mesa cualquiera.",
+        "footnote": "Publicamos las fotos con permiso de cada persona. ¿Quieres que salga la tuya? Respóndenos al correo de tu pedido.",
+        "show_average": false,
+        "average_label": "sobre [total] reseñas publicadas",
+        "verified_label": "Compra verificada",
+        "zoom_label": "Ver la foto en grande",
+        "tone": "white",
+        "align": "center",
+        "photo_ratio": "4/5",
+        "columns": 3,
+        "columns_mobile": "scroll",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "confianza": {
+      "type": "sh-trust-row",
+      "blocks": {
+        "t1": {
+          "type": "trust",
+          "settings": {
+            "icon": "truck",
+            "label": "Envío con seguimiento",
+            "detail": "Entre 5 y 12 días hábiles según tu región."
+          }
+        },
+        "t2": {
+          "type": "trust",
+          "settings": {
+            "icon": "shield-check",
+            "label": "Pago seguro",
+            "detail": "El pago se procesa en la pasarela segura de Shopify."
+          }
+        },
+        "t3": {
+          "type": "trust",
+          "settings": {
+            "icon": "life-buoy",
+            "label": "Si llega dañado, te ayudamos",
+            "detail": "Escríbenos con una foto dentro de los primeros 7 días."
+          }
+        },
+        "t4": {
+          "type": "trust",
+          "settings": {
+            "icon": "camera",
+            "label": "Fotos reales del producto",
+            "detail": "Lo que ves en la ficha es lo que llega a tu casa."
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "settings": {
+        "heading": "Compra tranquila",
+        "tone": "white",
+        "align": "center",
+        "pad_top": 48,
+        "pad_bottom": 48,
+        "pad_top_mobile": 40,
+        "pad_bottom_mobile": 40
+      }
+    },
+    "faq": {
+      "type": "sh-faq",
+      "blocks": {
+        "f1": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cuánto tarda el envío?",
+            "answer": "<p>Entre 5 y 12 días hábiles según tu región. Te enviamos el número de seguimiento apenas sale el pedido.</p>",
+            "open": true
+          }
+        },
+        "f2": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Qué pasa si llega dañado?",
+            "answer": "<p>Escríbenos con una foto dentro de los primeros 7 días y elegimos juntos: reposición o reembolso.</p>"
+          }
+        },
+        "f3": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cómo cuido mi squishy?",
+            "answer": "<p>Manos limpias y secas, lejos del sol directo. Si se ensucia, límpialo con un paño húmedo y déjalo secar al aire.</p>"
+          }
+        },
+        "f4": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Es seguro para niños?",
+            "answer": "<p>Recomendado a partir de los 3 años y siempre con supervisión. No es comestible ni es un juguete de baño.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ],
+      "settings": {
+        "eyebrow": "Preguntas frecuentes",
+        "heading": "Todo claro antes de comprar",
+        "help_text": "¿Te queda una duda?",
+        "help_link_label": "Escríbenos",
+        "tone": "pink",
+        "align": "center",
+        "pad_top": 80,
+        "pad_bottom": 80,
+        "pad_top_mobile": 48,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "newsletter": {
+      "type": "sh-newsletter",
+      "settings": {
+        "eyebrow": "Comunidad squishy",
+        "heading": "Un pequeño momento suave para tu día.",
+        "body": "Te avisamos cuando llegan texturas nuevas, packs de regalo y colecciones por color. Sin spam.",
+        "placeholder": "Tu correo",
+        "cta_label": "Quiero enterarme",
+        "note": "Puedes darte de baja cuando quieras.",
+        "tone": "cream",
+        "pad_top": 48,
+        "pad_bottom": 64,
+        "pad_top_mobile": 32,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "brillos": {
+      "type": "sh-brillos",
+      "settings": {
+        "density": "6",
+        "on_mobile": true
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "categorias",
+    "favoritos",
+    "interactivo",
+    "tamano",
+    "textura",
+    "historia",
+    "resenas",
+    "confianza",
+    "faq",
+    "newsletter",
+    "brillos"
+  ]
+}

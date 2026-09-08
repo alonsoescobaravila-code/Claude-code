@@ -1,0 +1,5 @@
+node_modules/
+horizon/
+horizon-mix/
+theme/
+*.png

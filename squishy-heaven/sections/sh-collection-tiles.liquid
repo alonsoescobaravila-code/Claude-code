@@ -1,0 +1,373 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+<section class="sh" data-tone="{{ section.settings.tone }}" {% render 'sh-section-attrs', s: section.settings, cols: section.settings.columns %}>
+  <div class="sh__wrap">
+    {%- if section.settings.heading != blank -%}
+      <div class="sh__head" data-align="{{ section.settings.align }}">
+        {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h2 class="sh__title">{{ section.settings.heading }}</h2>
+        {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="sh-grid sh-tiles">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign col = block.settings.collection
+          assign title = block.settings.title | default: col.title
+          assign url = col.url | default: '#'
+          assign count = block.settings.count
+          if count == blank and col != blank
+            assign count = col.products_count | append: ' squishies'
+          endif
+          assign img = block.settings.image | default: col.featured_image
+        -%}
+        <a href="{{ url }}" class="sh-card sh-tile" data-media="{{ block.settings.media }}" data-tint="{{ block.settings.tint }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.media == 'image' and img -%}
+            <span class="sh-tile__photo">
+              {%- assign sh_alt = img.alt | default: title -%}
+              {{ img | image_url: width: 480 | image_tag: loading: 'lazy', decoding: 'async', widths: '240,360,480', sizes: '(max-width: 749px) 45vw, 260px', alt: sh_alt }}
+            </span>
+          {%- else -%}
+            <span class="sh-tile__icon">{% render 'sh-icon', name: block.settings.icon, size: 24 %}</span>
+          {%- endif -%}
+          <span class="sh-tile__title">{{ title }}</span>
+          {%- if count != blank -%}<span class="sh-tile__count">{{ count }}</span>{%- endif -%}
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sh-tile {
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+    padding: var(--space-8) var(--space-5); text-align: center; text-decoration: none;
+    border: 0;
+  }
+  /* Con foto el tile se aprieta arriba: la imagen ya aporta el aire. */
+  .sh-tile[data-media="image"] { padding: var(--space-3) var(--space-4) var(--space-6); }
+  .sh-tile__photo {
+    display: block; width: 100%; aspect-ratio: 1/1; overflow: hidden;
+    border-radius: var(--radius-md); background: var(--white);
+    margin-bottom: var(--space-3);
+  }
+  .sh-tile__photo img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform var(--duration-slow) var(--ease-squish);
+  }
+  .sh-tile:hover .sh-tile__photo img { transform: scale(1.04); }
+  .sh-tile[data-tint="pink"]   { background: var(--pink-100); }
+  .sh-tile[data-tint="grape"]  { background: var(--grape-100); }
+  .sh-tile[data-tint="mint"]   { background: var(--mint-100); }
+  .sh-tile[data-tint="sky"]    { background: var(--sky-100); }
+  .sh-tile[data-tint="peach"]  { background: var(--peach-100); }
+  .sh-tile[data-tint="yellow"] { background: var(--yellow-100); }
+  .sh-tile__icon {
+    width: 52px; height: 52px; border-radius: var(--radius-pill); background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--grape-600); margin-bottom: var(--space-2);
+    transition: transform var(--duration-squish) var(--ease-squish);
+  }
+  .sh-tile:hover .sh-tile__icon { transform: scale(1.08); }
+  .sh-tile__title {
+    font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg);
+    color: var(--text-heading);
+  }
+  .sh-tile__count {
+    font-family: var(--font-body); font-weight: 600; font-size: var(--text-2xs);
+    color: var(--text-muted);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Categorías",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Entrada rápida al catálogo. Funciona mejor con 4 categorías; a partir de 8 la cuadrícula deja de leerse de un vistazo."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Antetítulo"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titular",
+      "default": "Explora por categoría"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        {
+          "value": "cream",
+          "label": "Crema"
+        },
+        {
+          "value": "white",
+          "label": "Blanco"
+        },
+        {
+          "value": "pink",
+          "label": "Rosa 50"
+        },
+        {
+          "value": "grape",
+          "label": "Uva 50"
+        }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alineación del encabezado",
+      "options": [
+        {
+          "value": "center",
+          "label": "Centrada"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columnas en escritorio",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "En móvil",
+      "info": "El carrusel deslizable muestra una tarjeta grande y se desliza con el dedo. Con 1 o 2 columnas la elección se respeta en todos los teléfonos; en pantallas muy angostas se aprieta el interior de la tarjeta, no la cuadrícula.",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 columna"
+        },
+        {
+          "value": "2",
+          "label": "2 columnas"
+        },
+        {
+          "value": "scroll",
+          "label": "Carrusel deslizable"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "label": "Espacio arriba (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "label": "Espacio abajo (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Espacio arriba (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Espacio abajo (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Categoría",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título (si lo dejas vacío usa el de la colección)"
+        },
+        {
+          "type": "text",
+          "id": "count",
+          "label": "Contador (si lo dejas vacío se calcula solo)"
+        },
+        {
+          "type": "select",
+          "id": "media",
+          "label": "Qué se ve arriba",
+          "info": "Con «Foto» usa la imagen de abajo; si la dejas vacía toma la imagen destacada de la colección.",
+          "options": [
+            {
+              "value": "icon",
+              "label": "Icono"
+            },
+            {
+              "value": "image",
+              "label": "Foto"
+            }
+          ],
+          "default": "icon"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto de la categoría"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icono",
+          "options": [
+            {
+              "value": "cherry",
+              "label": "Frutales"
+            },
+            {
+              "value": "rabbit",
+              "label": "Animalitos"
+            },
+            {
+              "value": "package",
+              "label": "Mini y Jumbo"
+            },
+            {
+              "value": "gift",
+              "label": "Packs regalo"
+            },
+            {
+              "value": "sparkles",
+              "label": "Novedades"
+            },
+            {
+              "value": "hand-heart",
+              "label": "Anti-estrés"
+            }
+          ],
+          "default": "cherry"
+        },
+        {
+          "type": "select",
+          "id": "tint",
+          "label": "Color",
+          "options": [
+            {
+              "value": "pink",
+              "label": "Rosa"
+            },
+            {
+              "value": "grape",
+              "label": "Uva"
+            },
+            {
+              "value": "mint",
+              "label": "Menta"
+            },
+            {
+              "value": "sky",
+              "label": "Cielo"
+            },
+            {
+              "value": "peach",
+              "label": "Durazno"
+            },
+            {
+              "value": "yellow",
+              "label": "Amarillo"
+            }
+          ],
+          "default": "pink"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Categorías",
+      "blocks": [
+        {
+          "type": "tile",
+          "settings": {
+            "title": "Frutales",
+            "icon": "cherry",
+            "tint": "pink"
+          }
+        },
+        {
+          "type": "tile",
+          "settings": {
+            "title": "Animalitos",
+            "icon": "rabbit",
+            "tint": "sky"
+          }
+        },
+        {
+          "type": "tile",
+          "settings": {
+            "title": "Mini y Jumbo",
+            "icon": "package",
+            "tint": "mint"
+          }
+        },
+        {
+          "type": "tile",
+          "settings": {
+            "title": "Packs regalo",
+            "icon": "gift",
+            "tint": "yellow"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

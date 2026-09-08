@@ -1,0 +1,64 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign icons = 'truck,shield-check,life-buoy,camera' | split: ','
+  assign labels = block.settings.labels | split: '|'
+-%}
+
+<div class="sh sh--flush sh-ptrust" data-layout="{{ block.settings.layout }}" {{ block.shopify_attributes }}>
+  <div class="sh-trust {% if block.settings.layout == 'inline' %}sh-trust--inline{% endif %}"
+       {% if block.settings.layout != 'inline' %}style="grid-template-columns:repeat({{ labels.size | at_most: 4 | at_least: 1 }},1fr)"{% endif %}>
+    {%- for label in labels limit: 4 -%}
+      <span class="sh-trust__item">
+        <span class="sh-trust__icon">{% render 'sh-icon', name: icons[forloop.index0], size: 18 %}</span>
+        <span class="sh-trust__label">{{ label | strip }}</span>
+      </span>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .sh-ptrust { padding: 0; background: none; }
+  .sh-ptrust[data-layout="grid"] .sh-trust__icon { width: 44px; height: 44px; }
+  .sh-ptrust[data-layout="grid"] .sh-trust__label { font-size: var(--text-3xs); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Confianza (producto)",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Va justo debajo del botón de compra. Vocabulario fijo: envío · pago seguro · ayuda si llega dañado · fotos reales."
+    },
+    {
+      "type": "text",
+      "id": "labels",
+      "label": "Etiquetas (separadas por |)",
+      "info": "El separador es la barra vertical porque las etiquetas llevan comas.",
+      "default": "Envío con seguimiento | Pago seguro | Si llega dañado, te ayudamos | Fotos reales del producto"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Disposición",
+      "options": [
+        {
+          "value": "inline",
+          "label": "En línea"
+        },
+        {
+          "value": "grid",
+          "label": "Cuadrícula con círculos"
+        }
+      ],
+      "default": "inline"
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Confianza (producto)"
+    }
+  ]
+}
+{% endschema %}

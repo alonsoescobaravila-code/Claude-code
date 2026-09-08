@@ -1,0 +1,70 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign p = closest.product | default: product
+  assign m = p.metafields.squishy
+
+  assign sh_name = m.nombre.value
+  assign sh_sub = m.subtitulo.value | default: block.settings.subtitulo_fallback
+-%}
+
+<div class="sh sh--flush sh-psub" {{ block.shopify_attributes }}>
+  {%- if block.settings.show_name and sh_name != blank -%}
+    <p class="sh-psub__name">{{ sh_name }}</p>
+    <p class="sh-psub__legal">También listado como: {{ p.title }}</p>
+  {%- endif -%}
+
+  {%- if sh_sub != blank -%}
+    <p class="sh-psub__text">{{ sh_sub }}</p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .sh-psub { padding: 0; background: none; }
+  .sh-psub__name {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+    line-height: var(--leading-tight); letter-spacing: var(--tracking-tight);
+    color: var(--text-heading); margin: 0;
+  }
+  .sh-psub__legal {
+    font-family: var(--font-body); font-size: var(--text-3xs);
+    color: var(--text-faint); margin: var(--space-2) 0 0;
+  }
+  .sh-psub__text {
+    font-family: var(--font-body); font-size: var(--text-lg);
+    line-height: var(--leading-normal); color: var(--text-muted);
+    margin: var(--space-3) 0 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Nombre y subtítulo",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Muestra el nombre corto del metafield `squishy.nombre` y el subtítulo sensorial de `squishy.subtitulo`. El título real del producto no cambia, así que el SEO queda intacto."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_name",
+      "label": "Mostrar nombre corto como título",
+      "info": "Actívalo solo si ocultas el título nativo del tema en esta plantilla, para no repetirlo.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subtitulo_fallback",
+      "label": "Subtítulo por defecto",
+      "info": "Se usa cuando el producto no tiene el metafield `squishy.subtitulo`.",
+      "default": "Suave al tacto, fácil de amar"
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Nombre y subtítulo"
+    }
+  ]
+}
+{% endschema %}

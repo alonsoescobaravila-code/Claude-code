@@ -1,0 +1,459 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sh-interactivo.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  Reseñas con foto real del cliente.
+
+  El promedio y el total NO se escriben a mano: se calculan sumando las
+  reseñas que hay publicadas aquí. Es la misma regla del audit que mantiene
+  apagada la calificación del hero — un número que nadie puede comprobar en la
+  página resta confianza en vez de sumarla.
+
+  La foto en grande usa <dialog>, que trae el cierre con Escape y el foco
+  atrapado de fábrica. Sin JavaScript la foto se ve igual dentro de la
+  tarjeta, solo que no se amplía.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+
+  assign suma = 0
+  assign votos = 0
+  for block in section.blocks
+    assign estrellas = block.settings.stars
+    if estrellas > 0
+      assign suma = suma | plus: estrellas
+      assign votos = votos | plus: 1
+    endif
+  endfor
+
+  assign promedio = 0
+  assign llenas = 0
+  if votos > 0
+    assign promedio = suma | times: 1.0 | divided_by: votos | round: 1
+    assign llenas = promedio | round
+  endif
+-%}
+
+<section class="sh" data-tone="{{ s.tone }}" {% render 'sh-section-attrs', s: s, cols: s.columns %}>
+  <div class="sh__wrap">
+    <div class="sh__head" data-align="{{ s.align }}">
+      {%- if s.eyebrow != blank -%}
+        <p class="sh__eyebrow">{{ s.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="sh__title">{{ s.heading }}</h2>
+
+      {%- if s.show_average and votos > 0 -%}
+        <p class="sh-rating sh-rev__promedio">
+          <span class="sh-rating__stars" aria-hidden="true">
+            {%- for i in (1..5) -%}
+              {%- if forloop.index <= llenas -%}
+                {% render 'sh-icon', name: 'star', size: 18 %}
+              {%- else -%}
+                <span class="sh-rating__vacia">{% render 'sh-icon', name: 'star', size: 18 %}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </span>
+          <strong>{{ promedio }}</strong>
+          {{ s.average_label | replace: '[total]', votos }}
+        </p>
+      {%- endif -%}
+
+      {%- if s.body != blank -%}
+        <p class="sh__sub">{{ s.body }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="sh-grid">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign foto = block.settings.image
+            assign quien = block.settings.author | default: 'Cliente'
+          -%}
+          <figure class="sh-card sh-rev" {{ block.shopify_attributes }}>
+            {%- if foto -%}
+              {%- assign sh_alt = foto.alt | default: block.settings.alt_text -%}
+              <button
+                type="button"
+                class="sh-rev__shot"
+                data-sh-foto="{{ foto | image_url: width: 1200 }}"
+                data-sh-alt="{{ sh_alt | escape }}"
+                aria-label="{{ s.zoom_label | escape }}"
+              >
+                <span class="sh-photo" data-tone="{{ block.settings.photo_tone }}" style="aspect-ratio:{{ s.photo_ratio }}">
+                  {{ foto | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', widths: '280,420,700', sizes: '(max-width: 749px) 92vw, 300px', alt: sh_alt }}
+                </span>
+              </button>
+            {%- else -%}
+              <span class="sh-photo" data-tone="{{ block.settings.photo_tone }}" style="aspect-ratio:{{ s.photo_ratio }}">
+                <span class="sh-photo__note"><span>{{ block.settings.photo_brief }}</span></span>
+              </span>
+            {%- endif -%}
+
+            <figcaption class="sh-rev__body">
+              {%- if block.settings.stars > 0 -%}
+                <span class="sh-rating__stars" aria-label="{{ block.settings.stars }} de 5">
+                  {%- for i in (1..5) -%}
+                    {%- if forloop.index <= block.settings.stars -%}
+                      {% render 'sh-icon', name: 'star', size: 15 %}
+                    {%- else -%}
+                      <span class="sh-rating__vacia">{% render 'sh-icon', name: 'star', size: 15 %}</span>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </span>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <blockquote class="sh-rev__texto">{{ block.settings.text }}</blockquote>
+              {%- endif -%}
+
+              <p class="sh-rev__quien">
+                <strong>{{ quien }}</strong>
+                {%- if block.settings.verified -%}
+                  <span class="sh-rev__ok">{% render 'sh-icon', name: 'shield-check', size: 13 %}{{ s.verified_label }}</span>
+                {%- endif -%}
+              </p>
+
+              {%- if block.settings.product != blank -%}
+                <a class="sh-rev__producto" href="{{ block.settings.product.url }}">{{ block.settings.product.title }}</a>
+              {%- endif -%}
+            </figcaption>
+          </figure>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if s.footnote != blank -%}
+      <p class="sh-note sh-rev__pie">{{ s.footnote }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SH · Reseñas con foto",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Reseñas reales con la foto que manda el cliente. El promedio y el total se calculan solos sumando las reseñas que publiques aquí — no se escriben a mano, para que el número siempre sea comprobable en la propia página. Publica solo reseñas que hayas recibido de verdad."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Antetítulo",
+      "default": "Fotos de quienes ya lo tienen"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titular",
+      "default": "Así llega a casa"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto",
+      "default": "Fotos que nos mandan los clientes después de recibir su pedido. Sin retoque y sin estudio: el squishy tal como se ve en una mesa cualquiera."
+    },
+    {
+      "type": "textarea",
+      "id": "footnote",
+      "label": "Nota al pie",
+      "default": "Publicamos las fotos con permiso de cada persona. ¿Quieres que salga la tuya? Respóndenos al correo de tu pedido."
+    },
+    {
+      "type": "header",
+      "content": "Promedio"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_average",
+      "label": "Mostrar promedio",
+      "info": "Se calcula con las reseñas publicadas aquí abajo. Si aún tienes pocas, déjalo apagado: tres reseñas y un 5,0 se leen como inventadas.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "average_label",
+      "label": "Texto junto al promedio",
+      "info": "Escribe [total] donde quieras que aparezca la cantidad.",
+      "default": "sobre [total] reseñas publicadas"
+    },
+    {
+      "type": "text",
+      "id": "verified_label",
+      "label": "Etiqueta de compra verificada",
+      "default": "Compra verificada"
+    },
+    {
+      "type": "text",
+      "id": "zoom_label",
+      "label": "Texto del botón de ampliar (lectores de pantalla)",
+      "default": "Ver la foto en grande"
+    },
+    {
+      "type": "header",
+      "content": "Fondo"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        {
+          "value": "cream",
+          "label": "Crema"
+        },
+        {
+          "value": "white",
+          "label": "Blanco"
+        },
+        {
+          "value": "pink",
+          "label": "Rosa 50"
+        },
+        {
+          "value": "grape",
+          "label": "Uva 50"
+        },
+        {
+          "value": "mint",
+          "label": "Menta 50"
+        },
+        {
+          "value": "sky",
+          "label": "Cielo 50"
+        },
+        {
+          "value": "yellow",
+          "label": "Amarillo 50"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alineación del encabezado",
+      "options": [
+        {
+          "value": "center",
+          "label": "Centrada"
+        },
+        {
+          "value": "start",
+          "label": "Izquierda"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "photo_ratio",
+      "label": "Proporción de las fotos",
+      "info": "Las fotos de cliente llegan de mil formas. Esta proporción las iguala recortando desde el centro.",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Cuadrada"
+        },
+        {
+          "value": "4/5",
+          "label": "4:5 (vertical, como el móvil)"
+        },
+        {
+          "value": "4/3",
+          "label": "4:3"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columnas en escritorio",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "En móvil",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 columna"
+        },
+        {
+          "value": "2",
+          "label": "2 columnas"
+        },
+        {
+          "value": "scroll",
+          "label": "Carrusel deslizable"
+        }
+      ],
+      "default": "scroll"
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "label": "Espacio arriba (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "label": "Espacio abajo (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Espacio arriba (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Espacio abajo (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "resena",
+      "name": "Reseña",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto del cliente"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Qué se ve en la foto",
+          "info": "Para quien no puede verla. Por ejemplo: «Squishy de fresa sobre un escritorio de madera».",
+          "default": "Squishy recibido por un cliente"
+        },
+        {
+          "type": "textarea",
+          "id": "photo_brief",
+          "label": "Foto pendiente: qué pedir",
+          "default": "Foto del cliente con el squishy recibido, sin retoque, tal como la manda."
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Estrellas",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Lo que escribió",
+          "info": "Cópialo tal cual, sin corregirle el estilo. Una reseña demasiado bien escrita se lee como publicidad.",
+          "default": "Llegó en una semana y es igual que en las fotos. La textura es lo mejor, no lo suelto."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Quién",
+          "info": "Nombre y primera letra del apellido es suficiente, y protege sus datos.",
+          "default": "Camila R."
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Compra verificada",
+          "info": "Actívalo solo si encontraste el pedido de esta persona en tu panel. Es una afirmación sobre tu tienda, no un adorno.",
+          "default": true
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Producto que compró",
+          "info": "Opcional. Añade un enlace a la ficha, para que quien lee pueda comprar lo mismo."
+        },
+        {
+          "type": "select",
+          "id": "photo_tone",
+          "label": "Color del pozo de foto",
+          "options": [
+            {
+              "value": "0",
+              "label": "Rosa"
+            },
+            {
+              "value": "1",
+              "label": "Uva"
+            },
+            {
+              "value": "2",
+              "label": "Menta"
+            },
+            {
+              "value": "3",
+              "label": "Cielo"
+            },
+            {
+              "value": "4",
+              "label": "Durazno"
+            },
+            {
+              "value": "5",
+              "label": "Amarillo"
+            }
+          ],
+          "default": "0"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Reseñas con foto",
+      "blocks": [
+        {
+          "type": "resena"
+        },
+        {
+          "type": "resena"
+        },
+        {
+          "type": "resena"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

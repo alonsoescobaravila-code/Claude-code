@@ -1,0 +1,194 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+<section class="sh" data-tone="{{ section.settings.tone }}" {% render 'sh-section-attrs', s: section.settings %}>
+  <div class="sh__wrap">
+    <div class="sh-news">
+      <span class="sh-news__icon">{% render 'sh-icon', name: 'mail', size: 24 %}</span>
+
+      {%- if section.settings.eyebrow != blank -%}<p class="sh__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="sh__title">{{ section.settings.heading }}</h2>
+      {%- if section.settings.body != blank -%}<p class="sh__sub">{{ section.settings.body }}</p>{%- endif -%}
+
+      {%- form 'customer', class: 'sh-news__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="sh-field">
+          <label class="sh-visually-hidden" for="sh-news-{{ section.id }}">{{ section.settings.placeholder }}</label>
+          <input
+            id="sh-news-{{ section.id }}"
+            class="sh-input"
+            type="email"
+            name="contact[email]"
+            placeholder="{{ section.settings.placeholder | escape }}"
+            autocomplete="email"
+            required
+          >
+          <button type="submit" class="sh-btn sh-btn--primary">{{ section.settings.cta_label }}</button>
+        </div>
+
+        {%- if form.posted_successfully? -%}
+          <p class="sh-form-msg sh-form-msg--ok">{{ section.settings.success_text }}</p>
+        {%- elsif form.errors -%}
+          <p class="sh-form-msg sh-form-msg--err">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+        {%- endif -%}
+      {%- endform -%}
+
+      {%- if section.settings.note != blank -%}
+        <p class="sh-note">{{ section.settings.note }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sh-news {
+    background: var(--pink-100);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+    max-width: var(--container-narrow);
+    margin-inline: auto;
+  }
+  .sh-news__icon {
+    width: 56px; height: 56px; border-radius: var(--radius-pill); background: var(--white);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--pink-600); margin-bottom: var(--space-5); box-shadow: var(--shadow-sm);
+  }
+  .sh-news .sh__sub { margin-inline: auto; }
+  .sh-news__form { margin-top: var(--space-8); }
+  .sh-news .sh-field { max-width: 460px; margin-inline: auto; flex-wrap: nowrap; }
+  .sh-news .sh-note { max-width: 46ch; margin-inline: auto; }
+  @media (max-width: 749px) {
+    .sh-news { padding: var(--space-10) var(--space-5); }
+    .sh-news .sh-field { flex-wrap: wrap; }
+    .sh-news .sh-btn { width: 100%; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Newsletter",
+  "tag": "section",
+  "class": "sh-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "El deseo va antes que el descuento. Si ofreces un incentivo, que sea suave y secundario — nada de «¡Solo hoy!»."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Antetítulo",
+      "default": "Comunidad squishy"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titular",
+      "default": "Un pequeño momento suave para tu día."
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Texto",
+      "default": "Te avisamos cuando llegan texturas nuevas, packs de regalo y colecciones por color. Sin spam."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Texto de ejemplo del campo",
+      "default": "Tu correo"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Botón",
+      "default": "Quiero enterarme"
+    },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Mensaje de éxito",
+      "default": "Listo. Te escribimos cuando llegue algo suave."
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Nota legal",
+      "default": "Puedes darte de baja cuando quieras."
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Fondo de la sección",
+      "options": [
+        {
+          "value": "cream",
+          "label": "Crema"
+        },
+        {
+          "value": "white",
+          "label": "Blanco"
+        },
+        {
+          "value": "grape",
+          "label": "Uva 50"
+        },
+        {
+          "value": "mint",
+          "label": "Menta 50"
+        }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "label": "Espacio arriba (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "label": "Espacio abajo (escritorio)",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Espacio arriba (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Espacio abajo (móvil)",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Newsletter"
+    }
+  ]
+}
+{% endschema %}

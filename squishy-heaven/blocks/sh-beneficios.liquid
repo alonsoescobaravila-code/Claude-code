@@ -1,0 +1,51 @@
+{{ 'sh-squishy.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign p = closest.product | default: product
+  assign benefits = p.metafields.squishy.beneficios.value
+
+  if benefits == blank
+    assign fallback = block.settings.fallback | strip
+    if fallback != blank
+      assign benefits = fallback | newline_to_br | split: '<br />'
+    endif
+  endif
+-%}
+
+{%- if benefits != blank -%}
+  <ul class="sh sh--flush sh-checks sh-pben" {{ block.shopify_attributes }}>
+    {%- for b in benefits limit: 4 -%}
+      {%- assign line = b | strip_newlines | strip -%}
+      {%- if line != blank -%}
+        <li>{% render 'sh-icon', name: 'check', size: 17 %}{{ line }}</li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+
+{% stylesheet %}
+  .sh-pben { padding: 0; background: none; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "SH · Beneficios",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Tres bullets, nunca más. Lee el metafield de lista `squishy.beneficios`; si el producto no lo tiene, usa el texto de abajo. Habla de textura, uso y tamaño — no de certificaciones."
+    },
+    {
+      "type": "textarea",
+      "id": "fallback",
+      "label": "Beneficios por defecto (uno por línea)",
+      "default": "Textura slow rising: vuelve lento a su forma\nIdeal para escritorio, mochila o regalo\nTamaño jumbo, 10 cm aprox."
+    }
+  ],
+  "presets": [
+    {
+      "name": "SH · Beneficios"
+    }
+  ]
+}
+{% endschema %}

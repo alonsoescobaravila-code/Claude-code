@@ -1,0 +1,112 @@
+{% doc %}
+  Tarjeta de producto con la voz de marca: nombre corto, subtítulo sensorial
+  y precio, sin tocar el título que indexa Google.
+
+  @param {product} product - Producto a mostrar.
+  @param {string} [tone] - Índice del color del pozo de foto, de "0" a "5".
+  @param {string} [cta] - Texto del botón cuando el producto se puede agregar directo. Por defecto "Agregar".
+
+  @example
+  {% render 'sh-product-card', product: product, tone: 0, cta: 'Agregar' %}
+{% enddoc %}
+
+{%- comment -%}
+  sh-product-card — ficha corta de producto con voz de marca.
+
+  Resuelve tres problemas del audit sin tocar el SEO:
+  1. Titulos largos en ingles -> muestra `squishy.nombre` si existe.
+  2. Copy de proveedor       -> muestra `squishy.subtitulo` (sensorial, 1 linea).
+  3. Foto tecnica como hero  -> usa `squishy.foto_card` si existe, si no la destacada.
+
+  El titulo real del producto no se toca: sigue siendo el que Google indexa.
+  Si un metafield falta, hay fallback y la tarjeta nunca se rompe.
+
+  Uso: {% render 'sh-product-card', product: product, tone: 0 %}
+{%- endcomment -%}
+
+{%- liquid
+  assign m = product.metafields.squishy
+
+  assign sh_name = m.nombre.value | default: product.title
+  unless m.nombre.value
+    assign sh_name = sh_name | split: ' - ' | first | split: ' | ' | first | truncatewords: 5
+  endunless
+
+  assign sh_sub = m.subtitulo.value
+  assign sh_badge = m.badge.value
+  assign sh_badge_tone = m.badge_tono.value | default: 'pink'
+
+  comment
+    compare_at_price_max, no compare_at_price: el segundo solo mira la
+    primera variante, así que un producto con varias en oferta no la marca.
+  endcomment
+  if product.compare_at_price_max > product.price and sh_badge == blank
+    assign sh_badge = 'Oferta suave'
+    assign sh_badge_tone = 'peach'
+  endif
+
+  unless product.available
+    assign sh_badge = 'Agotado'
+    assign sh_badge_tone = 'grape'
+  endunless
+
+  assign sh_img = m.foto_card.value | default: product.featured_image
+  assign sh_tone = tone | default: 0
+  assign sh_cta = cta | default: 'Agregar'
+
+  comment
+    Solo se agrega directo cuando hay una sola variante. Con opciones de
+    color o tamaño, agregar la primera le mete al cliente algo que no eligió.
+  endcomment
+  assign sh_quick_add = false
+  if product.available and product.has_only_default_variant
+    assign sh_quick_add = true
+  endif
+-%}
+
+<div class="sh-card sh-pcard sh-card--link">
+  <div class="sh-pcard__media">
+    <div class="sh-photo" data-tone="{{ sh_tone }}" style="aspect-ratio:1/1">
+      {%- if sh_img -%}
+        {%- assign sh_alt = sh_img.alt | default: sh_name -%}
+        {{ sh_img | image_url: width: 640 | image_tag: loading: 'lazy', decoding: 'async', widths: '320,480,640', sizes: '(max-width: 749px) 45vw, 280px', alt: sh_alt }}
+      {%- else -%}
+        <div class="sh-photo__note"><span>Foto pendiente: producto sobre fondo pastel plano</span></div>
+      {%- endif -%}
+    </div>
+    {%- if sh_badge != blank -%}
+      <span class="sh-badge sh-badge--{{ sh_badge_tone }} sh-pcard__badge">{{ sh_badge }}</span>
+    {%- endif -%}
+  </div>
+
+  <div class="sh-pcard__body">
+    <h3 class="sh-pcard__name"><a href="{{ product.url }}">{{ sh_name }}</a></h3>
+    {%- if sh_sub != blank -%}
+      <p class="sh-pcard__sub">{{ sh_sub }}</p>
+    {%- endif -%}
+
+    <div class="sh-pcard__foot">
+      <span class="sh-price">
+        {%- if product.price_varies -%}<span class="sh-price__from">Desde</span> {% endif -%}
+        {{- product.price | money -}}
+        {%- if product.compare_at_price_max > product.price -%}
+          <span class="sh-price__was">{{ product.compare_at_price_max | money }}</span>
+        {%- endif -%}
+      </span>
+
+      {%- if sh_quick_add -%}
+        {%- form 'product', product, class: 'sh-pcard__form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <button type="submit" class="sh-btn sh-btn--primary sh-btn--sm sh-btn--block"
+                  aria-label="Agregar {{ sh_name | escape }} al carrito">{{ sh_cta }}</button>
+        {%- endform -%}
+      {%- elsif product.available -%}
+        <a href="{{ product.url }}" class="sh-btn sh-btn--primary sh-btn--sm sh-btn--block"
+           aria-label="Elegir opciones de {{ sh_name | escape }}">Elegir opciones</a>
+      {%- else -%}
+        <a href="{{ product.url }}" class="sh-btn sh-btn--outline sh-btn--sm sh-btn--block"
+           aria-label="Ver {{ sh_name | escape }}">Ver detalles</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
