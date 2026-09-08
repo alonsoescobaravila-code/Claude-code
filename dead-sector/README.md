@@ -21,8 +21,15 @@ fuera de Studio: correr el benchmark y sacar el número real de zombis que el
 servidor aguanta. Hasta entonces `MaxLive = 40` es el objetivo del plan, no una
 medición. Está todo en [docs/prompt-1-ia-de-zombis.md](docs/prompt-1-ia-de-zombis.md).
 
+**Prompt 2 escrito, sin probar con gente** — el combate: hitscan, predicción en
+el cliente, rebobinado en el servidor y una cadena de trece comprobaciones antes
+de aplicar un solo punto de daño. El análisis de qué intentaría un tramposo y qué
+lo para —con sus huecos declarados— está en
+[docs/prompt-2-combate.md](docs/prompt-2-combate.md).
+
 Lo siguiente, en este orden: blockout del Sector 1 a mano en Studio, medir sobre
-él, y entonces el Prompt 2 (combate).
+él, ajustar los márgenes del combate jugando, y entonces el Prompt 3 (sectores y
+brecha colectiva).
 
 ## Estructura
 
@@ -40,10 +47,12 @@ ServerScriptService/        -> ServerScriptService
   Bootstrap.server.luau        el único Script del servidor. Init a todos, luego Start
   Systems/                     14 sistemas, todos con autoridad de servidor
   Zombies/                     la entidad, la reserva y el reparto de rutas
+  Combat/                      munición por jugador y techo de peticiones
   Benchmark/                   se llama a mano desde Studio. No arranca solo
 StarterPlayerScripts/       -> StarterPlayerScripts
   Bootstrap.client.luau        el único LocalScript
   Controllers/                 entrada, interfaz, efectos y predicción. Nada más
+docs/                          por qué de cada prompt, y qué quedó pendiente
 verificar/                     las dos pasadas. No se sube a Studio
 ```
 

@@ -17,12 +17,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG = os.path.join(ROOT, "ReplicatedStorage", "Config")
 SYSTEMS = os.path.join(ROOT, "ServerScriptService", "Systems")
 ZOMBIES = os.path.join(ROOT, "ServerScriptService", "Zombies")
+COMBATE = os.path.join(ROOT, "ServerScriptService", "Combat")
 CONTROLLERS = os.path.join(ROOT, "StarterPlayerScripts", "Controllers")
 
 # Carpetas de código de juego, donde manda la regla 8. Benchmark/ queda fuera a
 # propósito: es una herramienta de medición, no juego, y sus umbrales tienen que
 # estar donde se leen para poder discutirlos.
-CODIGO_DE_JUEGO = (SYSTEMS, ZOMBIES, CONTROLLERS)
+CODIGO_DE_JUEGO = (SYSTEMS, ZOMBIES, COMBATE, CONTROLLERS)
 
 # Un literal aceptable fuera de Config. 0 y 1 son el neutro y la unidad, y 2 es
 # partir por la mitad o saltar el primer elemento: ninguno es un número de
@@ -209,7 +210,7 @@ for reparto in ("AddScrap", "GrantXp", "BreachKills +=", "Breach.Add"):
         fallo(f"Systems/ZombieAI: reparte recompensas ('{reparto}'). Solo debe emitir la baja (regla 1)")
 
 # Rule 7: un solo bucle. Ninguna otra conexión por frame en el código de juego.
-for carpeta in (SYSTEMS, ZOMBIES):
+for carpeta in (SYSTEMS, ZOMBIES, COMBATE):
     if not os.path.isdir(carpeta):
         continue
     for archivo in sorted(os.listdir(carpeta)):
@@ -240,6 +241,48 @@ for base, _, archivos in os.walk(ROOT):
         codigo = sin_comentarios(leer(os.path.join(base, archivo)))
         if re.search(r"\bPvP\b|PlayerVsPlayer|FriendlyFire", codigo, re.I):
             fallo(f"{archivo}: aparece una vía de jugador contra jugador (regla 4)")
+
+# ---------------------------------------------------------------------------
+# 4b. Regla 3: todo handler de RemoteEvent limita la frecuencia
+# ---------------------------------------------------------------------------
+# Un handler sin límite es una invitación: mil llamadas por segundo tumban el
+# servidor sin que ninguna sea válida. Se comprueba de verdad, no de palabra:
+# se busca el cuerpo de cada función conectada a OnServerEvent y se exige que
+# dentro llame a Consume.
+combate = leer(os.path.join(SYSTEMS, "Combat.luau"))
+codigo_combate = sin_comentarios(combate)
+
+conectados = set(re.findall(r"OnServerEvent:Connect\((\w+)\)", codigo_combate))
+if not conectados:
+    fallo("Systems/Combat: no conecta ningún RemoteEvent. ¿Se movió el combate de sitio?")
+
+definiciones = list(re.finditer(r"^local function (\w+)\(", codigo_combate, re.M))
+for indice, definicion in enumerate(definiciones):
+    nombre = definicion.group(1)
+    if nombre not in conectados:
+        continue
+    fin = definiciones[indice + 1].start() if indice + 1 < len(definiciones) else len(codigo_combate)
+    cuerpo = codigo_combate[definicion.start():fin]
+    if ":Consume(" not in cuerpo:
+        fallo(f"Systems/Combat: el handler {nombre} no limita la frecuencia (regla 3)")
+    if "typeof(" not in cuerpo and "payload" in cuerpo:
+        fallo(f"Systems/Combat: el handler {nombre} no valida los tipos de lo que recibe (regla 3)")
+
+# El daño sale de Config, nunca de lo que mandó el cliente.
+if not re.search(r"local damage = weapon\.Damage", codigo_combate):
+    fallo("Systems/Combat: el daño no se lee de Config/Weapons (regla 1)")
+for sospechoso in ("request.Damage", "payload.Damage", "request.ZombieId", "payload.ZombieId"):
+    if sospechoso in codigo_combate:
+        fallo(f"Systems/Combat: usa '{sospechoso}'. El cliente manda intención, nunca resultados (regla 1)")
+
+# Y el tipo de la petición no puede ni siquiera tener dónde meterlos.
+peticion = re.search(r"export type FireRequest = \{(.*?)\n\}", leer(os.path.join(ROOT, "ReplicatedStorage", "Types.luau")), re.S)
+if peticion is None:
+    fallo("Types: no está declarado FireRequest")
+else:
+    for prohibido in ("Damage", "ZombieId", "Target", "Killed", "Hit"):
+        if re.search(rf"^\s*{prohibido}:", peticion.group(1), re.M):
+            fallo(f"Types.FireRequest declara '{prohibido}'. El cliente no manda resultados (regla 1)")
 
 # ---------------------------------------------------------------------------
 # 5. El contrato de red: nombres declarados y nombres creados coinciden

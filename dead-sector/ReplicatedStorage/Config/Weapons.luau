@@ -73,6 +73,7 @@ local Weapons: WeaponsConfig = {
 			Range = 200, -- TUNE (Prompt 2)
 			Spread = 1.5, -- TUNE (Prompt 4)
 			Pellets = 1,
+			ReserveMagazines = 6, -- TUNE (Prompt 4)
 			UpgradeMaterial = "Steel",
 		},
 	},

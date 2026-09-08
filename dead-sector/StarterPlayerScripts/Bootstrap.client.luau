@@ -24,10 +24,13 @@ type Controller = {
 	Start: () -> (),
 }
 
+-- Orden de dependencia, no alfabético. Effects antes que Prediction porque
+-- Prediction le pide el fogonazo en cuanto alguien aprieta, y Prediction antes
+-- que Input porque Input no hace otra cosa que llamarlo.
 local ORDER: { string } = {
-	"Input",
 	"Effects",
 	"Prediction",
+	"Input",
 	"Hud",
 }
 

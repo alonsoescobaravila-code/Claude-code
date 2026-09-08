@@ -124,6 +124,9 @@ export type Weapon = {
 	Spread: number,
 	-- Perdigones por disparo. Uno en todo lo que no sea escopeta.
 	Pellets: number,
+	-- Cargadores de reserva. La munición se recarga sola en el refugio; lo que
+	-- se compra con chatarra es la munición especial, que es cosa del Prompt 4.
+	ReserveMagazines: number,
 	-- Material de sector exigido para subir al tier siguiente.
 	UpgradeMaterial: string?,
 }
@@ -160,6 +163,34 @@ export type PlayerProfile = {
 --------------------------------------------------------------------------------
 -- Red
 --------------------------------------------------------------------------------
+
+-- Lo que el servidor confirma al cliente después de validar. El cliente ya pintó
+-- su predicción al apretar; esto le dice si acertó de verdad.
+export type HitConfirmation = {
+	ZombieId: ZombieId,
+	Position: Vector3,
+	Damage: number,
+	Killed: boolean,
+	-- Impacto por la espalda a un Blindado. El cliente lo marca distinto: es la
+	-- única forma de enseñar la mecánica sin un tutorial.
+	Weakpoint: boolean,
+}
+
+-- Por qué se rechazó un disparo. No se le manda al cliente —decirle qué
+-- comprobación falló es enseñarle a saltársela— pero sí se registra.
+export type RejectionReason =
+	"RateLimit"
+	| "BadPayload"
+	| "NoCharacter"
+	| "Dead"
+	| "WrongWeapon"
+	| "NoAmmo"
+	| "Reloading"
+	| "Cooldown"
+	| "StaleTimestamp"
+	| "FutureTimestamp"
+	| "OriginTooFar"
+	| "BadDirection"
 
 -- Lo que el cliente pide al disparar. Intención, nunca resultado: no lleva daño,
 -- ni a quién le dio, ni si mató. Eso lo decide el servidor.

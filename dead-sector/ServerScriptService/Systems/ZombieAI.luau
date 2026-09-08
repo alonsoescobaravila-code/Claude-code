@@ -50,6 +50,9 @@ local HISTORY_INTERVAL = 1 / ConfigCombat.RewindSampleRate
 -- El coste propio se informa en microsegundos: en milisegundos, un paso barato
 -- se lee como 0,0 y no se distingue de uno que no corrió.
 local MICROS_PER_SECOND = 1000000
+-- Se devuelve cuando aún no hay reserva. Constante para no asignar una tabla
+-- vacía en cada consulta.
+local EMPTY_IDS: { Types.ZombieId } = table.freeze({})
 
 export type Target = {
 	Player: Player,
@@ -75,7 +78,9 @@ export type ZombieAIModule = Types.System & {
 	Damage: (id: Types.ZombieId, amount: number, killer: Player?) -> boolean,
 	Despawn: (id: Types.ZombieId) -> (),
 	DespawnAll: () -> (),
-	PositionAt: (id: Types.ZombieId, when: number) -> Vector3?,
+	PositionAt: (id: Types.ZombieId, when: number) -> (Vector3?, Vector3?),
+	ActiveIds: () -> { Types.ZombieId },
+	StatsOf: (id: Types.ZombieId) -> Types.ZombieType?,
 	GetStats: () -> Stats,
 	-- Desconecta el bucle. No lo usa el juego —el bucle vive lo que vive el
 	-- servidor— pero sí las pruebas y el cierre ordenado.
@@ -377,9 +382,35 @@ function ZombieAI.DespawnAll()
 	end
 end
 
--- Dónde estaba un zombi en un instante pasado. Lo usará el Prompt 2 para
--- rebobinar al momento del disparo. nil si el instante queda fuera del buffer.
-function ZombieAI.PositionAt(id: Types.ZombieId, when: number): Vector3?
+-- Dónde estaba un zombi y hacia dónde miraba en un instante pasado. Es la puerta
+-- que usa el combate para rebobinar al momento del disparo. nil si el instante
+-- queda fuera del buffer.
+function ZombieAI.PositionAt(id: Types.ZombieId, when: number): (Vector3?, Vector3?)
+	local activePool = pool
+	if activePool == nil then
+		return nil, nil
+	end
+	local zombie = activePool:Get(id)
+	if zombie == nil then
+		return nil, nil
+	end
+	return zombie:PositionAt(when)
+end
+
+-- El array denso de vivos, tal cual. Se entrega sin copiar porque el combate lo
+-- recorre en cada disparo y copiarlo sería basura constante; a cambio, quien lo
+-- reciba NO puede modificarlo.
+function ZombieAI.ActiveIds(): { Types.ZombieId }
+	local activePool = pool
+	if activePool == nil then
+		return EMPTY_IDS
+	end
+	return activePool.ActiveIds
+end
+
+-- Los datos del tipo de un zombi vivo, para que el combate sepa su tamaño y si
+-- tiene punto débil sin tener que conocer la reserva.
+function ZombieAI.StatsOf(id: Types.ZombieId): Types.ZombieType?
 	local activePool = pool
 	if activePool == nil then
 		return nil
@@ -388,7 +419,7 @@ function ZombieAI.PositionAt(id: Types.ZombieId, when: number): Vector3?
 	if zombie == nil then
 		return nil
 	end
-	return zombie:PositionAt(when)
+	return zombie.Stats
 end
 
 function ZombieAI.GetStats(): Stats

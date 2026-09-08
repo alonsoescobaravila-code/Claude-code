@@ -28,6 +28,12 @@ export type CombatConfig = {
 	RangeTolerance: number,
 	-- Margen sobre la posición rebobinada del zombi, en studs.
 	HitboxTolerance: number,
+	-- Cuánto puede alejarse el origen que declara el cliente de la cabeza que el
+	-- servidor le ve. Es lo que impide disparar desde el otro lado del mapa.
+	MaxOriginDeviation: number,
+	-- Cuánto puede desviarse de 1 la longitud del vector de dirección. Un vector
+	-- gigante multiplicaría el alcance efectivo.
+	MaxDirectionError: number,
 	-- Techo de peticiones de disparo por jugador y segundo, aplicado en servidor.
 	MaxFireRequestsPerSecond: number,
 	-- Ráfaga tolerada antes de empezar a rechazar.
@@ -52,6 +58,8 @@ local Combat: CombatConfig = {
 	MaxClockSkewSeconds = 0.1, -- TUNE (Prompt 2)
 	RangeTolerance = 1.15, -- TUNE (Prompt 2)
 	HitboxTolerance = 2.5, -- TUNE (Prompt 2)
+	MaxOriginDeviation = 8, -- TUNE (Prompt 2)
+	MaxDirectionError = 0.01,
 	MaxFireRequestsPerSecond = 20, -- TUNE (Prompt 2): sobre la cadencia del arma más rápida
 	FireRequestBurst = 5, -- TUNE (Prompt 2)
 	SuspiciousRejectionStreak = 25, -- TUNE (Prompt 9)

@@ -72,6 +72,11 @@ type self = {
 	-- Buffer circular de posiciones pasadas, para que el Prompt 2 pueda rebobinar
 	-- al instante del disparo. Se reserva entero acá y no crece nunca.
 	History: { Vector3 },
+	-- La orientación también se guarda: el punto débil del Blindado depende de
+	-- por dónde entró el disparo, y hay que juzgarlo con la orientación que tenía
+	-- en ese instante, no con la de ahora. Girándose después no debería salvarse
+	-- de un tiro que ya iba a su espalda.
+	HistoryFacing: { Vector3 },
 	HistoryTimes: { number },
 	HistoryCursor: number,
 	HistoryCount: number,
@@ -84,6 +89,7 @@ local FORWARD = Vector3.new(0, 0, -1)
 
 function Zombie.new(id: Types.ZombieId, part: BasePart, stats: Types.ZombieType): Zombie
 	local history = table.create(HISTORY_SIZE, ZERO)
+	local facing = table.create(HISTORY_SIZE, FORWARD)
 	local times = table.create(HISTORY_SIZE, 0)
 
 	return setmetatable({
@@ -108,6 +114,7 @@ function Zombie.new(id: Types.ZombieId, part: BasePart, stats: Types.ZombieType)
 		FarTimer = 0,
 		AttackCooldown = 0,
 		History = history,
+		HistoryFacing = facing,
 		HistoryTimes = times,
 		HistoryCursor = 0,
 		HistoryCount = 0,
@@ -158,6 +165,7 @@ function Zombie.RecordPosition(self: Zombie, now: number)
 	local cursor = self.HistoryCursor % HISTORY_SIZE + 1
 	self.HistoryCursor = cursor
 	self.History[cursor] = self.Position
+	self.HistoryFacing[cursor] = self.Facing
 	self.HistoryTimes[cursor] = now
 
 	if self.HistoryCount < HISTORY_SIZE then
@@ -165,33 +173,41 @@ function Zombie.RecordPosition(self: Zombie, now: number)
 	end
 end
 
--- Dónde estaba en un instante pasado. Devuelve la muestra más cercana, no una
--- interpolada: con 30 muestras por segundo la diferencia queda muy por debajo de
--- la tolerancia de impacto, y no interpolar ahorra trabajo en la ruta caliente.
+-- Dónde estaba y hacia dónde miraba en un instante pasado. Devuelve la muestra
+-- más cercana, no una interpolada: con 30 muestras por segundo la diferencia
+-- queda muy por debajo de la tolerancia de impacto, y no interpolar ahorra
+-- trabajo en la ruta caliente.
+--
+-- Recorre hacia atrás desde la más reciente y se planta en cuanto la diferencia
+-- deja de reducirse. Las muestras están ordenadas en el tiempo, así que pasado
+-- el instante buscado ya solo se aleja: seguir mirando las treinta es trabajo
+-- tirado, y esto se llama una vez por zombi y por disparo.
+--
 -- nil si el instante pedido queda fuera del buffer, que es lo que tiene que
 -- pasar cuando alguien manda una marca de tiempo inventada.
-function Zombie.PositionAt(self: Zombie, when: number): Vector3?
+function Zombie.PositionAt(self: Zombie, when: number): (Vector3?, Vector3?)
 	if self.HistoryCount == 0 then
-		return nil
+		return nil, nil
 	end
 
-	local best: Vector3? = nil
+	local bestIndex = 0
 	local bestDelta = math.huge
 
 	for offset = 0, self.HistoryCount - 1 do
 		local index = (self.HistoryCursor - offset - 1) % HISTORY_SIZE + 1
 		local delta = math.abs(self.HistoryTimes[index] - when)
-		if delta < bestDelta then
-			bestDelta = delta
-			best = self.History[index]
+		if delta >= bestDelta then
+			break
 		end
+		bestDelta = delta
+		bestIndex = index
 	end
 
-	if bestDelta > ConfigCombat.RewindBufferSeconds then
-		return nil
+	if bestIndex == 0 or bestDelta > ConfigCombat.RewindBufferSeconds then
+		return nil, nil
 	end
 
-	return best
+	return self.History[bestIndex], self.HistoryFacing[bestIndex]
 end
 
 -- Devuelve true si esta baja mata. Quien decide cuánto daño es el sistema de
