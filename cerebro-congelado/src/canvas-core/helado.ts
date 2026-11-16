@@ -27,37 +27,37 @@ export const CAPTIONS: { from: number; to: number; text: string }[] = [
 
 // ------------------------------------------------------------------ small helpers
 type V3 = THREE.Vector3;
-const v3 = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
-const UP = v3(0, 1, 0);
-const TAU = Math.PI * 2;
+export const v3 = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+export const UP = v3(0, 1, 0);
+export const TAU = Math.PI * 2;
 /** piecewise keys [frame, value]: eased between neighbours, held outside. Pure in f. */
-const key = (f: number, ks: [number, number][], e: Ease = ease.inOutCubic) => {
+export const key = (f: number, ks: [number, number][], e: Ease = ease.inOutCubic) => {
   if (f <= ks[0][0]) return ks[0][1];
   for (let i = 1; i < ks.length; i++) if (f <= ks[i][0]) return lerp(ks[i - 1][1], ks[i][1], e(seg(f, ks[i - 1][0], ks[i][0])));
   return ks[ks.length - 1][1];
 };
-const key3 = (f: number, ks: [number, number, number, number][], e: Ease = ease.inOutCubic) =>
+export const key3 = (f: number, ks: [number, number, number, number][], e: Ease = ease.inOutCubic) =>
   v3(key(f, ks.map((k) => [k[0], k[1]]), e), key(f, ks.map((k) => [k[0], k[2]]), e), key(f, ks.map((k) => [k[0], k[3]]), e));
-const gloss = (color: THREE.ColorRepresentation, roughness = 0.4) => new THREE.MeshStandardMaterial({ color, roughness, metalness: 0 });
-const mesh = (g: THREE.BufferGeometry, m: THREE.Material, p?: [number, number, number], s?: [number, number, number]) => {
+export const gloss = (color: THREE.ColorRepresentation, roughness = 0.4) => new THREE.MeshStandardMaterial({ color, roughness, metalness: 0 });
+export const mesh = (g: THREE.BufferGeometry, m: THREE.Material, p?: [number, number, number], s?: [number, number, number]) => {
   const o = new THREE.Mesh(g, m); if (p) o.position.set(...p); if (s) o.scale.set(...s); return o;
 };
-const basisQ = (x: V3, y: V3, z: V3) => new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z));
-const lights = (scene: THREE.Scene) => {
+export const basisQ = (x: V3, y: V3, z: V3) => new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z));
+export const lights = (scene: THREE.Scene) => {
   // bright, even, white: a big sky fill and two soft directionals, no drama
   scene.add(new THREE.HemisphereLight("#ffffff", "#c9d6f0", 1.45));
   const k = new THREE.DirectionalLight("#ffffff", 1.7); k.position.set(-3, 5, 8); scene.add(k);
   const fl = new THREE.DirectionalLight("#ffffff", 0.75); fl.position.set(5, 1, 6); scene.add(fl);
 };
-const camera = () => { const c = new THREE.PerspectiveCamera(30, W / H, 0.1, 100); c.position.set(0, 0.2, 15); c.lookAt(0, 0.2, 0); return c; };
+export const camera = () => { const c = new THREE.PerspectiveCamera(30, W / H, 0.1, 100); c.position.set(0, 0.2, 15); c.lookAt(0, 0.2, 0); return c; };
 
-const SKIN = new THREE.Color("#ffc38f"), ICE_SKIN = new THREE.Color("#a8d3f5");
-const INK = "#1d1a2b";
+export const SKIN = new THREE.Color("#ffc38f"), ICE_SKIN = new THREE.Color("#a8d3f5");
+export const INK = "#1d1a2b";
 
 // ------------------------------------------------------------------ the character (shots 1, 2, 5)
 const HEAD_C = v3(0, 0.65, 0), HEAD_R = v3(0.85, 0.8, 0.8);
 /** a point on the head's surface in front, from face x/y (head group space) */
-const onHead = (x: number, y: number, lift = 0) => {
+export const onHead = (x: number, y: number, lift = 0) => {
   const nx = x / HEAD_R.x, ny = (y - HEAD_C.y) / HEAD_R.y, nz = Math.sqrt(Math.max(0.01, 1 - nx * nx - ny * ny));
   return v3(x, y, nz * HEAD_R.z + lift);
 };
@@ -82,7 +82,7 @@ const buildHand = (skin: THREE.Material) => {
 };
 type Hand = ReturnType<typeof buildHand>;
 /** curl 0 open, 1 fist; thumb 0 tucked along the fingers, 1 sticking out along +x */
-const poseHand = (h: Hand, curl: number, thumb: number, wrap = 0) => {
+export const poseHand = (h: Hand, curl: number, thumb: number, wrap = 0) => {
   h.fingers.forEach((fg, i) => { const c = curl * (1 + (i - 1.5) * 0.04); fg.a.rotation.x = c * 1.25; fg.b.rotation.x = c * 1.35; });
   h.thumb.rotation.set(0, -wrap * 1.1, lerp(1.25, 0, thumb));
 };
@@ -115,7 +115,7 @@ const scoopGeo = (bitten: boolean) => {
   return g;
 };
 
-const buildChar = () => {
+export const buildChar = (withCone = true) => {
   const scene = new THREE.Scene(); lights(scene);
   const skin = gloss(SKIN.clone(), 0.45), hoodie = gloss("#ff8a3d", 0.42), navy = gloss("#27407a", 0.45), white = gloss("#ffffff", 0.35);
   const ink = gloss(INK, 0.25), pink = gloss("#ff7fa8", 0.32), ice = new THREE.MeshStandardMaterial({ color: "#d6eeff", roughness: 0.18, metalness: 0, flatShading: true });
@@ -194,18 +194,18 @@ const buildChar = () => {
   const scoopFull = mesh(scoopGeo(false), pink, [0, 0.5, 0]), scoopBit = mesh(scoopGeo(true), pink, [0, 0.5, 0]);
   cone.add(scoopFull, scoopBit);
   cone.rotation.z = -Math.PI / 2; cone.position.set(0, 0.07, 0.15);
-  arms[1].hand.g.add(cone);
+  if (withCone) arms[1].hand.g.add(cone);
   return { scene, cam: camera(), char, body, legs, arms, head, eyes, smile, open, tongue, grim, firm, spikes, frost, drops, skin, scoopFull, scoopBit };
 };
-type Char = ReturnType<typeof buildChar>;
+export type Char = ReturnType<typeof buildChar>;
 
 const Q_CONE = basisQ(v3(0, 1, 0), v3(-1, 0, 0), v3(0, 0, 1));     // x up (the cone), fingers inward, palm to camera
 const Q_SIDE = basisQ(v3(0, 0, 1), v3(0, -1, 0), v3(1, 0, 0));     // relaxed: fingers down, palm to the body
 const Q_HEAD = basisQ(v3(0, 0, -1), v3(0, 1, 0), v3(1, 0, 0));     // clutching the head: fingers up, palm on the temple
 const Q_THUMB = basisQ(v3(0, 1, 0), v3(0, 0, 1), v3(1, 0, 0));     // thumbs up: thumb (x) up, knuckles to camera
 
-const putBone = (m: THREE.Mesh, a: V3, b: V3) => { const d = b.clone().sub(a), L = d.length(); m.position.copy(a).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(UP, d.normalize()); m.scale.set(1, L, 1); };
-const setArm = (A: Char["arms"][number], target: V3, q: THREE.Quaternion) => {
+export const putBone = (m: THREE.Mesh, a: V3, b: V3) => { const d = b.clone().sub(a), L = d.length(); m.position.copy(a).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(UP, d.normalize()); m.scale.set(1, L, 1); };
+export const setArm = (A: Char["arms"][number], target: V3, q: THREE.Quaternion) => {
   const root = v3(A.s * 0.56, 0.36, 0), mid0 = root.clone().add(v3(0, -ARM_L, 0)), end0 = mid0.clone().add(v3(0, -ARM_L, 0));
   const s = solveTwoBone(root, mid0, end0, target, root.clone().add(v3(A.s * 1.2, -0.7, -0.5)));
   putBone(A.upper, root, s.mid); putBone(A.lower, s.mid, s.end);
@@ -369,7 +369,7 @@ const buildCut = (env: Env) => {
 };
 type Cut = ReturnType<typeof buildCut>;
 const ROOT_X = 0.0, BRAIN_X = -0.36, BRAIN_S = 0.86;
-const pop = (f: number, at: number, len = 16) => ease.outBack(seg(f, at, at + len));
+export const pop = (f: number, at: number, len = 16) => ease.outBack(seg(f, at, at + len));
 const C_PAL = new THREE.Color("#f08a9a"), C_ICE = new THREE.Color("#bfe6ff"), C_VES = new THREE.Color("#e23b3b"), C_TIGHT = new THREE.Color("#8a4a9a"), C_HOT = new THREE.Color("#ff2a1f"), C_BRAIN = new THREE.Color("#f7a8c0"), C_BRAIN_COLD = new THREE.Color("#c9c0ee"), C_BRAIN_HOT = new THREE.Color("#ff8f9f");
 
 const poseCut = (c: Cut, f: number) => {
@@ -419,7 +419,7 @@ const poseCut = (c: Cut, f: number) => {
 };
 
 // ------------------------------------------------------------------ the frame: backdrop, set, caption, vignette
-const backdrop = (ctx: Ctx, env: Env) => {
+export const backdrop = (ctx: Ctx, env: Env) => {
   ctx.save(); ctx.setTransform(env.scale, 0, 0, env.scale, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
   const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#3d8df0"); g.addColorStop(0.55, "#3381e8"); g.addColorStop(1, "#1f5fc4");
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
@@ -445,7 +445,7 @@ const finish = (ctx: Ctx, env: Env, f: number) => { caption(ctx, env, f); vignet
 const LOOK = { clear: null, toneMapping: THREE.ACESFilmicToneMapping, exposure: 1.12 } as const;
 
 const charShot = (start: number) => (ctx: Ctx, local: number, env: Env) => {
-  const f = start + local, c = memo(env, "helado:char", buildChar);
+  const f = start + local, c = memo(env, "helado:char", () => buildChar());
   poseChar(c, f); backdrop(ctx, env); draw3d(ctx, env, c.scene, c.cam, LOOK); finish(ctx, env, f);
 };
 const cutShot = (start: number) => (ctx: Ctx, local: number, env: Env) => {
