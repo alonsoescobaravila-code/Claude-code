@@ -75,6 +75,9 @@ table { width: 100%; border-collapse: collapse; font-size: 0.9rem }
 td { padding: 7px 10px; border-bottom: 1px solid var(--line) }
 td code { color: var(--violet) }
 .note { font-size: 0.86rem; color: var(--muted) }
+.qr { display: flex; gap: 14px; align-items: center; flex-wrap: wrap }
+.qr img { width: 132px; height: 132px; border-radius: 10px; background: #fff; padding: 6px; flex: none }
+.qr > div { min-width: 0; flex: 1 1 180px; display: grid; gap: 4px }
 .progress { font: 600 0.82rem var(--mono); color: var(--ok) }
 @media (prefers-reduced-motion: no-preference) { .btn { transition: color .15s, border-color .15s } }
 @media (max-width: 520px) { .avatar { width: 88px; height: 88px; margin-top: -44px } .clip-head { flex-direction: column; gap: 6px } }
@@ -117,7 +120,7 @@ td code { color: var(--violet) }
           <li><label><input type="checkbox" id="p1" data-save>Crear la cuenta en TikTok, Instagram y YouTube<small>Con el usuario, la foto, el banner y la bio de arriba.</small></label></li>
           <li><label><input type="checkbox" id="p2" data-save>Calentar 24 horas sin publicar<small>Seguir, dar me gusta y comentar solo en entretenimiento, reality TV y streaming.</small></label></li>
           <li><label><input type="checkbox" id="p3" data-save>Unirte a la campaña en Content Rewards / Whop<small>Ahí están 4 archivos de reglas que no pude ver.</small></label></li>
-          <li><label><input type="checkbox" id="p4" data-save>Tener a mano el QR de la historia de TikTok<small>Te lo dieron al entrar en la campaña.</small></label></li>
+          <li><label><input type="checkbox" id="p4" data-save>Guardar el QR de la historia de TikTok<small>Está en «Historias y comentarios», más abajo.</small></label></li>
         </ul>
       </div>
       <div class="panel">
@@ -125,6 +128,7 @@ td code { color: var(--violet) }
         <ul class="checklist">
           <li>9:16, con título y CTA en pantalla <small>Los clips ya lo traen.</small></li>
           <li>Descripción con CTA, el elenco que sale y <code>@streamhousela</code> <small>Abajo, lista para copiar.</small></li>
+          <li>Máximo 5 hashtags por descripción <small>Los textos de abajo llevan los 4 obligatorios: puedes añadir uno más como mucho.</small></li>
           <li>Sin marca de agua tuya; títulos y textos distintos cada vez</li>
           <li>Una historia en Instagram y otra en TikTok por cada clip</li>
           <li>Responder rápido a quien pregunte dónde verlo</li>
@@ -134,7 +138,7 @@ td code { color: var(--violet) }
       <div class="panel">
         <h3>Historias y comentarios</h3>
         {{STORY_IG}}
-        <p class="note">Historia de TikTok: usa el código QR de la campaña.</p>
+        <div class="qr"><img src="data:image/png;base64,{{QR}}" alt="Código QR para la historia de TikTok"><div><span class="label">Historia de TikTok · código QR</span><p class="note">Guarda esta imagen en tu teléfono (mantén pulsado o clic derecho → guardar). En cada clip, publica una historia en TikTok y pon este QR encima, como sticker o foto. También te lo mandé como archivo: <code>qr-historia-tiktok.png</code>.</p></div></div>
         {{REPLY}}
       </div>
       <div class="panel">
