@@ -433,7 +433,7 @@ const caption = (ctx: Ctx, env: Env, f: number) => {
   if (widest * em > SAFE_R - SAFE_L - 30) em = (SAFE_R - SAFE_L - 30) / widest;
   ctx.save(); ctx.setTransform(env.scale, 0, 0, env.scale, 0, 0); ctx.globalCompositeOperation = "source-over";
   lines.forEach((line, i) => {
-    const at = cap.from + 6 + i * 8, t = ease.outCubic(seg(f, at, at + 14)), out = 1 - seg(f, cap.to - 8, cap.to - 1);
+    const at = cap.from + 6 + i * 8, t = ease.outCubic(seg(f, at, at + 14)), out = cap.to === CUT.end ? 1 : 1 - seg(f, cap.to - 8, cap.to - 1);
     if (t <= 0) return;
     const lay = layoutText(font, line), x = (SAFE_L + SAFE_R) / 2, y = CAP_Y + i * em * 1.28 + (1 - t) * 26;
     ctx.globalAlpha = t * out * 0.55; ctx.fillStyle = "#0d2f7a"; fillText2d(ctx as unknown as CanvasRenderingContext2D, font, lay, em, x, y + em * 0.42 + 5);
