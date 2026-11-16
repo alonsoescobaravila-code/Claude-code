@@ -1,0 +1,14 @@
+{
+  "name": "Clips de un streamer (genérico, en español)",
+  "lang": "es",
+  "model": "small",
+  "ctas": ["Sígueme para más clips", "Mira el directo completo en su canal", "Parte 2 en mi perfil"],
+  "hashtags": "#clips #twitch #streamer",
+  "show": "",
+  "credit": "Créditos: @CANAL_DEL_STREAMER",
+  "requireCast": false,
+  "cast": {},
+  "story": [],
+  "reply": "",
+  "notes": "Úsalo solo con streamers que permiten clips o en una campaña suya, y dales crédito en cada publicación."
+}

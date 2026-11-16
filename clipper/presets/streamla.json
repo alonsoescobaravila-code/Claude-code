@@ -1,0 +1,18 @@
+{
+  "name": "Streamhouse LA (CWETV)",
+  "lang": "en",
+  "model": "small.en",
+  "ctas": ["Watch Streamhouse LA on CWETV", "Download CWETV to watch the full episode", "Watch the full episode on CWETV", "New episode out now on chickenwrapent.com"],
+  "hashtags": "#streamhouselacwe #streamhousela #cwetv #chickenwrapentertainment",
+  "show": "@streamhousela",
+  "requireCast": true,
+  "cast": {
+    "Morgan Westbrooks": "@morgandwestbrooks", "India Love": "@indialove", "Casanova": "@one_cnova", "DJ SkyHigh Baby": "@djskyhighbaby",
+    "Michaela": "@sheismichaela", "Phee": "@romanaceanddancepole", "Island Boi": "@islandboij242", "CJ": "@cjkilla", "Lyricc": "@assistanttothestarz",
+    "Vegas Ky": "@vegas_ky", "Jojo": "@flyestmanonearth", "D Mac": "@mrmacster9", "Chica": "@chicachicaduhhh_", "K Shiday": "@kshiday", "Noel": "@bignoel_official",
+    "Diamond The Body": "@DiamondTheBodyy", "Tru Carr": "@trucarr_", "EKE": "@eke.thename", "Speedy": "@speedy1808", "Conrad": "@boutabag_rad"
+  },
+  "story": ["Instagram story link: https://www.cwenetwork.com/buy?campaign=motionclipping", "TikTok story: add the campaign QR code from your onboarding"],
+  "reply": "Reply to \"where can I watch?\" comments with: https://www.cwenetwork.com",
+  "notes": "New episodes every Monday 6 PM. Clip the current episode. Target USA, UK and Canada. No botting, no personal watermark."
+}
