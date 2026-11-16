@@ -26,7 +26,7 @@ const downloadChat = async (link, out) => {
   for (;;) {
     const variables = cursor ? { videoID: id, cursor } : { videoID: id, contentOffsetSeconds: 0 };
     const j = await gql([{ operationName: "VideoCommentsByOffsetOrCursor", variables, extensions: { persistedQuery: { version: 1, sha256Hash: "b70a3591ff0f4e0313d126c6a1502d79a1c02baebb288227c582044aa76adf6a" } } }]);
-    const c = j?.[0]?.data?.video?.comments; if (!c) throw new Error("Twitch returned no chat for this VOD (expired, subscriber-only, or chat replay is off)");
+    const c = j?.[0]?.data?.video?.comments; if (!c) throw new Error(`Twitch returned no chat for this VOD (expired, subscriber-only, or chat replay is off). Twitch said: ${JSON.stringify(j).slice(0, 400)}`);
     for (const e of c.edges) comments.push({ content_offset_seconds: e.node.contentOffsetSeconds, commenter: { display_name: e.node.commenter?.displayName ?? "" }, message: { body: (e.node.message?.fragments ?? []).map((f) => f.text).join("") } });
     if (!c.pageInfo?.hasNextPage || !c.edges.length) break;
     cursor = c.edges[c.edges.length - 1].cursor;
