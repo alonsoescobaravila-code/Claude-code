@@ -63,7 +63,7 @@ export const onHead = (x: number, y: number, lift = 0) => {
 };
 const ARM_L = 0.58;
 
-const buildHand = (skin: THREE.Material) => {
+export const buildHand = (skin: THREE.Material) => {
   // hand frame: +y along the fingers, +z out of the palm, +x toward the thumb
   const g = new THREE.Group();
   g.add(mesh(new THREE.SphereGeometry(0.16, 24, 16), skin, [0, 0.02, 0], [1, 0.95, 0.72]));
@@ -80,7 +80,7 @@ const buildHand = (skin: THREE.Material) => {
   g.add(thumb);
   return { g, fingers, thumb };
 };
-type Hand = ReturnType<typeof buildHand>;
+export type Hand = ReturnType<typeof buildHand>;
 /** curl 0 open, 1 fist; thumb 0 tucked along the fingers, 1 sticking out along +x */
 export const poseHand = (h: Hand, curl: number, thumb: number, wrap = 0) => {
   h.fingers.forEach((fg, i) => { const c = curl * (1 + (i - 1.5) * 0.04); fg.a.rotation.x = c * 1.25; fg.b.rotation.x = c * 1.35; });
