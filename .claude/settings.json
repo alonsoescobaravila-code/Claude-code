@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node chat-clips.mjs:*)",
+      "Bash(node clipper/chat-clips.mjs:*)",
+      "Bash(curl -sS -m 20 https://gql.twitch.tv/gql:*)"
+    ]
+  }
+}
