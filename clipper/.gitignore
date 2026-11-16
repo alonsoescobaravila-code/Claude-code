@@ -3,3 +3,5 @@ out/
 *.mp4
 *.wav
 !README.md
+episodes/
+ep2.url
