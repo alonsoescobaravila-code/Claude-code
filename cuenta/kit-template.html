@@ -1,0 +1,190 @@
+<title>Daily Drama Clips</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one column like a production call sheet: the account kit, the rules, then a card per clip with copy-ready text. */
+:root {
+  --bg: #0d0818; --surface: #170f29; --surface-2: #211638; --line: #33264f;
+  --fg: #f3eefc; --muted: #a99bc7; --accent: #ff4f9a; --accent-2: #ff8a3d; --violet: #9b6bff; --warn: #ffc857; --ok: #4fd18b;
+  --display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --bg: #f7f3fc; --surface: #ffffff; --surface-2: #f1eaf9; --line: #dfd3ef; --fg: #1b1230; --muted: #5f5379; --accent: #d1186f; --accent-2: #c85a12; --violet: #6b3fd6; --warn: #8a5a00; --ok: #137a45; color-scheme: light } }
+:root[data-theme="light"] { --bg: #f7f3fc; --surface: #ffffff; --surface-2: #f1eaf9; --line: #dfd3ef; --fg: #1b1230; --muted: #5f5379; --accent: #d1186f; --accent-2: #c85a12; --violet: #6b3fd6; --warn: #8a5a00; --ok: #137a45; color-scheme: light }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--body); }
+.wrap { max-width: 980px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 40px }
+h1, h2, h3 { font-family: var(--display); line-height: 1.12; text-wrap: balance; margin: 0 }
+h1 { font-size: clamp(2rem, 6vw, 3.4rem); font-weight: 800; letter-spacing: -0.02em }
+h2 { font-size: clamp(1.35rem, 3.4vw, 1.8rem); font-weight: 800 }
+h3 { font-size: 1.12rem; font-weight: 600 }
+p { margin: 0 }
+.eyebrow { font: 600 0.72rem/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent) }
+.muted, .sub { color: var(--muted) }
+code { font-family: var(--mono); font-size: 0.9em }
+section { display: grid; gap: 16px }
+
+.hero { display: grid; gap: 14px }
+.banner { width: 100%; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 18px; overflow: hidden; position: relative; border: 1px solid var(--line) }
+.banner img { width: 100%; height: 100%; object-fit: cover; display: block }
+.ident { display: flex; gap: 18px; align-items: center; flex-wrap: wrap }
+.avatar { width: 112px; height: 112px; border-radius: 50%; border: 3px solid var(--accent); flex: none; margin-top: -56px; margin-left: 18px; position: relative; background: var(--surface); object-fit: cover }
+.ident-text { min-width: 0; display: grid; gap: 4px }
+.handles { display: flex; flex-wrap: wrap; gap: 8px }
+.handle { font: 600 0.95rem var(--mono); padding: 6px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line) }
+.handle.first { border-color: var(--accent); color: var(--accent) }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 12px; min-width: 0 }
+
+.copy { display: grid; gap: 6px; min-width: 0 }
+.copy-head { display: flex; justify-content: space-between; align-items: center; gap: 10px }
+.label { font: 600 0.72rem/1.2 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted) }
+pre { margin: 0; font: 0.86rem/1.5 var(--mono); white-space: pre-wrap; word-break: break-word; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--fg) }
+.btn { font: 600 0.78rem var(--body); color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 5px 11px; cursor: pointer; flex: none }
+.btn:hover { border-color: var(--accent); color: var(--accent) }
+.btn:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.btn.done { border-color: var(--ok); color: var(--ok) }
+
+.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px }
+.checklist label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer }
+.checklist input, .done input { accent-color: var(--accent); width: 18px; height: 18px; margin-top: 2px; flex: none }
+.checklist small { color: var(--muted); display: block }
+
+.steps { margin: 0; padding-left: 1.3em; display: grid; gap: 6px }
+
+.clips { display: grid; gap: 18px }
+.clip { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 14px; min-width: 0 }
+.clip-head { display: flex; gap: 14px; align-items: flex-start }
+.num { font: 800 2rem/1 var(--display); color: var(--accent-2); flex: none; min-width: 2.2ch; font-variant-numeric: tabular-nums }
+.clip-meta { display: grid; gap: 6px; min-width: 0 }
+.chips { display: flex; flex-wrap: wrap; gap: 6px }
+.chip { font-size: 0.82rem; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line) }
+.chip b { font-family: var(--mono); font-weight: 600; color: var(--violet) }
+.warn { font-size: 0.84rem; color: var(--warn) }
+.platforms { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px }
+.done { display: flex; flex-wrap: wrap; gap: 8px 16px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 0.88rem; color: var(--muted) }
+.done label { display: flex; gap: 6px; align-items: center; cursor: pointer }
+
+.table-wrap { overflow-x: auto }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem }
+td { padding: 7px 10px; border-bottom: 1px solid var(--line) }
+td code { color: var(--violet) }
+.note { font-size: 0.86rem; color: var(--muted) }
+.progress { font: 600 0.82rem var(--mono); color: var(--ok) }
+@media (prefers-reduced-motion: no-preference) { .btn { transition: color .15s, border-color .15s } }
+@media (max-width: 520px) { .avatar { width: 88px; height: 88px; margin-top: -44px } .clip-head { flex-direction: column; gap: 6px } }
+</style>
+
+<div class="wrap">
+  <section class="hero" aria-labelledby="t">
+    <div class="banner"><img src="data:image/jpeg;base64,{{BANNER}}" alt="Banner de Daily Drama Clips"></div>
+    <div class="ident">
+      <img class="avatar" src="data:image/jpeg;base64,{{PERFIL}}" alt="Foto de perfil de Daily Drama Clips">
+      <div class="ident-text">
+        <span class="eyebrow">Kit de cuenta · Campaña Streamhouse LA</span>
+        <h1 id="t">Daily Drama Clips</h1>
+        <p class="muted">Todo lo que necesitas para abrir la cuenta y publicar los 8 clips del episodio 2.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-cuenta">
+    <span class="eyebrow">La cuenta</span>
+    <h2 id="s-cuenta">Nombre, foto, banner y bio</h2>
+    <div class="grid2">
+      <div class="panel">
+        <span class="label">Usuario (el mismo en TikTok, Instagram y YouTube)</span>
+        <div class="handles"><span class="handle first">dailydramaclips</span><span class="handle">dailydramalive</span><span class="handle">dramaclipsdaily</span></div>
+        <p class="note">Usa el primero; si está ocupado, el siguiente. Nombre visible: <b>Daily Drama Clips</b>.</p>
+        <p class="note">La foto (1080×1080) y el banner (2560×1440, texto dentro del área segura de YouTube) te los mandé como archivos en el chat: <code>foto-perfil.png</code> y <code>banner.png</code>.</p>
+      </div>
+      <div class="panel">{{BIO_TT}}{{BIO_YT}}</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-req">
+    <span class="eyebrow">Requisitos</span>
+    <h2 id="s-req">Antes de publicar y en cada publicación</h2>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Preparar la cuenta <span class="progress" data-progress="prep"></span></h3>
+        <ul class="checklist" data-group="prep">
+          <li><label><input type="checkbox" id="p1" data-save>Crear la cuenta en TikTok, Instagram y YouTube<small>Con el usuario, la foto, el banner y la bio de arriba.</small></label></li>
+          <li><label><input type="checkbox" id="p2" data-save>Calentar 24 horas sin publicar<small>Seguir, dar me gusta y comentar solo en entretenimiento, reality TV y streaming.</small></label></li>
+          <li><label><input type="checkbox" id="p3" data-save>Unirte a la campaña en Content Rewards / Whop<small>Ahí están 4 archivos de reglas que no pude ver.</small></label></li>
+          <li><label><input type="checkbox" id="p4" data-save>Tener a mano el QR de la historia de TikTok<small>Te lo dieron al entrar en la campaña.</small></label></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>En cada publicación</h3>
+        <ul class="checklist">
+          <li>9:16, con título y CTA en pantalla <small>Los clips ya lo traen.</small></li>
+          <li>Descripción con CTA, el elenco que sale y <code>@streamhousela</code> <small>Abajo, lista para copiar.</small></li>
+          <li>Sin marca de agua tuya; títulos y textos distintos cada vez</li>
+          <li>Una historia en Instagram y otra en TikTok por cada clip</li>
+          <li>Responder rápido a quien pregunte dónde verlo</li>
+        </ul>
+        {{TAGS}}
+      </div>
+      <div class="panel">
+        <h3>Historias y comentarios</h3>
+        {{STORY_IG}}
+        <p class="note">Historia de TikTok: usa el código QR de la campaña.</p>
+        {{REPLY}}
+      </div>
+      <div class="panel">
+        <h3>Reglas y cobro</h3>
+        <ul class="checklist">
+          <li>Público de EE. UU., Reino Unido y Canadá <small>Si no llegas a ese público, avisa al admin.</small></li>
+          <li>Nada de bots ni interacción comprada</li>
+          <li>Recortar el episodio en curso <small>Uno nuevo cada lunes a las 6 PM.</small></li>
+        </ul>
+        <ol class="steps">
+          <li>Copia el enlace de cada publicación.</li>
+          <li>Mándalo en la pestaña <b>Content Rewards</b> de Whop.</li>
+          <li>Te pagan en tu saldo de Whop 4 días después de la aprobación.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-clips">
+    <span class="eyebrow">Episodio 2 · 8 clips</span>
+    <h2 id="s-clips">Textos para copiar y pegar <span class="progress" data-progress="clips"></span></h2>
+    <p class="muted">Los videos <code>clip_01.mp4</code> a <code>clip_08.mp4</code> te los mandé en el chat. Marca cada red cuando lo publiques; las marcas se guardan solo en este navegador.</p>
+    <div class="clips">
+{{CLIPS}}
+    </div>
+  </section>
+
+  <section aria-labelledby="s-cast">
+    <span class="eyebrow">Referencia</span>
+    <h2 id="s-cast">Usuarios del elenco</h2>
+    <div class="table-wrap panel"><table><tbody>{{CAST}}</tbody></table></div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+  document.querySelectorAll("button[data-copy]").forEach((b) => b.addEventListener("click", async () => {
+    const pre = document.getElementById(b.dataset.copy), text = pre.textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = "Copiado"; b.classList.add("done"); }
+    catch { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Seleccionado"; }
+    setTimeout(() => { b.textContent = "Copiar"; b.classList.remove("done"); }, 1600);
+  }));
+  const boxes = [...document.querySelectorAll("input[data-save]")];
+  const progress = () => {
+    const prep = boxes.filter((x) => x.id.startsWith("p")), clip = boxes.filter((x) => x.id.startsWith("d"));
+    const set = (name, list) => { const el = document.querySelector(`[data-progress="${name}"]`); if (el) el.textContent = `${list.filter((x) => x.checked).length}/${list.length}`; };
+    set("prep", prep); set("clips", clip);
+  };
+  boxes.forEach((x) => { x.checked = store.get("dd:" + x.id) === "1"; x.addEventListener("change", () => { store.set("dd:" + x.id, x.checked ? "1" : "0"); progress(); }); });
+  progress();
+})();
+</script>

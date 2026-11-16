@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}</style></head><body>
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="1440" viewBox="0 0 2560 1440">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="#3a1466"/><stop offset="0.5" stop-color="#1a0b33"/><stop offset="1" stop-color="#07040f"/></radialGradient>
+    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a1a"/><stop offset="0.5" stop-color="#ff2e88"/><stop offset="1" stop-color="#8a3dff"/></linearGradient>
+    <linearGradient id="txt" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffd7ec"/></linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="16" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="40"/></filter>
+  </defs>
+  <rect width="2560" height="1440" fill="url(#bg)"/>
+  <!-- glow blobs and a grid of faint screens, outside the safe area -->
+  <circle cx="420" cy="380" r="260" fill="#ff2e88" opacity="0.25" filter="url(#soft)"/>
+  <circle cx="2160" cy="1080" r="300" fill="#8a3dff" opacity="0.28" filter="url(#soft)"/>
+  <circle cx="2200" cy="330" r="200" fill="#ff7a1a" opacity="0.2" filter="url(#soft)"/>
+  <g opacity="0.12" stroke="#ffffff" stroke-width="4" fill="none">
+    <rect x="140" y="860" width="300" height="200" rx="34"/><rect x="2140" y="420" width="260" height="170" rx="30"/><rect x="250" y="250" width="200" height="130" rx="24"/><rect x="2020" y="1120" width="220" height="150" rx="26"/>
+  </g>
+  <!-- the safe area for every device is 1546 x 423 in the middle -->
+  <g transform="translate(507 509)">
+    <g filter="url(#glow)" transform="translate(0 46)">
+      <rect x="0" y="0" width="330" height="230" rx="44" fill="none" stroke="url(#neon)" stroke-width="22"/>
+      <path d="M128 64 L128 166 L218 115 Z" fill="url(#neon)" stroke="url(#neon)" stroke-width="14" stroke-linejoin="round"/>
+      <rect x="110" y="258" width="110" height="16" rx="8" fill="url(#neon)"/>
+    </g>
+    <g transform="translate(262 10)"><rect width="128" height="54" rx="27" fill="#ff2e3c"/><circle cx="28" cy="27" r="9" fill="#fff"/><text x="80" y="38" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="27" fill="#fff" text-anchor="middle">LIVE</text></g>
+    <text x="420" y="180" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="150" fill="url(#txt)" letter-spacing="4">DAILY DRAMA</text>
+    <text x="426" y="262" font-family="Arial, sans-serif" font-weight="700" font-size="42" fill="#ff8fc6" letter-spacing="5">CLIPS · REACTIONS · WILD MOMENTS</text>
+    <rect x="426" y="300" width="560" height="10" rx="5" fill="url(#neon)"/>
+    <text x="426" y="378" font-family="Arial, sans-serif" font-weight="700" font-size="44" fill="#ffffff" opacity="0.85">New clips every day 🎬</text>
+  </g>
+</svg></body></html>
