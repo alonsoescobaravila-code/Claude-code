@@ -1,0 +1,43 @@
+1
+00:00:00,050 --> 00:00:03,480
+¿Qué pasaría si cada golpe que das fuera el doble de fuerte que el anterior?
+
+2
+00:00:03,500 --> 00:00:04,200
+¡Bomboclaat!
+
+3
+00:00:05,500 --> 00:00:06,200
+¡Bomboclaat!
+
+4
+00:00:07,500 --> 00:00:08,200
+¡Bomboclaat!
+
+5
+00:00:09,500 --> 00:00:10,200
+¡Bomboclaat!
+
+6
+00:00:12,000 --> 00:00:12,700
+¡Bomboclaat!
+
+7
+00:00:14,500 --> 00:00:15,200
+¡Bomboclaat!
+
+8
+00:00:17,000 --> 00:00:17,700
+¡Bomboclaat!
+
+9
+00:00:18,150 --> 00:00:20,237
+Veinticuatro golpes después…
+
+10
+00:00:21,500 --> 00:00:22,200
+¡Bomboclaat!
+
+11
+00:00:25,600 --> 00:00:27,656
+Ups… creo que me pasé.

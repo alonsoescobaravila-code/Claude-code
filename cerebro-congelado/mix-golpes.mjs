@@ -6,7 +6,7 @@ import { existsSync, writeFileSync } from "node:fs";
 
 const FPS = 60, DUR = 28, HITS = [210, 330, 450, 570, 720, 870, 1020, 1290].map((f) => f / FPS);
 const LINES = ["¿Qué pasaría si cada golpe que das fuera el doble de fuerte que el anterior?", "Veinticuatro golpes después…", "Ups… creo que me pasé.", "¡Bomboclaat!"];
-const STARTS = [0.15, 18.15, 25.6]; // narration lines: the intro, the time skip, the shrug
+const STARTS = [0.05, 18.15, 25.6]; // narration lines: the intro, the time skip, the shrug
 const ff = (args) => { const r = spawnSync("ffmpeg", ["-hide_banner", "-y", ...args], { encoding: "utf8" }); if (r.status) throw new Error(r.stderr.slice(-2500)); return r.stderr; };
 const dur = (f) => Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f], { encoding: "utf8" }));
 const voice = ["voice-golpes.mp3", "voice-golpes.wav"].find((f) => existsSync(f));
@@ -26,7 +26,7 @@ if (voice) {
   console.table(segs.map(([a, b], i) => ({ line: LINES[i].slice(0, 30), from: +a.toFixed(2), to: +b.toFixed(2), len: +(b - a).toFixed(2) })));
   inputs.push("-i", voice); if (shout) inputs.push("-i", shout);
   const parts = [], names = [];
-  STARTS.forEach((at, i) => { const [a, b] = segs[i]; parts.push(`[1:a]atrim=${a}:${b},asetpts=PTS-STARTPTS,afade=t=out:st=${Math.max(0, b - a - 0.05)}:d=0.05,adelay=${Math.round(at * 1000)}:all=1[n${i}]`); names.push(`[n${i}]`); srt.push([at, at + (b - a), LINES[i]]); });
+  STARTS.forEach((at, i) => { const [a, b] = segs[i]; parts.push(`[1:a]atrim=${a}:${b},asetpts=PTS-STARTPTS,afade=t=out:st=${Math.max(0, b - a - 0.05)}:d=0.05${i === 0 ? ",atempo=1.2" : ""},adelay=${Math.round(at * 1000)}:all=1[n${i}]`); names.push(`[n${i}]`); srt.push([at, at + (b - a) / (i === 0 ? 1.2 : 1), LINES[i]]); }); // the intro is sped up 1.2x so it ends before punch 1
   // the shout: higher and small for a tap, lower, louder and echoing as the power doubles
   const [sa, sb] = segs[3], src = shout ? "[2:a]aresample=48000" : `[1:a]atrim=${sa}:${sb},asetpts=PTS-STARTPTS,aresample=48000`;
   HITS.forEach((at, k) => {
