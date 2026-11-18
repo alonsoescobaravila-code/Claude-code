@@ -16,15 +16,23 @@ CLIPS = [
     ("35:00", 40, "Castro Said Imagine What He Could Do With A Couple More Days 😤", ["CJ"], "Confidence on a hundred 😤", True),
     ("38:34", 48, "D Mac Says Everybody Out Here Is Trying To Be Him", ["D Mac"], "He really does it all? 🤔", False),
 ]
+# YouTube: the question pinned as the first comment, and the keywords for the Tags field (not hashtags, so they don't count toward the 5).
+PINNED = ["Did that get out of hand or was it deserved? 👇", "Was this too much or did it have to happen? 👇", "Team Michaela or Team Jojo? 👇",
+          "Fair or favoritism? 👑👇", "Best party in the house so far? 🔥👇", "Who's telling the truth? 👇", "Confident or cocky? 😤👇", "Is he right? 🤔👇"]
+YT_KEYWORDS = "Streamhouse LA, Streamhouse LA episode 2, CWETV, Chicken Wrap Entertainment, reality show, content house, drama"
+YT_TAGS = TAGS + " #shorts"
 clips = []
 for i, (start, dur, title, cast, hook, unsure) in enumerate(CLIPS):
     tags = " ".join(CAST[c] for c in cast)
     tt, ig = CTA_TT[i % 4], CTA_IG[i % 4]
-    ytdesc = (tt if tt.endswith("com") else tt + ".") + f" @streamhousela {tags} {TAGS}"
+    watch = "" if tt.endswith("com") else "\nFull episodes 👉 https://www.cwenetwork.com"
+    ytdesc = f"{hook}\n\n{tt} 📺{watch}\n\n@streamhousela {tags}\n\n{YT_TAGS}"
     clips.append({"n": i + 1, "start": start, "dur": dur, "title": title, "cast": [[c, CAST[c]] for c in cast], "unsure": unsure,
                   "tiktok": f"{hook} {tt} @streamhousela {tags} {TAGS}",
                   "instagram": f"{hook}\n{ig} 📺 @streamhousela {tags}\n{TAGS}",
-                  "yt_title": title, "yt_desc": ytdesc})
+                  "yt_title": f"{title} | Streamhouse LA", "yt_desc": ytdesc,
+                  "yt_pin": f"{PINNED[i]}\nFull episodes 👉 https://www.cwenetwork.com",
+                  "yt_kw": YT_KEYWORDS + ", " + ", ".join(cast)})
 
 ALLCAST = [("Morgan Westbrooks", "@morgandwestbrooks"), ("India Love", "@indialove"), ("Casanova", "@one_cnova"), ("DJ SkyHigh Baby", "@djskyhighbaby"), ("Michaela", "@sheismichaela"),
     ("Phee", "@romanaceanddancepole"), ("Island Boi", "@islandboij242"), ("Castro “CJ” Dean", "@cjkilla"), ("Lyricc", "@assistanttothestarz"), ("Vegas Ky", "@vegas_ky"), ("Jojo", "@flyestmanonearth"),
@@ -47,6 +55,8 @@ for c in clips:
     {copy("Instagram", c["instagram"], f"c{k}-ig")}
     {copy("YouTube · título", c["yt_title"], f"c{k}-ytt")}
     {copy("YouTube · descripción", c["yt_desc"], f"c{k}-ytd")}
+    {copy("YouTube · comentario fijado", c["yt_pin"], f"c{k}-ytp")}
+    {copy("YouTube · etiquetas (campo «Etiquetas»)", c["yt_kw"], f"c{k}-ytk")}
   </div>
   <div class="done" role="group" aria-label="Clip {k} hecho">{"".join(f'<label><input type="checkbox" id="d{k}-{x}" data-save> {lbl}</label>' for x, lbl in [("tt","TikTok"),("ig","Instagram"),("yt","YouTube"),("st","Historias"),("wh","Enviado a Whop")])}</div>
 </article>''')
