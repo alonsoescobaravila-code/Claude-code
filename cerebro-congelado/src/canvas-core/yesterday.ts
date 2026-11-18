@@ -139,7 +139,7 @@ const piano = (ctx: Ctx, f: number, env: Env) => {
   const [x, , h] = place(s.cam, env, 0.15, -1.4), [, seatY] = place(s.cam, env, 0.15, -1.4, 0.5), play = f < 400, worry = f >= 400, hands = Math.sin(f * 0.6) * 10;
   stick(ctx, env, x, seatY + h * 0.45, h, PAUL, { face: worry ? "o" : "smile", look: worry ? 0 : -1, ll: -70, rl: -60, la: worry ? [150, 25] : [-100 + hands, -10], ra: worry ? [-150, -25] : [-95 - hands, 30] }, f);
   if (play) notes(ctx, env, f, x, seatY - h * 0.85, 220, 0.3);
-  label(ctx, env, f, 300, "AL DESPERTAR", "green"); punch(ctx, env, "¿LA COPIÉ?", W / 2, 1470, 110, (f - 432) / 12);
+  label(ctx, env, f, 300, "AL DESPERTAR", "green"); punch(ctx, env, "¿LA COPIÉ?", W / 2, 1470, 110, (f - 424) / 12);
 };
 const ask = (ctx: Ctx, f: number, env: Env) => {
   const s = memo(env, "y:parlour", buildParlour); push(s.cam, (f - 465) / 180, 0.6, f); frame3d(ctx, env, s);
@@ -155,8 +155,8 @@ const eggsSong = (ctx: Ctx, f: number, env: Env) => {
   stick(ctx, env, x, y, h, PAUL, { inst: "guitar", face: f < 830 ? "shout" : "grin", la: [-40, 70], ra: [40 + strum, -60] }, f);
   notes(ctx, env, f, x + h * 0.25, y - h * 1.15, 120, 0.6);
   label(ctx, env, f, 675, "LA LETRA DE MENTIRA", "yellow");
-  numBox(ctx, env, "SCRAMBLED EGGS", W / 2, 1470, 64, (f - 735) / 8);
-  if (f >= 840) punch(ctx, env, "= HUEVOS REVUELTOS", W / 2, 1600, 70, (f - 840) / 10, "#f2c11d", -0.03);
+  numBox(ctx, env, "SCRAMBLED EGGS", W / 2, 1470, 64, (f - 737) / 8);
+  if (f >= 846) punch(ctx, env, "= HUEVOS REVUELTOS", W / 2, 1600, 70, (f - 846) / 10, "#f2c11d", -0.03);
 };
 const portugal = (ctx: Ctx, f: number, env: Env) => {
   const s = memo(env, "y:road", buildRoad); const t = (f - 915) / 180; s.car.position.set(lerp(-5.5, 3.5, t), 0, 0.2); s.car.rotation.z = Math.sin(f * 0.9) * 0.008;
@@ -173,7 +173,7 @@ const studio = (ctx: Ctx, f: number, env: Env) => {
   seats.forEach(([sx, sz, kind], i) => { const [px, py, ph] = place(s.cam, env, sx, sz); const t = ease.outBack(seg(f, 1150 + i * 8, 1162 + i * 8)); if (t <= 0) return;
     stick(ctx, env, px, py + (1 - t) * 40, ph * (kind === "cello" ? 0.9 : 1), PLAYER, kind === "cello" ? { face: "sleep", ll: -60, rl: 40, la: [-30, 80], ra: [50, -40] } : { face: "sleep", la: [-150, 20], ra: [-60, -60] }, f); fiddle(ctx, env, px, py, ph, kind, f, i); });
   stick(ctx, env, x, y, h, PAUL, { inst: "guitar", face: "smile", la: [-40, 70], ra: [40 + strum, -60] }, f);
-  label(ctx, env, f, 1095, "ABBEY ROAD · JUNIO 1965", "red"); punch(ctx, env, "SOLO PAUL", W / 2, 1470, 110, (f - 1263) / 12, "#f2c11d");
+  label(ctx, env, f, 1095, "ABBEY ROAD · JUNIO 1965", "red"); punch(ctx, env, "SOLO PAUL", W / 2, 1470, 110, (f - 1266) / 12, "#f2c11d");
 };
 const end = (ctx: Ctx, f: number, env: Env) => {
   const s = memo(env, "y:record", buildRecord); push(s.cam, (f - 1335) / 165, 0.5, f); s.disc.rotation.y = -f * 0.11; frame3d(ctx, env, s);
