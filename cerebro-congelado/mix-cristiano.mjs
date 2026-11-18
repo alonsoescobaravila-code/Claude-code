@@ -36,7 +36,7 @@ writeFileSync("out/cristiano.srt", srt.map(([a, b, t], i) => `${i + 1}\n${ts(a)}
 ff([...inputs, "-filter_complex", filter, "-map", "[mix]", "-t", String(DUR), "-ar", "48000", "out/cristiano-premix.wav"]);
 const m1 = ff(["-i", "out/cristiano-premix.wav", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json", "-f", "null", "-"]), j = JSON.parse(m1.slice(m1.lastIndexOf("{")));
 ff(["-i", "out/cristiano-premix.wav", "-af", `loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=${j.input_i}:measured_TP=${j.input_tp}:measured_LRA=${j.input_lra}:measured_thresh=${j.input_thresh}:offset=${j.target_offset}:linear=true`, "-ar", "48000", "out/cristiano-mix.wav"]);
-ff(["-i", "out/cristiano-picture.mp4", "-i", "out/cristiano-mix.wav", "-map", "0:v", "-map", "1:a", "-vf", "scale=out_color_matrix=bt709:out_range=tv,format=yuv420p", "-c:v", "libx264", "-preset", "slow", "-crf", "17", "-profile:v", "high", "-r", "60",
-  "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-color_range", "tv", "-c:a", "aac", "-b:a", "256k", "-movflags", "+faststart", "-t", String(DUR), "out/semana-cristiano.mp4"]);
-const m2 = ff(["-i", "out/semana-cristiano.mp4", "-af", "ebur128=peak=true", "-f", "null", "-"]);
-console.log("out/semana-cristiano.mp4", m2.match(/I:\s+-?[\d.]+ LUFS/g)?.pop(), m2.match(/Peak:\s+-?[\d.]+ dBFS/g)?.pop());
+ff(["-i", (process.env.PICTURE ?? "out/cristiano-picture.mp4"), "-i", "out/cristiano-mix.wav", "-map", "0:v", "-map", "1:a", "-vf", "scale=out_color_matrix=bt709:out_range=tv,format=yuv420p", "-c:v", "libx264", "-preset", "slow", "-crf", "17", "-profile:v", "high", "-r", "60",
+  "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-color_range", "tv", "-c:a", "aac", "-b:a", "256k", "-movflags", "+faststart", "-t", String(DUR), (process.env.OUTFILE ?? "out/semana-cristiano.mp4")]);
+const m2 = ff(["-i", (process.env.OUTFILE ?? "out/semana-cristiano.mp4"), "-af", "ebur128=peak=true", "-f", "null", "-"]);
+console.log((process.env.OUTFILE ?? "out/semana-cristiano.mp4"), m2.match(/I:\s+-?[\d.]+ LUFS/g)?.pop(), m2.match(/Peak:\s+-?[\d.]+ dBFS/g)?.pop());
