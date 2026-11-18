@@ -16,7 +16,7 @@ import { W, TAU, mat, box, cyl, room, cam, push, stick, captions, pill, punch, n
 import WORDS from "./yesterday.words.json";
 
 const FPS = 30, END = 1500;
-export const CUT = { hook: 0, dream: 150, piano: 300, ask: 465, eggs: 645, portugal: 915, studio: 1095, end: 1335, fin: END };
+export const CUT = { hook: 0, dream: 150, piano: 300, ask: 465, eggs: 675, portugal: 915, studio: 1095, end: 1335, fin: END };
 const PAUL: Who = { kind: "beatle", torso: "#2b2b30", hair: "#2a1a10", skin: "#f3e6d0" };
 const FRIENDS: Who[] = [{ kind: "beatle", torso: "#3a2a20", hair: "#5a3a22", skin: "#f3e6d0", round: true }, { kind: "fan", torso: "#5a6a8a", hair: "#2a1b12", skin: "#efe0c8" }, { kind: "fan", torso: "#8a4a3a", hair: "#e8c26a", skin: "#f3e6d0" }];
 const PLAYER: Who = { kind: "fan", torso: "#1d1d22", hair: "#3a2a1e", skin: "#efe0c8" };
@@ -145,18 +145,18 @@ const ask = (ctx: Ctx, f: number, env: Env) => {
   const s = memo(env, "y:parlour", buildParlour); push(s.cam, (f - 465) / 180, 0.6, f); frame3d(ctx, env, s);
   const [px, py, ph] = place(s.cam, env, -0.85, 0.6), strum = Math.sin(f * 0.8) * 12;
   stick(ctx, env, px, py, ph, PAUL, { inst: "guitar", face: "o", look: 1, la: [-40, 70], ra: [40 + strum, -60] }, f);
-  FRIENDS.forEach((who, i) => { const [x, y, h] = place(s.cam, env, 0.05 + i * 0.55, 0.2 - i * 0.35), no = f >= 600 ? Math.sin(f * 0.9 + i) * 8 : 0;
-    stick(ctx, env, x + no, y, h * 0.95, who, { face: f >= 600 ? "flat" : "smile", look: -1, tilt: no * 0.3 }, f); });
-  label(ctx, env, f, 465, "¿YA EXISTÍA?", "red"); punch(ctx, env, "NO", W / 2 + 180, 560, 150, (f - 598) / 10);
+  FRIENDS.forEach((who, i) => { const [x, y, h] = place(s.cam, env, 0.05 + i * 0.55, 0.2 - i * 0.35), no = f >= 628 ? Math.sin(f * 0.9 + i) * 8 : 0;
+    stick(ctx, env, x + no, y, h * 0.95, who, { face: f >= 628 ? "flat" : "smile", look: -1, tilt: no * 0.3 }, f); });
+  label(ctx, env, f, 465, "¿YA EXISTÍA?", "red"); punch(ctx, env, "NO", W / 2 + 180, 560, 150, (f - 626) / 10);
 };
 const eggsSong = (ctx: Ctx, f: number, env: Env) => {
-  const s = memo(env, "y:eggs", buildEggsSong); push(s.cam, (f - 645) / 270, 0.8, f); frame3d(ctx, env, s);
+  const s = memo(env, "y:eggs", buildEggsSong); push(s.cam, (f - 675) / 240, 0.8, f); frame3d(ctx, env, s);
   const [x, y, h] = place(s.cam, env, -0.85, 0.7), strum = Math.sin(f * 0.7) * 14;
-  stick(ctx, env, x, y, h, PAUL, { inst: "guitar", face: f < 800 ? "shout" : "grin", la: [-40, 70], ra: [40 + strum, -60] }, f);
+  stick(ctx, env, x, y, h, PAUL, { inst: "guitar", face: f < 830 ? "shout" : "grin", la: [-40, 70], ra: [40 + strum, -60] }, f);
   notes(ctx, env, f, x + h * 0.25, y - h * 1.15, 120, 0.6);
-  label(ctx, env, f, 645, "LA LETRA DE MENTIRA", "yellow");
-  numBox(ctx, env, "SCRAMBLED EGGS", W / 2, 1470, 64, (f - 700) / 8);
-  if (f >= 813) punch(ctx, env, "= HUEVOS REVUELTOS", W / 2, 1600, 70, (f - 813) / 10, "#f2c11d", -0.03);
+  label(ctx, env, f, 675, "LA LETRA DE MENTIRA", "yellow");
+  numBox(ctx, env, "SCRAMBLED EGGS", W / 2, 1470, 64, (f - 735) / 8);
+  if (f >= 840) punch(ctx, env, "= HUEVOS REVUELTOS", W / 2, 1600, 70, (f - 840) / 10, "#f2c11d", -0.03);
 };
 const portugal = (ctx: Ctx, f: number, env: Env) => {
   const s = memo(env, "y:road", buildRoad); const t = (f - 915) / 180; s.car.position.set(lerp(-5.5, 3.5, t), 0, 0.2); s.car.rotation.z = Math.sin(f * 0.9) * 0.008;
