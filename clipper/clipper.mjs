@@ -78,7 +78,7 @@ const wrap = (t, max) => { const out = []; let line = ""; for (const word of t.s
 const ass = (clip, w, dur, cta) => {
   const st = (name, size, outline, align, v) => `Style: ${name},Poppins,${size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,${outline},2,${align},150,150,${v},1`;
   const head = `[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\nWrapStyle: 2\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n` +
-    [st("Title", 68, 6, 8, 170), st("Sub", 66, 6, 2, 700), st("Cta", P.ctaSize ?? 44, 4, 2, 470)].join("\n") + `\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+    [st("Title", P.titleSize ?? 68, 6, 8, P.titleY ?? 170), st("Sub", 66, 6, 2, P.subY ?? 700), st("Cta", P.ctaSize ?? 44, 4, 2, P.ctaY ?? 470)].join("\n") + `\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
   const ev = [`Dialogue: 0,${assTime(0)},${assTime(dur)},Title,,0,0,0,,{\\fad(120,0)}${wrap(esc(noEmoji(clip.title)), P.titleWrap ?? 30).join("\\N")}`];
   if (cta) ev.push(`Dialogue: 0,${assTime(0)},${assTime(dur)},Cta,,0,0,0,,${esc(cta)}`);
   const t0 = secs(clip.start), mine = w.filter((x) => x.s >= t0 - 0.05 && x.e <= secs(clip.end) + 0.05).map((x) => ({ ...x, s: x.s - t0, e: x.e - t0 }));
@@ -111,8 +111,12 @@ const cut = (video, planFile) => {
     writeFileSync(join(out, `${name}.ass`), ass(clip, w, dur, cta));
     // ffmpeg runs inside out/, so the subtitle and font paths have no drive letters to escape on Windows
     const fonts = relative(out, HERE).replace(/\\/g, "/") || ".";
-    const vf = `[0:v]split[a][b];[a]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=30:2,eq=brightness=-0.12[bg];` +
-      (P.zoom ? `[b]scale=-2:${Math.round(608 * P.zoom / 2) * 2},crop=1080:ih[fg];[bg][fg]overlay=(W-w)/2:${Math.round(824 - 304 * P.zoom)},` : `[b]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:520,`) + `subtitles=${name}.ass:fontsdir=${fonts},format=yuv420p[v]`;
+    const subs = `subtitles=${name}.ass:fontsdir=${fonts},format=yuv420p[v]`;
+    // stack: a title band on top, the streamer's camera full width under it, the gameplay below (both crops in source pixels)
+    const stack = P.stack && (() => { const { cam: [cx, cy, cw, ch], game: [gx, gy, gw, gh], top = 260 } = P.stack, camH = Math.round((1080 * ch) / cw / 2) * 2, gameH = 1920 - top - camH;
+      return `[0:v]split[a][b];[a]crop=${cw}:${ch}:${cx}:${cy},scale=1080:${camH},setsar=1[cam];[b]crop=${gw}:${gh}:${gx}:${gy},scale=1080:${gameH},setsar=1[game];[cam][game]vstack,pad=1080:1920:0:${top}:color=0x0b0b0b,${subs}`; })();
+    const vf = stack || `[0:v]split[a][b];[a]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=30:2,eq=brightness=-0.12[bg];` +
+      (P.zoom ? `[b]scale=-2:${Math.round(608 * P.zoom / 2) * 2},crop=1080:ih[fg];[bg][fg]overlay=(W-w)/2:${Math.round(824 - 304 * P.zoom)},` : `[b]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:520,`) + subs;
     run("ffmpeg", ["-hide_banner", "-loglevel", "error", "-y", "-ss", String(start), "-i", resolve(video), "-t", String(dur), "-filter_complex", vf, "-map", "[v]", "-map", "0:a?", "-r", "30", "-c:v", "libx264", "-preset", "medium", "-crf", "19",
       "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-c:a", "aac", "-b:a", "192k", "-af", "loudnorm=I=-14:TP=-1.5", "-movflags", "+faststart", `${name}.mp4`], { cwd: out });
     writeFileSync(join(out, `${name}.txt`), captionText(clip, k));
