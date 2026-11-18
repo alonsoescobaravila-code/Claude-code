@@ -10,7 +10,7 @@
   "hashtags": "#LACY #GTA6 #GTAVI #gaming #twitch",
   "show": "",
   "requireCast": false,
-  "censor": false,
+  "censor": true,
   "cast": {},
   "story": [],
   "reply": "",
@@ -38,5 +38,5 @@
   "titleSize": 74,
   "titleY": 40,
   "titleWrap": 26,
-  "ctaSize": 42
+  "ctaSize": 46
 }

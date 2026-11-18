@@ -91,7 +91,7 @@ const ass = (clip, w, dur, cta) => {
   return head + ev.join("\n") + "\n";
 };
 const captionText = (clip, k) => {
-  const tags = (clip.cast ?? []).map((c) => P.cast[c] ?? c).join(" "), cta = P.ctas.length ? P.ctas[k % P.ctas.length] : "", hook0 = clip.caption ?? clip.title, hook = /[.!?…]$/u.test(hook0.trim()) ? hook0 : hook0.trim() + ".", mention = [P.show, tags].filter(Boolean).join(" ");
+  const tags = (clip.cast ?? []).map((c) => P.cast[c] ?? c).join(" "), cta = P.ctas.length ? P.ctas[k % P.ctas.length] : "", hook0 = clip.caption ?? clip.title, hook = /[.!?…\p{Extended_Pictographic}\u{FE0F}]$/u.test(hook0.trim()) ? hook0 : hook0.trim() + ".", mention = [P.show, tags].filter(Boolean).join(" ");
   return [`ON-SCREEN TITLE: ${clip.title}`, "", "--- TikTok ---", `${hook} ${cta} ${mention}`.replace(/\s+/g, " ").trim(), ...(P.credit ? [P.credit] : []), P.hashtags, "",
     "--- Instagram Reels ---", hook, `${cta} ${mention}`.trim(), ...(P.credit ? [P.credit] : []), P.hashtags, "",
     ...(P.platforms && !P.platforms.includes("youtube") ? [] : ["--- YouTube Shorts ---", `Title: ${clip.title.slice(0, 95)}`, `Description: ${cta}. ${mention} ${P.credit ?? ""} ${P.hashtags}`.replace(/\s+/g, " ").trim(), ""]),
