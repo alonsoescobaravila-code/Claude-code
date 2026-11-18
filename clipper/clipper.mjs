@@ -94,7 +94,7 @@ const captionText = (clip, k) => {
   const tags = (clip.cast ?? []).map((c) => P.cast[c] ?? c).join(" "), cta = P.ctas.length ? P.ctas[k % P.ctas.length] : "", hook = clip.caption ?? clip.title, mention = [P.show, tags].filter(Boolean).join(" ");
   return [`ON-SCREEN TITLE: ${clip.title}`, "", "--- TikTok ---", `${hook} ${cta} ${mention}`.replace(/\s+/g, " ").trim(), P.credit ?? "", P.hashtags, "",
     "--- Instagram Reels ---", hook, `${cta} ${mention}`.trim(), P.credit ?? "", P.hashtags, "",
-    "--- YouTube Shorts ---", `Title: ${clip.title.slice(0, 95)}`, `Description: ${cta}. ${mention} ${P.credit ?? ""} ${P.hashtags}`.replace(/\s+/g, " ").trim(), "",
+    ...(P.platforms && !P.platforms.includes("youtube") ? [] : ["--- YouTube Shorts ---", `Title: ${clip.title.slice(0, 95)}`, `Description: ${cta}. ${mention} ${P.credit ?? ""} ${P.hashtags}`.replace(/\s+/g, " ").trim(), ""]),
     ...(P.story.length ? ["--- Stories (one per clip) ---", ...P.story, ""] : []), P.reply ?? ""].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
 };
 const cut = (video, planFile) => {
