@@ -2,7 +2,9 @@
   "name": "Call of Duty MW4 - DMZ Intel Briefing (Clipping Culture)",
   "lang": "en",
   "model": "small.en",
-  "ctas": ["DMZ gets free access for a limited time"],
+  "ctas": [
+    "DMZ gets free access for a limited time"
+  ],
   "hashtags": "#Ad #CallofDuty #MW4 #DMZ",
   "show": "@callofduty",
   "requireCast": false,
@@ -10,6 +12,13 @@
   "cast": {},
   "story": [],
   "reply": "",
-  "platforms": ["tiktok", "instagram"],
-  "notes": "Official content folder footage only. No added music, no AI voices. English only, 10 s minimum. #Ad first on its own line, max 3 more hashtags. Mention the DMZ free trial (caption or on-screen). Tag @callofduty. Keep posts up 30 days, likes visible. No made-up facts; a trailer is not gameplay."
+  "platforms": [
+    "tiktok",
+    "instagram"
+  ],
+  "notes": "Official content folder footage only. No added music, no AI voices. English only, 10 s minimum. #Ad first on its own line, max 3 more hashtags. Mention the DMZ free trial (caption or on-screen). Tag @callofduty. Keep posts up 30 days, likes visible. No made-up facts; a trailer is not gameplay.",
+  "subs": false,
+  "zoom": 1.3,
+  "ctaSize": 56,
+  "titleWrap": 34
 }

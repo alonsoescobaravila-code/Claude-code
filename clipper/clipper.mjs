@@ -78,11 +78,11 @@ const wrap = (t, max) => { const out = []; let line = ""; for (const word of t.s
 const ass = (clip, w, dur, cta) => {
   const st = (name, size, outline, align, v) => `Style: ${name},Poppins,${size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,${outline},2,${align},150,150,${v},1`;
   const head = `[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\nWrapStyle: 2\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n` +
-    [st("Title", 68, 6, 8, 170), st("Sub", 66, 6, 2, 700), st("Cta", 44, 4, 2, 470)].join("\n") + `\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
-  const ev = [`Dialogue: 0,${assTime(0)},${assTime(dur)},Title,,0,0,0,,{\\fad(120,0)}${wrap(esc(noEmoji(clip.title)), 30).join("\\N")}`];
+    [st("Title", 68, 6, 8, 170), st("Sub", 66, 6, 2, 700), st("Cta", P.ctaSize ?? 44, 4, 2, 470)].join("\n") + `\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+  const ev = [`Dialogue: 0,${assTime(0)},${assTime(dur)},Title,,0,0,0,,{\\fad(120,0)}${wrap(esc(noEmoji(clip.title)), P.titleWrap ?? 30).join("\\N")}`];
   if (cta) ev.push(`Dialogue: 0,${assTime(0)},${assTime(dur)},Cta,,0,0,0,,${esc(cta)}`);
   const t0 = secs(clip.start), mine = w.filter((x) => x.s >= t0 - 0.05 && x.e <= secs(clip.end) + 0.05).map((x) => ({ ...x, s: x.s - t0, e: x.e - t0 }));
-  for (let i = 0; i < mine.length; ) {
+  for (let i = 0; P.subs !== false && i < mine.length; ) {
     let j = i + 1; while (j < mine.length && j - i < 4 && mine[j].s - mine[j - 1].e < 0.6 && !/[.?!,]$/.test(mine[j - 1].w)) j++;
     const g = mine.slice(i, j), gEnd = Math.min(g[g.length - 1].e + 0.25, mine[j]?.s ?? dur);
     g.forEach((x, k) => { const end = k < g.length - 1 ? g[k + 1].s : gEnd; ev.push(`Dialogue: 1,${assTime(x.s)},${assTime(end)},Sub,,0,0,0,,${g.map((y, m) => (m === k ? `{\\c&H00D7FF&}${esc(clean(y.w))}{\\c&HFFFFFF&}` : esc(clean(y.w)))).join(" ").toUpperCase()}`); });
@@ -91,9 +91,9 @@ const ass = (clip, w, dur, cta) => {
   return head + ev.join("\n") + "\n";
 };
 const captionText = (clip, k) => {
-  const tags = (clip.cast ?? []).map((c) => P.cast[c] ?? c).join(" "), cta = P.ctas.length ? P.ctas[k % P.ctas.length] : "", hook = clip.caption ?? clip.title, mention = [P.show, tags].filter(Boolean).join(" ");
-  return [`ON-SCREEN TITLE: ${clip.title}`, "", "--- TikTok ---", `${hook} ${cta} ${mention}`.replace(/\s+/g, " ").trim(), P.credit ?? "", P.hashtags, "",
-    "--- Instagram Reels ---", hook, `${cta} ${mention}`.trim(), P.credit ?? "", P.hashtags, "",
+  const tags = (clip.cast ?? []).map((c) => P.cast[c] ?? c).join(" "), cta = P.ctas.length ? P.ctas[k % P.ctas.length] : "", hook0 = clip.caption ?? clip.title, hook = /[.!?…]$/u.test(hook0.trim()) ? hook0 : hook0.trim() + ".", mention = [P.show, tags].filter(Boolean).join(" ");
+  return [`ON-SCREEN TITLE: ${clip.title}`, "", "--- TikTok ---", `${hook} ${cta} ${mention}`.replace(/\s+/g, " ").trim(), ...(P.credit ? [P.credit] : []), P.hashtags, "",
+    "--- Instagram Reels ---", hook, `${cta} ${mention}`.trim(), ...(P.credit ? [P.credit] : []), P.hashtags, "",
     ...(P.platforms && !P.platforms.includes("youtube") ? [] : ["--- YouTube Shorts ---", `Title: ${clip.title.slice(0, 95)}`, `Description: ${cta}. ${mention} ${P.credit ?? ""} ${P.hashtags}`.replace(/\s+/g, " ").trim(), ""]),
     ...(P.story.length ? ["--- Stories (one per clip) ---", ...P.story, ""] : []), P.reply ?? ""].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
 };
@@ -112,7 +112,7 @@ const cut = (video, planFile) => {
     // ffmpeg runs inside out/, so the subtitle and font paths have no drive letters to escape on Windows
     const fonts = relative(out, HERE).replace(/\\/g, "/") || ".";
     const vf = `[0:v]split[a][b];[a]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=30:2,eq=brightness=-0.12[bg];` +
-      `[b]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:520,subtitles=${name}.ass:fontsdir=${fonts},format=yuv420p[v]`;
+      (P.zoom ? `[b]scale=-2:${Math.round(608 * P.zoom / 2) * 2},crop=1080:ih[fg];[bg][fg]overlay=(W-w)/2:${Math.round(824 - 304 * P.zoom)},` : `[b]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:520,`) + `subtitles=${name}.ass:fontsdir=${fonts},format=yuv420p[v]`;
     run("ffmpeg", ["-hide_banner", "-loglevel", "error", "-y", "-ss", String(start), "-i", resolve(video), "-t", String(dur), "-filter_complex", vf, "-map", "[v]", "-map", "0:a?", "-r", "30", "-c:v", "libx264", "-preset", "medium", "-crf", "19",
       "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-c:a", "aac", "-b:a", "192k", "-af", "loudnorm=I=-14:TP=-1.5", "-movflags", "+faststart", `${name}.mp4`], { cwd: out });
     writeFileSync(join(out, `${name}.txt`), captionText(clip, k));
